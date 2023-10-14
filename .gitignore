@@ -1,3 +1,4 @@
 farm_management_web/__pycache__/
 main/__pycache__/
 .DS_Store
+.env

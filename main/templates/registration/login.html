@@ -2,16 +2,23 @@
 {% block title %}Login{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
-<span class="mb-0 text-muted">
-{% if msg %}
-{{ msg | safe }}
-{% else %}
-Login Here
-{% endif %}
-</span>
-<form method="post">
-{% csrf_token %}{{form|crispy}}
-<p>Don't have an account? <a href="/sign-up">Sign Up</a></p>
-<button type="submit" class="btn btn-success">Login</button>
-</form>
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="text-center border p-4 shadow rounded">
+    <span class="mb-0 text-muted">
+      {% if msg %}
+        {{ msg }}
+      {% else %}
+        <h1>Login</h1>
+      {% endif %}
+    </span>
+    <form method="post">
+      {% csrf_token %}{{form|crispy}}
+      <p>Don't have an account? <a href="/sign-up">Sign Up</a></p>
+      {% if msg %}
+        <p>Forgot Password? <a href="/password_reset">Reset</a></p>
+      {% endif %}
+      <button type="submit" class="btn btn-success">Login</button>
+    </form>
+  </div>
+</div>
 {% endblock %}

@@ -1,11 +1,12 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, PasswordResetForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
-
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -72,3 +73,25 @@ def custom_logout_view(request):
     logout(request)
     return redirect(reverse_lazy('login')) 
 
+def reset_password(request):
+    form = PasswordResetForm()
+    return render(request, 'registration/password_reset_form.html', {"form": form})
+    # if request.method == 'POST':
+    #     form = PasswordResetForm(request.POST)
+    #     if form.is_valid():
+    #         return redirect('/password_reset/done')
+    # else:
+    #     form = PasswordResetForm()
+    # return render(request, 'registration/password_reset_form.html', {"form": form})
+
+    # form_class = PasswordResetForm
+    # template_name = 'registration/password_reset_form.html.html'
+
+    # subject = 'Test Email'
+    # message = 'This is a test email sent using Mailgun.'
+    # from_email = 'postmaster@sandboxeba38c7c567940d392f5335911764c14.mailgun.org'
+    # recipient_list = ['sheilakioko@gmail.com']
+
+    # send_mail(subject, message, from_email, recipient_list)
+
+    # return HttpResponse('Email sent successfully.')

@@ -2,9 +2,13 @@
 {% block title %}Sign Up{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
+<div class="d-flex justify-content-center align-items-center vh-150">
+<div class="text-center border p-4 shadow rounded">
 <form method="post">
 {% csrf_token %}{{form|crispy}}
 <p>Have an account? <a href="/login">Login</a></p>
 <button type="submit" class="btn btn-success">Register</button>
 </form>
+</div>
+</div>
 {% endblock %}
