@@ -1,10 +1,86 @@
-{% extends 'main/base.html' %}
-{% block title %}farmer's{% endblock %}
+{% extends 'main/base.html' %} 
+{% block title %}farmer's{% endblock %} 
 {% block content %}
-<h1>Farmers Home Page!</h1>
-<div class="d-flex justify-content-center align-items-center vh-100">
-  <div class="text-center border p-4 shadow rounded">
-    <span class="mb-0 text-muted">
-      <button class="btn btn-success">Farmer Personal Details</button>
+<div class="text-center">
+  <div class="row">
+    <div class="col-md-4">
+      <a
+        href="/farmer_bio-data"
+        class="text-decoration-none"
+        style="color: black"
+      >
+        <div class="border p-4 shadow rounded" style="background-color: white">
+          <i class="fas fa-map-marker-alt fa-5x"></i>
+          <h1>Farmer bio-data & Geo-tagging</h1>
+          <hr />
+          <p>Click to share the following details</p>
+          <p><i class="fas fa-check text-brown"></i>Name, Age, Sex</p>
+          <p><i class="fas fa-check text-brown"></i>Photo/ Headshot</p>
+          <p>
+            <i class="fas fa-check text-brown"></i>NIN (National Identification
+            Number)
+          </p>
+          <p><i class="fas fa-check text-brown"></i>Contact and Address</p>
+          <p>
+            <i class="fas fa-check text-brown"></i>GPS Location and Area of the
+            Garden
+          </p>
+          <p><i class="fas fa-check text-brown"></i>Pictures of Garden</p>
+          <p><i class="fas fa-check text-brown"></i>Other crops on farm</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a
+        href="/farm_activities"
+        class="text-decoration-none"
+        style="color: black"
+      >
+        <div class="border p-4 shadow rounded" style="background-color: white">
+          <i class="fas fa-seedling fa-5x"></i>
+          <h1>Farmers’ activities</h1>
+          <hr />
+          <p>Click to share the following details</p>
+          <p>
+            <i class="fas fa-check text-brown"></i>Date of planting, ploughing,
+            weeding, harvesting (piece milling and uprooting) cassava
+          </p>
+          <p>
+            <i class="fas fa-check text-brown"></i>Cassava variety and quantity
+            planted
+          </p>
+          <p>
+            <i class="fas fa-check text-brown"></i>Date and cost of applying
+            fertilizer
+          </p>
+          <p>
+            <i class="fas fa-check text-brown"></i>Cost of planting, ploughing,
+            weeding, harvesting cassava
+          </p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a
+        href="/insurance_banking"
+        class="text-decoration-none"
+        style="color: black"
+      >
+        <div class="border p-4 shadow rounded" style="background-color: white">
+          <i class="fas fa-university fa-5x"></i>
+          <h1>Insurance records/Savings</h1>
+          <hr />
+          <p>Click to share the following details</p>
+          <p>
+            <i class="fas fa-check text-brown"></i>Insurance records and savings
+            for farmers (VSLA)
+          </p>
+          <p>
+            <i class="fas fa-check text-brown"></i>Insurers’ contacts and name
+          </p>
+        </div>
+      </a>
+    </div>
   </div>
+</div>
 {% endblock %}
