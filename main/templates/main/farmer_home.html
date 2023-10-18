@@ -1,14 +1,10 @@
 {% extends 'main/base.html' %} 
+{% load static %}
 {% block title %}farmer's{% endblock %} 
 {% block content %}
 <div class="text-center">
-  <div class="row">
+  <div class="row col-md-12 mb-5">
     <div class="col-md-4">
-      <a
-        href="/farmer_bio-data"
-        class="text-decoration-none"
-        style="color: black"
-      >
         <div class="border p-4 shadow rounded" style="background-color: white">
           <i class="fas fa-map-marker-alt fa-5x"></i>
           <h1>Farmer bio-data & Geo-tagging</h1>
@@ -28,14 +24,9 @@
           <p><i class="fas fa-check text-brown"></i>Pictures of Garden</p>
           <p><i class="fas fa-check text-brown"></i>Other crops on farm</p>
         </div>
-      </a>
     </div>
-    <div class="col-md-4">
-      <a
-        href="/farm_activities"
-        class="text-decoration-none"
-        style="color: black"
-      >
+    <div class="col-md-4 h-100">
+      <a href="/farm_activities" class="text-decoration-none" style="color: black">
         <div class="border p-4 shadow rounded" style="background-color: white">
           <i class="fas fa-seedling fa-5x"></i>
           <h1>Farmers’ activities</h1>
@@ -61,11 +52,7 @@
       </a>
     </div>
     <div class="col-md-4">
-      <a
-        href="/insurance_banking"
-        class="text-decoration-none"
-        style="color: black"
-      >
+      <a href="/insurance_banking" class="text-decoration-none" style="color: black">
         <div class="border p-4 shadow rounded" style="background-color: white">
           <i class="fas fa-university fa-5x"></i>
           <h1>Insurance records/Savings</h1>
@@ -83,4 +70,8 @@
     </div>
   </div>
 </div>
+{% block javascript %}
+    <script src="{% static 'js/custom.js' %}"></script>
 {% endblock %}
+{% endblock %}
+

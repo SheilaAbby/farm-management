@@ -28,17 +28,17 @@
         <div>
           <ul class="navbar-nav">
            {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link text-success" href="/index">News</a>
+            <li  class="btn text-success" data-bs-toggle="popover2" title="Blog/News" data-bs-content="Coming Soon!">
+             Blog
             </li>
-            <li class="nav-item">
-              <a class="nav-link text-success" href="/learning">Training</a>
+            <li  class="btn text-success" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!">
+             Training
             </li>
-            <li class="nav-item">
-              <a class="nav-link text-success" href="/chat">Chat RealTime</a>
+            <li  class="btn text-success" data-bs-toggle="popover1" title="Real Time Chat" data-bs-content="Coming soon!">
+             ChatRoom
             </li>
-             <li class="nav-item">
-              <a class="nav-link text-success" href="/about">About</a>
+             <li  class="btn text-success" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG">
+             About
             </li>
             {% endif%}
           </ul>
@@ -61,13 +61,13 @@
         </div>
       </div>
     </nav>
-    <div class="bg-light p-4 rounded" style="background-image: url('{% static "images/background.jpeg" %}'); background-size: cover;">
-    <div class="bg-light p-4 rounded text-center col-md-12 mb-5"> <!-- Add text-center class for centering -->
+    <div id="dynamic-background" class="bg-light p-4 rounded">
+    <div class="bg-light p-4 rounded text-center col-md-12 mb-5"> 
      <h1 class="mb-4 text-success">Windwood Farm Management</h1>
      </div>
     <div class="container">{% block content %}{% endblock %}</div>
     <div class="bg-light p-4 rounded">
-     <footer class="bg-light text-dark py-3">
+     <footer class="bg-light text-success py-3">
       <div class="container">
         <div class="row">
           <div class="col-md-12 text-center">
@@ -89,5 +89,27 @@
       integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
       crossorigin="anonymous"
     ></script>
+    <script>
+        var images = [
+            "{% static 'images/background1.jpeg' %}",
+            "{% static 'images/background2.jpeg' %}",
+            "{% static 'images/background3.jpeg' %}"
+        ];
+        var currentIndex = 0;
+        var backgroundDiv = document.getElementById("dynamic-background");
+
+        function changeBackground() {
+          // Set the background image to the next URL in the array
+          backgroundDiv.style.backgroundImage = "url(" + images[currentIndex] + ")";
+
+          // Increment the index and loop back to the start if necessary
+          currentIndex = (currentIndex + 1) % images.length;
+        }
+        // Call the changeBackground function periodically to switch images
+        setInterval(changeBackground, 5000); // Change every 5 seconds (adjust as needed)
+      // Wait for the document to be ready
+    </script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    {% block javascript %}{% endblock %}
   </body>
 </html>
