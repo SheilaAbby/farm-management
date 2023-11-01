@@ -38,3 +38,21 @@ Step-by-step instructions on how to get farm-management project development envi
 
    ```bash
    git clone https://github.com/SheilaAbby/farm-management.git
+
+2. cd into the project:
+
+   ```bash
+   cd farm-management/farm_management_web
+
+3. Create a virtual env:
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+ 
+4. Pip install Project packages:
+
+   ```bash
+   pip3 install -r requirements.txt
+
+
