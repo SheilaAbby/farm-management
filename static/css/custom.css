@@ -1,0 +1,22 @@
+/* Define the list of background images */
+#dynamic-background {
+    background-repeat: no-repeat;
+    background-size: cover;
+    animation: backgroundAnimation 20s linear infinite; /* Adjust the duration as needed */
+    background-image: url("/static/images/background5.jpeg"); /* Relative or absolute URL to your image */
+}
+
+@keyframes backgroundAnimation {
+    0% {
+        background-image: url("/static/images/background5.jpeg");
+    }
+    33% {
+        background-image: url("/static/images/background2.jpeg");
+    }
+    66% {
+        background-image: url("/static/images/background3.jpeg");
+    }
+    100% {
+        background-image: url("/static/images/background4.jpeg");
+    }
+}

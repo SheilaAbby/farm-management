@@ -3,12 +3,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="d-flex justify-content-center align-items-center vh-100">
-  <div class="text-center border p-4 shadow rounded" style="background-color: white">
+  <div class="text-center border p-4 shadow rounded" style="background-color: white; max-width: 800px;">
     <span class="mb-0 text-muted">
       {% if msg %}
         {{ msg }}
       {% else %}
-        <h1>Login</h1>
+       <h1 class="mb-4 text-success">Login</h1>
       {% endif %}
     </span>
     <form method="post">
