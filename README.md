@@ -17,24 +17,24 @@ Farm management app built using Django.
 
 ## Description
 
-Provide an overview of your project. What is it? What problem does it solve? Why is it valuable?
+Windwood Farmer Management web-app to increase efficiency in farmer coordination and data handling across Windwood Millers geographically spaced farmer network.
 
 ## Getting Started
 
-These instructions will help you get a copy of the project up and running on your local machine for development and testing purposes.
+These instructions will help you get a copy of the farm-management project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-List the software and tools that need to be installed for someone to use or contribute to your project. For example:
+Software and tools that need to be installed.
 
 - Python 3.x
-- Bootstrap 5
+- Pyenv
 
 ### Installation
 
-Step-by-step instructions on how to get your project development environment set up. Make it as clear as possible.
+Step-by-step instructions on how to get farm-management project development environment set up. 
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/your-project.git
+   git clone https://github.com/SheilaAbby/farm-management.git
