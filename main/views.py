@@ -42,7 +42,7 @@ def sign_up(request):
             msg = 'form is invalid'
     else:
             form =  form = RegisterForm()
-    return render(request, 'registration/sign_up.html', {'form': form, 'msg': msg})
+    return render(request, 'registration/custom_signup.html', {'form': form, 'msg': msg})
    
 def login_view(request):
     form = LoginForm(request.POST or None)

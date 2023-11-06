@@ -3,7 +3,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     animation: backgroundAnimation 20s linear infinite; /* Adjust the duration as needed */
-    background-image: url("/static/images/background5.jpeg"); /* Relative or absolute URL to your image */
+    background-image: url("/static/images/background3.jpeg"); /* Relative or absolute URL to your image */
 }
 
 @keyframes backgroundAnimation {

@@ -5,10 +5,27 @@ from main.models import CustomUser
 from django.contrib.auth.forms import PasswordResetForm
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(max_length=30, help_text='Required. Enter your email address.')
-    first_name = forms.CharField(max_length=30, help_text='Required. Enter your first name.')
-    last_name = forms.CharField(max_length=30, help_text='Required. Enter your last name.')
-    role = forms.ChoiceField(choices=[('farmer', 'Farmer'), ('field_agent', 'Field Agent'), ('lead_agronomist', 'Lead Agronomist'), ('manager', 'Manager/Staff')])
+    email = forms.EmailField(max_length=254, help_text='Required. Enter your email address.', 
+                             widget = forms.TextInput(
+                                 attrs = {"class": "form-control"}))
+    first_name = forms.CharField(max_length=30, help_text='Required. Enter your first name.',
+                                 widget = forms.TextInput(
+                                    attrs = {"class": "form-control"}))
+    last_name = forms.CharField(max_length=30, help_text='Required. Enter your last name.', 
+                                widget = forms.TextInput(
+                                    attrs = {"class": "form-control"}))
+    username = forms.CharField(max_length=30, help_text='Required. Enter a Username.',
+                                widget = forms.TextInput(
+                                    attrs = {"class": "form-control"}))
+    role = forms.ChoiceField(choices=[('farmer', 'Farmer'), ('field_agent', 'Field Agent'), ('lead_agronomist', 'Lead Agronomist'), ('manager', 'Manager/Staff')],
+                             widget = forms.Select(
+                                 attrs = {"class": "form-control"}))
+    
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        # Set the widget attributes for password fields
+        self.fields['password1'].widget.attrs.update({'class': 'form-control'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         model = CustomUser
