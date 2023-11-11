@@ -17,7 +17,7 @@ class RegisterForm(UserCreationForm):
     username = forms.CharField(max_length=30, help_text='Required. Enter a Username.',
                                 widget = forms.TextInput(
                                     attrs = {"class": "form-control", "placeholder": "Username"}))
-    role = forms.ChoiceField(choices=[('', 'Select a Role'),('farmer', 'Farmer'), ('field_agent', 'Field Agent'), ('lead_agronomist', 'Lead Agronomist'), ('manager', 'Manager/Staff')],
+    role = forms.ChoiceField(choices=[('', 'Select a Role'),('farmer', 'Farmer'), ('field_agent', 'Field Agent'), ('manager_staff', 'Manager/Staff')],
                              widget = forms.Select(
                                  attrs = {"class": "form-control"}))
     
@@ -46,9 +46,3 @@ class LoginForm(forms.Form):
             }
         )
     )
-
-class PasswordResetForm(PasswordResetForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Add custom CSS classes to form elements
-        self.fields['email'].widget.attrs['class'] = 'custom-class'

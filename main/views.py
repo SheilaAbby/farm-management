@@ -56,14 +56,14 @@ def login_view(request):
             if user is not None and user.role == 'farmer':
                 login(request, user)
                 return redirect('farmer_home')
-            elif user is not None and user.role == 'lead_agronomist':
+            elif user is not None and user.role == 'field_agent':
                 login(request, user)
-                return redirect('lead_agronomist_home')
-            elif user is not None and user.role == 'manager':
+                return redirect('field_agent_home')
+            elif user is not None and user.role == 'manager_staff':
                 login(request, user)
                 return redirect('manager_home')
             else:
-                msg = 'Invalid Credentials'
+                msg = 'Invalid username or password. Please try again.'
         else:
             msg = 'Error Validating Form'
     return render(request, 'registration/login.html', {'form': form, 'msg': msg})

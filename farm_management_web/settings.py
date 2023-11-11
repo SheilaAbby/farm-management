@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['c750-3-227-49-158.ngrok-free.app', 'localhost']
+ALLOWED_HOSTS = ['7de0-41-80-113-193.ngrok-free.app', 'localhost']
 
 
 # Application definition
@@ -64,7 +64,7 @@ ROOT_URLCONF = 'farm_management_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'main', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,8 +141,8 @@ PASSWORD_RESET_COMPLETE = '/login'
 
 #  set up to send emails 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mailgun.org'  # Mailgun SMTP server
-EMAIL_PORT = 587  # Use the default Mailgun SMTP port
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = True    
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD'),
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = '2525'

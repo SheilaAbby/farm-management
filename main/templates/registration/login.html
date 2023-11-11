@@ -4,21 +4,18 @@
 {% block content %}
 <div class="d-flex justify-content-center align-items-center vh-100">
   <div class="text-center border p-4 shadow rounded" style="background-color: white; max-width: 800px;">
-    <span class="mb-0 text-muted">
-      {% if msg %}
-        {{ msg }}
-      {% else %}
-       <h1 class="mb-4 text-success">Login</h1>
-      {% endif %}
-    </span>
+    <h1 class="mb-4 text-success">Login</h1>
+    <hr/>
     <form method="post">
-      {% csrf_token %}{{form|crispy}}
-      <p>Don't have an account? <a href="/sign-up">Sign Up</a></p>
+      {% csrf_token %}
+      {{ form|crispy }}  
       {% if msg %}
-        <p>Forgot Password? <a href="/password_reset">Reset</a></p>
+        <p class="text-danger">{{ msg }}</p>
       {% endif %}
       <button type="submit" class="btn btn-success">Login</button>
     </form>
+    <p>Don't have an account? <a href="/sign-up">Sign Up</a></p>
+    <p>Forgot Password? <a href="/password_reset">Reset</a></p>
   </div>
 </div>
 {% endblock %}
