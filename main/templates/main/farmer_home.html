@@ -2,73 +2,31 @@
 {% load static %}
 {% block title %}farmer's{% endblock %} 
 {% block content %}
-<div class="text-center">
-  <div class="row col-md-12 mb-5">
-    <div class="col-md-4">
-     <a href="/farm_biodata" class="text-decoration-none" style="color: black">
-        <div class="border p-4 shadow rounded" style="background-color: white">
-          <i class="fas fa-map-marker-alt fa-5x"></i>
-          <h1>Farmer bio-data & Geo-tagging</h1>
-          <hr />
-          <p>Click to share the following details</p>
-          <p><i class="fas fa-check text-brown"></i>Name, Age, Sex</p>
-          <p><i class="fas fa-check text-brown"></i>Photo/ Headshot</p>
-          <p>
-            <i class="fas fa-check text-brown"></i>NIN (National Identification
-            Number)
-          </p>
-          <p><i class="fas fa-check text-brown"></i>Contact and Address</p>
-          <p>
-            <i class="fas fa-check text-brown"></i>GPS Location and Area of the
-            Garden
-          </p>
-          <p><i class="fas fa-check text-brown"></i>Pictures of Garden</p>
-          <p><i class="fas fa-check text-brown"></i>Other crops on farm</p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="{% static 'images/cassava.jpeg' %}" class="card-img-top" alt="Cassava Image">
+        <div class="card-header">
+          Farmer bio-data & Geo-tagging
         </div>
-        </a>
+        <div class="card-body">
+          <p class="card-text">Cassava, maize, and rice are crucial staple crops globally. Cassava is a versatile root crop, while maize and rice, as cereal grains, play vital roles in providing sustenance and ensuring food security for millions worldwide.</p>
+          <a href="{% url 'add_farm' %}" class="btn btn-primary">Add a Farm</a>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      <a href="/farm_activities" class="text-decoration-none" style="color: black">
-        <div class="border p-4 shadow rounded" style="background-color: white">
-          <i class="fas fa-seedling fa-5x"></i>
-          <h1>Farmers’ activities</h1>
-          <hr />
-          <p>Click to share the following details</p>
-          <p>
-            <i class="fas fa-check text-brown"></i>Date of planting, ploughing,
-            weeding, harvesting (piece milling and uprooting) cassava
-          </p>
-          <p>
-            <i class="fas fa-check text-brown"></i>Cassava variety and quantity
-            planted
-          </p>
-          <p>
-            <i class="fas fa-check text-brown"></i>Date and cost of applying
-            fertilizer
-          </p>
-          <p>
-            <i class="fas fa-check text-brown"></i>Cost of planting, ploughing,
-            weeding, harvesting cassava
-          </p>
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="{% static 'images/cassava-harvest.avif.avif' %}" class="card-img-top" alt="Cassava Harvest Image">
+        <div class="card-header">
+          Farmers’ activities
         </div>
-      </a>
-    </div>
-    <div class="col-md-4">
-      <a href="/insurance_banking" class="text-decoration-none" style="color: black">
-        <div class="border p-4 shadow rounded" style="background-color: white">
-          <i class="fas fa-university fa-5x"></i>
-          <h1>Insurance records/Savings</h1>
-          <hr />
-          <p>Click to share the following details</p>
-          <p>
-            <i class="fas fa-check text-brown"></i>Insurance records and savings
-            for farmers (VSLA)
-          </p>
-          <p>
-            <i class="fas fa-check text-brown"></i>Insurers’ contacts and name
-          </p>
+        <div class="card-body">
+          <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
+          <a href="{% url 'add_farm' %}" class="btn btn-primary">Farm Management</a>
         </div>
-      </a>
+      </div>
     </div>
   </div>
 </div>
@@ -76,4 +34,3 @@
     <script src="{% static 'js/custom.js' %}"></script>
 {% endblock %}
 {% endblock %}
-

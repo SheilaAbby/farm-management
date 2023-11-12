@@ -1,0 +1,95 @@
+{% extends 'main/base.html' %} 
+{% load static %}
+{% block title %}Update Profile{% endblock %} 
+{% block content %}
+<div class="container my-5 container h-100">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-lg-12 col-xl-8">
+      <div class="card text-black" style="border-radius: 25px">
+        <div class="card-body p-md-5">
+          <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+              <p class="text-center text-success h1 fw-bold">
+                Update Profile
+              </p>
+              <hr/>
+              <form method="post" enctype="multipart/form-data" action="{% url 'update_profile' %}">
+                {% csrf_token %} {% if form.errors %}
+                <div class="alert alert-danger">
+                  <strong>Error:</strong> Please check the following fields:
+                  <ul>
+                    {% for field in form %} {% for error in field.errors %}
+                    <li>{{ field.label_tag }}: {{ error }}</li>
+                    {% endfor %} {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                   {{ form.year_of_birth }}
+                  </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                     {{ form.sex }} 
+                  </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                      {{ form.photo.label_tag }}
+                      {{ form.photo }}
+                      </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                    {{ form.nin }}
+                  </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                     {{ form.address }}
+                  </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                   {{ form.phone_number }}
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                  <button type="submit" class="btn btn-success">Update Profile</button>
+                </div>
+              </form>
+            </div>
+            <div
+              class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+              <!-- Display user avatar or default avatar -->
+                  {% if user.profile.photo %}
+                      <div class="rounded-circle overflow-hidden me-2" style="width: 200px; height: 200px;">
+                          <img src="{{ user.profile.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
+                      </div>
+                  {% else %}
+                      <!-- Basic avatar or placeholder -->
+                      <div class="rounded-circle overflow-hidden me-2" style="width: 200px; height: 200px; background-color: #ddd;">
+                          <i class="fas fa-user fa-2x d-flex justify-content-center align-items-center text-secondary"></i>
+                      </div>
+                  {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

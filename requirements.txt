@@ -3,6 +3,7 @@ crispy-bootstrap5==0.6
 Django==3.2.23
 django-crispy-forms==1.13.0
 fontawesomefree==6.4.2
+Pillow==8.4.0
 psycopg2==2.9.8
 python-dotenv==0.20.0
 pytz==2023.3.post1
