@@ -4,3 +4,5 @@ main/__pycache__/
 .env
 farm-env/
 *.pyc
+main/migrations/*.py
+
