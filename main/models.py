@@ -2,11 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 class CustomUser(AbstractUser):
     # Add additional fields as needed
     role = models.CharField(max_length=50)
+
+    @property
+    def has_farm(self):
+        # Check if the user has an associated farm
+        return self.farm_set.exists()  
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
@@ -20,27 +26,40 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
-
 class Person(models.Model):
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     date_of_employment = models.DateField(null=True, blank=True)
     
+class Crop(models.Model):
+    CROP_CHOICES = [
+        ('Cassava', 'Cassava 🍠'),
+        ('Maize', 'Maize 🌽'),
+        ('Rice', 'Rice 🍚'),
+    ]
+
+    name = models.CharField(max_length=255, choices=CROP_CHOICES)
+
+    def __str__(self):
+        return self.name
+    
 class Farm(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
+    crops = models.CharField(max_length=255)
     pictures = models.ManyToManyField('FarmImage', related_name='farms_images', blank=True)
     district = models.CharField(max_length=255)
     location_coordinates = models.CharField(max_length=255)
-    crops = models.ManyToManyField('Crop', related_name='farms')
     land_size = models.DecimalField(max_digits=10, decimal_places=2)
     resources_supplied = models.ManyToManyField('Resource', related_name='farms', blank=True)
     
     crop_peelers = models.ManyToManyField('Person', related_name='farms_peeling', blank=True)
     staff_contacts = models.ManyToManyField('Person', related_name='farms_staff', blank=True)
+    created = models.DateTimeField(auto_now_add=True)
 
-class Crop(models.Model):
-    name = models.CharField(max_length=255)
-
+    def __str__(self):
+        return self.name
+    
 class CropInformation(models.Model):
     crop = models.ForeignKey('Crop', on_delete=models.CASCADE, related_name='crop_information')
     farm = models.ForeignKey('Farm', on_delete=models.CASCADE, related_name='crop_information')

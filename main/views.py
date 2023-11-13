@@ -1,13 +1,13 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from .forms import RegisterForm, LoginForm, UserProfileForm,FarmForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
-from .models import UserProfile
+from .models import UserProfile, Farm
+from .forms import FarmForm 
 
 # Create your views here.
 @login_required(login_url="/login")
@@ -16,7 +16,10 @@ def index(request):
 
 @login_required(login_url="/login")
 def farmer_home(request):
-    return render(request, 'main/farmer_home.html')
+    user = request.user 
+    farms = Farm.objects.filter(user=user)
+    print(farms)
+    return render(request, 'main/farmer_home.html', {'user': user, 'farms': farms})
 
 @login_required(login_url="/login")
 def field_agent_home(request):
@@ -97,13 +100,32 @@ def profile(request):
 
 def add_farm(request):
     if request.method == 'POST':
-        form = FarmForm(request.POST)
+        form = FarmForm(request.POST, user=request.user)
         if form.is_valid():
             # Save the form data to create a new farm
             new_farm = form.save()
-            return redirect('farm_detail', pk=new_farm.pk)  # Redirect to farm detail view
+            return redirect('farmer_home')  # Redirect to farm detail view
     else:
-        form = FarmForm()
+        form = FarmForm(user=request.user)
 
     return render(request, 'main/add_farm.html', {'form': form})
 
+@login_required(login_url="/login")
+def edit_farm(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+
+    if request.method == 'POST':
+        form = FarmForm(request.POST, instance=farm, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('farmer_home')
+    else:
+        form = FarmForm(instance=farm, user=request.user)
+
+    return render(request, 'main/edit_farm.html', {'form': form, 'farm': farm})
+
+@login_required(login_url="/login")
+def farm_details(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    # You may add more context data based on your Farm model fields
+    return render(request, 'main/farm_details.html', {'farm': farm})

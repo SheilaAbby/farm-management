@@ -89,16 +89,11 @@ class UserProfileForm(forms.ModelForm):
 class FarmForm(forms.ModelForm):
     class Meta:
         model = Farm
-        fields = ['name', 'district', 'location_coordinates', 'land_size', 'crops', 'resources_supplied', 'crop_peelers', 'staff_contacts']
-
-    name = forms.CharField(
-        max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Farm Name'})
-    )
+        fields = ['district', 'location_coordinates', 'land_size', 'crops']
 
     district = forms.CharField(
         max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'District'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'District(Lango, Teso, Abim, & Nakaseke)'})
     )
 
     location_coordinates = forms.CharField(
@@ -112,22 +107,42 @@ class FarmForm(forms.ModelForm):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Land Size'})
     )
 
-    crops = forms.ModelMultipleChoiceField(
-        queryset=Crop.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder': 'Crops'})
+    crops = forms.ChoiceField(
+        choices=[('', 'Select Crop')],  # Initial empty choice
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Crop'}),
     )
+    def __init__(self, *args, **kwargs):
+        # Extract 'user' from kwargs
+        user = kwargs.pop('user', None)
 
-    resources_supplied = forms.ModelMultipleChoiceField(
-        queryset=Resource.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder': 'Resources Supplied'})
-    )
+        # Call the parent __init__ method
+        super().__init__(*args, **kwargs)
 
-    crop_peelers = forms.ModelMultipleChoiceField(
-        queryset=Person.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder': 'Crop Peelers'})
-    )
+        # Save 'user' as an attribute of the form
+        self.user = user
 
-    staff_contacts = forms.ModelMultipleChoiceField(
-        queryset=Person.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder': 'Staff'})
-    )
+        # Fetch available crop choices from the database
+        crop_choices = Crop.objects.values_list('name', 'name')
+        # Add an empty choice for the default placeholder
+        crop_choices = [('', 'Select Crop')] + list(crop_choices)
+
+        # Set the choices for the 'crops' field
+        self.fields['crops'] = forms.ChoiceField(
+            choices=crop_choices,
+            widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Crop'}),
+        )
+
+    def save(self, commit=True):
+        farm = super().save(commit=False) 
+        
+        # Set the user field
+        farm.user = self.user
+
+        # Set the farm name based on user's first name, last name, selected crop, and 'Farm'
+        crop_name = self.cleaned_data['crops']
+        farm.name = f"{self.user.first_name} {self.user.last_name} {crop_name} Farm"
+
+        if commit:
+            farm.save()
+
+        return farm
