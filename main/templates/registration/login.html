@@ -4,16 +4,27 @@
 {% block content %}
 <div class="d-flex justify-content-center align-items-center vh-100">
   <div class="text-center border p-4 shadow rounded" style="background-color: white; max-width: 800px;">
-    <h1 class="mb-4 text-success">Login</h1>
-    <hr/>
+    <h1 class="card-header mb-4 text-success">Login</h1>
     <form method="post">
       {% csrf_token %}
-      {{ form|crispy }}  
+      
+      <div class="form-floating mb-3">
+        {{ form.username }}
+        <label for="{{ form.username.id_for_label }}"><i class="fas fa-user"></i> Username</label>
+      </div>
+      
+      <div class="form-floating mb-3">
+        {{ form.password }}
+        <label for="{{ form.password.id_for_label }}"><i class="fas fa-lock"></i> Password</label>
+      </div>
+      
       {% if msg %}
         <p class="text-danger">{{ msg }}</p>
       {% endif %}
+      
       <button type="submit" class="btn btn-success">Login</button>
     </form>
+    
     <p>Don't have an account? <a href="/sign-up">Sign Up</a></p>
     <p>Forgot Password? <a href="/password_reset">Reset</a></p>
   </div>
