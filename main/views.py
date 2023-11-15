@@ -7,7 +7,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile, Farm
-from .forms import FarmForm 
+from .forms import FarmForm, CropInformationForm
 
 # Create your views here.
 @login_required(login_url="/login")
@@ -18,7 +18,7 @@ def index(request):
 def farmer_home(request):
     user = request.user 
     farms = Farm.objects.filter(user=user)
-    print(farms)
+ 
     return render(request, 'main/farmer_home.html', {'user': user, 'farms': farms})
 
 @login_required(login_url="/login")
@@ -76,6 +76,7 @@ def custom_logout_view(request):
     logout(request)
     return redirect(reverse_lazy('login')) 
 
+@login_required(login_url="/login")
 def update_profile(request):
     # Assuming you have the user instance
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -95,9 +96,11 @@ def update_profile(request):
 
     return render(request, 'main/update_profile.html', {'form': form, 'msg': msg})
 
+@login_required(login_url="/login")
 def profile(request):
     return render(request, 'main/profile.html')
 
+@login_required(login_url="/login")
 def add_farm(request):
     if request.method == 'POST':
         form = FarmForm(request.POST, user=request.user)
@@ -129,3 +132,20 @@ def farm_details(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
     # You may add more context data based on your Farm model fields
     return render(request, 'main/farm_details.html', {'farm': farm})
+
+@login_required(login_url="/login")
+def create_crop_information(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+
+    if request.method == 'POST':
+        form = CropInformationForm(request.POST)
+        if form.is_valid():
+            crop_information = form.save(commit=False)
+            crop_information.farm = farm
+            crop_information.save()
+
+    else:
+        form = CropInformationForm()
+
+    return render(request, 'main/update_crop_info.html', {'farm': farm, 'form': form})
+
