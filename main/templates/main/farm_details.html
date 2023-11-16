@@ -46,15 +46,47 @@
 
             <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary">Update Farm</a>
             </div>
-            <div
-              class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-              {% if user.profile.photo %}
-              <div class="rounded-circle overflow-hidden" style="width: 150px; height: 150px;">
-              <img src="{{ user.profile.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
+            
+            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                <!-- Display Crop Information -->
+              <div class="row">
+                  <div class="col-md-12">
+                      <h2>Farm Activities</h2>
+                      {% for crop_info in farm.crop_information.all %}
+                          <div class="card mb-3">
+                              <div class="card-body">
+                                  <h5 class="card-title">Farm Activities {{ forloop.counter }}</h5>
+                                  <p><strong>Date Planting:</strong> {{ crop_info.date_planting }}</p>
+                                  <p><strong>Date Ploughing:</strong> {{ crop_info.date_ploughing }}</p>
+                                  <!-- Add more fields as needed -->
+                              </div>
+                          </div>
+                      {% empty %}
+                          <p>No farm activities available for this farm.</p>
+                          <a href="{% url 'create_crop_information' farm.id %}" class="btn btn-primary">Update</a>
+                      {% endfor %}
+                  </div>
               </div>
-              {% else %}
-              <p>No photo available</p>
-              {% endif %}
+              <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                <!-- Display Crop Information -->
+              <div class="row">
+                  <div class="col-md-12">
+                      <h2>Farm Workers</h2>
+                      {% for crop_info in farm.crop_information.all %}
+                          <div class="card mb-3">
+                              <div class="card-body">
+                                  <h5 class="card-title">Farm Workers {{ forloop.counter }}</h5>
+                                  <p><strong>Full Names:</strong> {{ crop_info.date_planting }}</p>
+                                  <p><strong>Date Employed:</strong> {{ crop_info.date_ploughing }}</p>
+                                  <!-- Add more fields as needed -->
+                              </div>
+                          </div>
+                      {% empty %}
+                          <p>No farm workers added.</p>
+                          <a href="{% url 'create_crop_information' farm.id %}" class="btn btn-primary">Add Workers</a>
+                      {% endfor %}
+                  </div>
+              </div>
             </div>
           </div>
         </div>

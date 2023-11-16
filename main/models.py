@@ -61,7 +61,6 @@ class Farm(models.Model):
         return self.name
     
 class CropInformation(models.Model):
-    crop = models.ForeignKey('Crop', on_delete=models.CASCADE, related_name='crop_information')
     farm = models.ForeignKey('Farm', on_delete=models.CASCADE, related_name='crop_information')
     
     date_planting = models.DateField(null=True, blank=True)

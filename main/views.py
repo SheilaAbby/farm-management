@@ -144,6 +144,8 @@ def create_crop_information(request, farm_id):
             crop_information.farm = farm
             crop_information.save()
 
+            return redirect('farm_details', farm_id=farm_id)
+
     else:
         form = CropInformationForm()
 
