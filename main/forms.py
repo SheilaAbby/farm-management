@@ -8,9 +8,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 class RegisterForm(UserCreationForm):
+
     email = forms.EmailField(max_length=254, help_text='Required. Enter your email address.', 
                              widget = forms.TextInput(
-                                 attrs = {"class": "form-control", "placeholder": "Email"}))
+                                 attrs = {"class": "form-control", "placeholder": "Email (to be associated with your account)"}))
     first_name = forms.CharField(max_length=30, help_text='Required. Enter your first name.',
                                  widget = forms.TextInput(
                                     attrs = {"class": "form-control", "placeholder": "First Name"}))
@@ -23,6 +24,25 @@ class RegisterForm(UserCreationForm):
     role = forms.ChoiceField(choices=[('', 'Select a Role'),('farmer', 'Farmer'), ('field_agent', 'Field Agent'), ('manager_staff', 'Manager/Staff')],
                              widget = forms.Select(
                                  attrs = {"class": "form-control"}))
+    birth_year = forms.IntegerField(help_text='Required. Enter your year of birth.',
+                                    widget=forms.NumberInput(
+                                        attrs={"class": "form-control", "placeholder": "Year of Birth"}
+                                    ))
+
+    gender = forms.ChoiceField(choices=[('', 'Select Gender'), ('male', 'Male'), ('female', 'Female')],
+                               widget=forms.Select(
+                                   attrs={"class": "form-control"}
+                               ))
+
+    national_id = forms.CharField(max_length=20, help_text='Required. Enter your national identification number.',
+                                  widget=forms.TextInput(
+                                      attrs={"class": "form-control", "placeholder": "National ID"}
+                                  ))
+
+    phone_number = forms.CharField(max_length=15, help_text='Required. Enter your phone number.',
+                                   widget=forms.TextInput(
+                                       attrs={"class": "form-control", "placeholder": "Phone Number"}
+                                   ))
     
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
@@ -32,7 +52,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'username','role', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'email', 'username', 'role', 'birth_year', 'gender', 'national_id', 'phone_number', 'password1', 'password2']
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -107,6 +127,7 @@ class FarmForm(forms.ModelForm):
     )
 
     land_size = forms.DecimalField(
+        required=True,
         max_digits=10,
         decimal_places=2,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Land Size (in acres)'})

@@ -30,7 +30,13 @@
       <div class="form-floating mb-3">
         {{ form.password }}
         <label for="{{ form.password.id_for_label }}"><i class="fas fa-lock"></i> Password</label>
-      </div>
+        <div class="input-group-append mt-3">
+              <div class="input-group-text">
+                  <input type="checkbox" onclick="togglePasswordVisibility('{{ form.password.id_for_label }}')">
+                  <label class="form-check-label">Show Password</label>
+              </div>
+          </div>
+        </div>
       
       {% if msg %}
         <p class="text-danger">{{ msg }}</p>
@@ -43,4 +49,12 @@
     <p>Forgot Password? <a href="/password_reset">Reset</a></p>
   </div>
 </div>
+{% endblock %}
+{% block javascript %}
+<script>
+function togglePasswordVisibility(passwordId) {
+    var passwordInput = document.getElementById(passwordId);
+    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+}
+</script>
 {% endblock %}
