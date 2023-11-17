@@ -254,3 +254,19 @@ class CropInformationForm(forms.ModelForm):
                 raise ValidationError(_('Price rate must be greater than zero.'))
 
             return cleaned_data
+
+class PersonForm(forms.ModelForm):
+    class Meta:
+        model = Person
+        fields = ['name', 'phone_number', 'date_of_employment', 'is_peeler', 'is_staff']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_of_employment': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'is_peeler': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+    def __init__(self, *args, **kwargs):
+        super(PersonForm, self).__init__(*args, **kwargs)
+        self.fields['is_peeler'].label = 'Is A Peeler'
+        self.fields['is_staff'].label = 'Is A Staff'

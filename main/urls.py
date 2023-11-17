@@ -20,7 +20,7 @@ urlpatterns = [
     path('edit_farm/<int:farm_id>/', views.edit_farm, name='edit_farm'),
     path('farm_details/<int:farm_id>/', views.farm_details, name='farm_details'),
     path('manage_farm/<int:farm_id>/crop_information/', views.create_crop_information, name='create_crop_information'),
-    
+    path('add_person/<int:farm_id>/farm_workers', views.add_person, name='add_person'),
     
 
 # Password Reset urls

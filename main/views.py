@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
-from .forms import RegisterForm, LoginForm, UserProfileForm,FarmForm
+from .forms import RegisterForm, LoginForm, UserProfileForm,FarmForm, PersonForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
@@ -150,4 +150,26 @@ def create_crop_information(request, farm_id):
         form = CropInformationForm()
 
     return render(request, 'main/update_crop_info.html', {'farm': farm, 'form': form})
+
+def add_person(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+
+    if request.method == 'POST':
+        form = PersonForm(request.POST)
+        if form.is_valid():
+            person = form.save(commit=False)
+            person.save()
+
+            # Add the person to the appropriate relation based on the context (peeling or staff)
+            if form.cleaned_data.get('is_peeler'):
+                farm.crop_peelers.add(person)
+            if form.cleaned_data.get('is_staff'):
+                farm.staff_contacts.add(person)
+
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = PersonForm()
+
+    return render(request, 'main/add_person.html', {'form': form, 'farm': farm})
+
 

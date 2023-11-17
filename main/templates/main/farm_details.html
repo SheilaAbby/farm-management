@@ -83,7 +83,7 @@
                           </div>
                       {% empty %}
                           <p>No farm workers added.</p>
-                          <a href="{% url 'create_crop_information' farm.id %}" class="btn btn-primary">Add Workers</a>
+                          <a href="{% url 'add_person' farm.id %}" class="btn btn-primary">Add Workers</a>
                       {% endfor %}
                   </div>
               </div>
