@@ -1,13 +1,15 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from .forms import RegisterForm, LoginForm, UserProfileForm,FarmForm, PersonForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile, Farm
-from .forms import FarmForm, CropInformationForm
+from .models import UserProfile, Farm, Person
+from .forms import FarmForm, CropInformationForm,  PersonForm
+
 
 # Create your views here.
 @login_required(login_url="/login")
@@ -39,7 +41,7 @@ def sign_up(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            msg = 'user created'
+            messages.success(request, 'User created successfully. Please log in.')
             return redirect ('login')
         else:
             msg = 'form is invalid'
@@ -78,7 +80,6 @@ def custom_logout_view(request):
 
 @login_required(login_url="/login")
 def update_profile(request):
-    # Assuming you have the user instance
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     msg = None
 
@@ -88,6 +89,7 @@ def update_profile(request):
             form.save()
             msg = 'user updated'
             # Redirect to their profile page
+            messages.success(request, 'Profile Updated Successfully!')
             return redirect('profile')
         else:
             msg = 'Error Validating Form'
@@ -107,6 +109,7 @@ def add_farm(request):
         if form.is_valid():
             # Save the form data to create a new farm
             new_farm = form.save()
+            messages.success(request, 'Farm created successfully')
             return redirect('farmer_home')  # Redirect to farm detail view
     else:
         form = FarmForm(user=request.user)
@@ -144,6 +147,7 @@ def create_crop_information(request, farm_id):
             crop_information.farm = farm
             crop_information.save()
 
+            messages.success(request, 'Farming Activities Updated Successfully!')
             return redirect('farm_details', farm_id=farm_id)
 
     else:
@@ -166,10 +170,40 @@ def add_person(request, farm_id):
             if form.cleaned_data.get('is_staff'):
                 farm.staff_contacts.add(person)
 
+            messages.success(request, 'Person created successfully!')
             return redirect('farm_details', farm_id=farm_id)
     else:
         form = PersonForm()
 
     return render(request, 'main/add_person.html', {'form': form, 'farm': farm})
+
+def edit_person(request, farm_id, person_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    person = get_object_or_404(Person, id=person_id)
+
+    if request.method == 'POST':
+        form = PersonForm(request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = PersonForm(instance=person)
+
+    return render(request, 'your_app/edit_person.html', {'form': form, 'farm': farm, 'person': person})
+
+def edit_person(request, farm_id, person_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    person = get_object_or_404(Person, id=person_id)
+
+    if request.method == 'POST':
+        form = PersonForm(request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Person updated successfully!')
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = PersonForm(instance=person)
+
+    return render(request, 'main/edit_person.html', {'form': form, 'farm': farm, 'person': person})
 
 

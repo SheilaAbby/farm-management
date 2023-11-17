@@ -4,6 +4,20 @@
 {% block content %}
 <div class="d-flex justify-content-center align-items-center vh-100">
   <div class="text-center border p-4 shadow rounded" style="background-color: white; max-width: 800px;">
+     {% if messages %}
+        <div class="alert alert-success" role="alert">
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                        {{ message }}
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check fa-lg ml-2"></i>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
     <h1 class="card-header mb-4 text-success">Login</h1>
     <form method="post">
       {% csrf_token %}

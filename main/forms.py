@@ -109,7 +109,7 @@ class FarmForm(forms.ModelForm):
     land_size = forms.DecimalField(
         max_digits=10,
         decimal_places=2,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Land Size'})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Land Size (in acres)'})
     )
 
     crops = forms.ChoiceField(

@@ -5,6 +5,20 @@
 <div class="container mt-5 mb-5">
   <div class="row d-flex justify-content-center align-items-center h-100">
     <div class="col-lg-12 col-xl-8">
+         {% if messages %}
+          <div class="alert alert-success" role="alert">
+              <ul class="messages">
+                  {% for message in messages %}
+                      <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                          {{ message }}
+                          {% if message.tags == 'success' %}
+                              <i class="fas fa-check fa-lg ml-2"></i>
+                          {% endif %}
+                      </li>
+                  {% endfor %}
+              </ul>
+          </div>
+      {% endif %}
       <div class="card text-black" style="border-radius: 25px">
         <div class="card-body p-md-5">
           <div class="row justify-content-center">
@@ -40,7 +54,14 @@
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                     <strong>Location:</strong> {{ farm.district }}
+                     <strong>Distcrict:</strong> {{ farm.district }}
+                  </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                     <strong>Location Coordinates:</strong> {{ farm.location_coordinates }}
                   </div>
                 </div>
 
@@ -61,6 +82,7 @@
                                   <!-- Add more fields as needed -->
                               </div>
                           </div>
+                          <a href="{% url 'create_crop_information' farm.id %}" class="btn btn-primary">Update</a>
                       {% empty %}
                           <p>No farm activities available for this farm.</p>
                           <a href="{% url 'create_crop_information' farm.id %}" class="btn btn-primary">Update</a>
@@ -70,23 +92,35 @@
               <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
                 <!-- Display Crop Information -->
               <div class="row">
-                  <div class="col-md-12">
-                      <h2>Farm Workers</h2>
-                      {% for crop_info in farm.crop_information.all %}
-                          <div class="card mb-3">
-                              <div class="card-body">
-                                  <h5 class="card-title">Farm Workers {{ forloop.counter }}</h5>
-                                  <p><strong>Full Names:</strong> {{ crop_info.date_planting }}</p>
-                                  <p><strong>Date Employed:</strong> {{ crop_info.date_ploughing }}</p>
-                                  <!-- Add more fields as needed -->
-                              </div>
-                          </div>
-                      {% empty %}
+            <div class="col-md-12">
+                <h2>Farm Workers</h2>
+                {% for person in farm.staff_contacts.all %}
+                    <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Farm Worker {{ person.name }}</h5>
+                      <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                          <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary">Edit</a>
+                      </div>
+                  </div>
+              {% endfor %}
+
+            {% for person in farm.crop_peelers.all %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Peeler Full Names: {{ person.name}}</h5>
+                        <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                        <!-- Add more fields as needed -->
+                    </div>
+                </div>
+                      {% endfor %}
+
+                      {% if not farm.staff_contacts.all and not farm.crop_peelers.all %}
                           <p>No farm workers added.</p>
                           <a href="{% url 'add_person' farm.id %}" class="btn btn-primary">Add Workers</a>
-                      {% endfor %}
+                      {% endif %}
                   </div>
               </div>
+
             </div>
           </div>
         </div>

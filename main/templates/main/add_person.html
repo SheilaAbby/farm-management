@@ -1,10 +1,11 @@
 {% extends 'main/base.html' %}
 {% block title %}Add Person{% endblock %}
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-lg-12 col-xl-8">
-          <div class="card card-sm mb-4">
+<div class="container mt-5">
+  <div class="row justify-content-center">
+  
+      <div class="col-lg-4 col-xl-8 mb-4">
+          <div class="card card-sm mb-4 h-100 d-flex flex-column mb-4">
             <div class="card-body">
               <h2 class="card-title">Add a Person to {{ farm.name }}</h2>
               <form method="post" action="{% url 'add_person' farm_id=farm.id %}">
@@ -13,8 +14,7 @@
                 <button type="submit" class="btn btn-primary">Add Person</button>
               </form>
             </div>
-  </div>
-  </div>
-  </div>
-  </div>
+        </div>
+    </div>
+ </div>
 {% endblock %}
