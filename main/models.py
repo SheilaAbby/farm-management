@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
     gender = models.CharField(max_length=10, choices=[('male', 'Male'), ('female', 'Female')], null=True, blank=True)
     national_id = models.CharField(max_length=20, null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
+    phone_belongs_to_user = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], default='no')
 
     def age(self):
         from datetime import date

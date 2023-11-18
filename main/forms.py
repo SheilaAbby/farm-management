@@ -12,12 +12,9 @@ class RegisterForm(UserCreationForm):
     email = forms.EmailField(max_length=254, help_text='Required. Enter your email address.', 
                              widget = forms.TextInput(
                                  attrs = {"class": "form-control", "placeholder": "Email (to be associated with your account)"}))
-    first_name = forms.CharField(max_length=30, help_text='Required. Enter your first name.',
+    full_name = forms.CharField(max_length=60, help_text='Required. Enter your full name.',
                                  widget = forms.TextInput(
                                     attrs = {"class": "form-control", "placeholder": "First Name"}))
-    last_name = forms.CharField(max_length=30, help_text='Required. Enter your last name.', 
-                                widget = forms.TextInput(
-                                    attrs = {"class": "form-control", "placeholder": "Last Name"}))
     username = forms.CharField(max_length=30, help_text='Required. Enter a Username.',
                                 widget = forms.TextInput(
                                     attrs = {"class": "form-control", "placeholder": "Username"}))
@@ -44,6 +41,10 @@ class RegisterForm(UserCreationForm):
                                        attrs={"class": "form-control", "placeholder": "Phone Number"}
                                    ))
     
+    phone_belongs_to_user = forms.ChoiceField(choices=[('', 'Yours ?'),('Yes', 'Yes'), ('No', 'No')],
+                             widget = forms.Select(
+                                 attrs = {"class": "form-control"}))
+    
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
         # Set the widget attributes for password fields
@@ -52,7 +53,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'username', 'role', 'birth_year', 'gender', 'national_id', 'phone_number', 'password1', 'password2']
+        fields = ['full_name', 'email', 'username', 'role', 'birth_year', 'gender', 'national_id', 'phone_number', 'phone_belongs_to_user', 'password1', 'password2']
 
 class LoginForm(forms.Form):
     username = forms.CharField(

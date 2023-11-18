@@ -1,5 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
+
     // Define the data attribute that your elements share
     var dataAttribute = "data-bs-toggle";
   
@@ -33,5 +34,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     });
-  });
+      // Code for location-related functionality
+const locationCoordinatesInput = document.getElementById('location-coordinates');
+const getLocationButton = document.getElementById('get-location-btn');
+
+getLocationButton.addEventListener('click', function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const locationCoordinates = `${latitude}, ${longitude}`;
+
+            locationCoordinatesInput.value = locationCoordinates;
+        }, function (error) {
+            console.error('Error getting location:', error.message);
+        });
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    });
+
+function togglePasswordVisibility(passwordId1, passwordId2) {
+  var passwordInput1 = document.getElementById(passwordId1);
+  var passwordInput2 = document.getElementById(passwordId2);
+
+  passwordInput1.type = passwordInput1.type === "password" ? "text" : "password";
+  passwordInput2.type = passwordInput2.type === "password" ? "text" : "password";
+}
+   });
+  
   

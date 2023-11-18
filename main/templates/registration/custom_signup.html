@@ -2,18 +2,22 @@
 {% load static %}
 {% block title %}Sign Up{% endblock %} 
 {% block content %}
-<div class="container my-5 container h-100">
-  <div class="row d-flex justify-content-center align-items-center h-100">
-    <div class="col-lg-12 col-xl-11">
-      <div class="card text-black" style="border-radius: 25px">
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-primary">
         <div class="card-body p-md-5">
+          <div
+              class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Windwood Farm Management Logo">
+            </div>
           <div class="row justify-content-center">
             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-              <p class="text-center text-success h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">
-                Sign up
-              </p>
+              <h2 class="text-center text-success fw-bold mb-4">
+                Sign Up
+              </h2>
               <hr/>
-              <form method="post" class="mx-1 mx-md-4">
+              <form method="post" class="mx-4">
                 {% csrf_token %} {% if form.errors %}
                 <div class="alert alert-danger">
                   <strong>Error:</strong> Please check the following fields:
@@ -25,23 +29,15 @@
                 </div>
                 {% endif %}
 
-                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="d-flex flex-row align-items-center mb-3">
                   <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                   <div class="form-floating mb-1">
-                   {{ form.first_name }}
-                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
-                  </div>
-                </div>
-          
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                  <div class="form-floating mb-1">
-                     {{ form.last_name }}
-                     <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                   {{ form.full_name }}
+                    <label for="{{ form.full_name.id_for_label }}">Full Name</label>
                   </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="d-flex flex-row align-items-center mb-3">
                   <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                   <div class="form-floating mb-1">
                      {{ form.username }} 
@@ -49,15 +45,14 @@
                   </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="d-flex flex-row align-items-center mb-3">
                   <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                      <div class="form-floating mb-1">
                       {{ form.role }}
-                      {% comment %} <label for="{{ form.role.id_for_label }}">Role</label> {% endcomment %}
                      </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="d-flex flex-row align-items-center mb-3">
                   <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                   <div class="form-floating mb-1">
                     {{ form.email }}
@@ -65,7 +60,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="d-flex flex-row align-items-center mb-3">
                     <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
                     <div class="form-floating mb-1">
                         {{ form.birth_year }}
@@ -73,14 +68,14 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="d-flex flex-row align-items-center mb-3">
                     <i class="fas fa-venus-mars fa-lg me-3 fa-fw"></i>
                     <div class="form-floating mb-1">
                         {{ form.gender }}
                     </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="d-flex flex-row align-items-center mb-3">
                     <i class="fas fa-id-card fa-lg me-3 fa-fw"></i>
                     <div class="form-floating mb-1">
                         {{ form.national_id }}
@@ -88,56 +83,50 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
-                    <div class="form-floating mb-1">
-                        {{ form.phone_number }}
-                        <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+            <div class="d-flex flex-row align-items-center mb-3">
+                <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+                <div class="form-floating mb-1" style="width: 59%;">
+                    {{ form.phone_number }}
+                    <label for="{{ form.phone_number.id_for_label }}">Phone</label>
+                </div>
+                <div class="form-floating mb-1 ms-1" style="width: 41%;">
+                    {{ form.phone_belongs_to_user }}
+                    <label for="{{ form.phone_belongs_to_user.id_for_label }}"></label>
+                </div>
+            </div>
+
+                <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-3">
+                      {{ form.password1 }}
+                      <label for="{{ form.password1.id_for_label }}">Password</label>
                     </div>
-                </div>
-
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                  <div class="form-floating mb-3">
-                     {{ form.password1 }}
-                     <label for="{{ form.password1.id_for_label }}">Password</label>
-                       <div class="input-group-append mt-3">
-                          <div class="input-group-text">
-                              <input type="checkbox" onclick="togglePasswordVisibility('{{ form.password1.id_for_label }}')">
-                              <label class="form-check-label">Show Password</label>
-                          </div>
-                      </div>
                   </div>
-                </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                  <div class="form-floating mb-1">
-                   {{ form.password2 }}
-                    <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
-                    <div class="input-group-append mt-3">
-                          <div class="input-group-text">
-                              <input type="checkbox" onclick="togglePasswordVisibility('{{ form.password2.id_for_label }}')">
-                              <label class="form-check-label">Show Password</label>
-                          </div>
+                  <div class="d-flex flex-row align-items-center mb-3">
+                    <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-3">
+                      {{ form.password2 }}
+                      <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                        <div class="input-group-append mt-3">
+                        <div class="input-group-text">
+                          <input type="checkbox" onclick="togglePasswordVisibility('{{ form.password1.id_for_label }}', '{{ form.password2.id_for_label }}')" class="me-2">
+                          <label class="form-check-label">Show Password</label>
+                        </div>
                       </div>
+                    </div>
                   </div>
-                </div>
 
-                <div class="form-check d-flex justify-content-center mb-5">
+                <div class="form-check d-flex justify-content-center mb-1">
                   <label class="form-check-label" for="form2Example3">
                     Have an account? <a href="/login">Login</a>
                   </label>
                 </div>
 
-                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                  <button type="submit" class="btn btn-success">Register</button>
-                </div>
+                  <div class="d-flex justify-content-center mb-4">
+                    <button type="submit" class="btn btn-success">Register</button>
+                  </div>
               </form>
-            </div>
-            <div
-              class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Windwood Farm Management Logo">
             </div>
           </div>
         </div>
@@ -148,9 +137,12 @@
 {% endblock %}
 {% block javascript %}
 <script>
-function togglePasswordVisibility(passwordId) {
-    var passwordInput = document.getElementById(passwordId);
-    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+function togglePasswordVisibility(passwordId1, passwordId2) {
+  var passwordInput1 = document.getElementById(passwordId1);
+  var passwordInput2 = document.getElementById(passwordId2);
+
+  passwordInput1.type = passwordInput1.type === "password" ? "text" : "password";
+  passwordInput2.type = passwordInput2.type === "password" ? "text" : "password";
 }
 </script>
 {% endblock %}
