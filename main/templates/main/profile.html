@@ -40,26 +40,26 @@
               <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                     <strong>Username:</strong> {{ user.username }}
+                     <strong>Full Name:</strong> {{ user.full_name }}
                   </div>
                 </div>
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-birthday-cake fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                     <strong>Year of Birth:</strong> {{ user.profile.year_of_birth }}
+                     <strong>Year of Birth:</strong> {{ user.birth_year }}
                   </div>
                 </div>
                  <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-venus-mars fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                      <strong>Sex:</strong> {{ user.profile.sex }}
+                      <strong>Sex:</strong> {{ user.gender }}
                   </div>
                 </div>
      
              <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-id-card fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                      <strong>NIN:</strong> {{ user.profile.nin }}
+                      <strong>NIN:</strong> {{ user.national_id }}
                   </div>
                 </div>
                 <div class="d-flex flex-row align-items-center mb-4">
@@ -71,7 +71,7 @@
               <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                    <strong>Phone Number:</strong> {{ user.profile.phone_number }}
+                    <strong>Phone Number:</strong> {{ user.phone_number }}
                   </div>
                 </div>
             <a href="{% url 'update_profile' %}" class="btn btn-primary">Update Profile</a>

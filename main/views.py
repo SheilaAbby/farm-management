@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
-from .forms import RegisterForm, LoginForm, UserProfileForm,FarmForm, PersonForm
+from .forms import RegisterForm, LoginForm, UserProfileForm, FarmForm, PersonForm, RegisterForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
@@ -80,23 +80,29 @@ def custom_logout_view(request):
 
 @login_required(login_url="/login")
 def update_profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user = request.user
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
     msg = None
 
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        if form.is_valid():
-            form.save()
-            msg = 'user updated'
-            # Redirect to their profile page
+        user_form = RegisterForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            print('BOTH SAVED hERE')
+            user_form.save()
+            profile_form.save()
+            msg = 'Profile updated successfully!'
             messages.success(request, 'Profile Updated Successfully!')
-            return redirect('profile')
+            print('BOTH SAVED')
+            return redirect('profile') 
         else:
             msg = 'Error Validating Form'
     else:
-        form = UserProfileForm(instance=user_profile)
+        user_form = RegisterForm(instance=user)
+        profile_form = UserProfileForm(instance=user_profile)
 
-    return render(request, 'main/update_profile.html', {'form': form, 'msg': msg})
+    return render(request, 'main/update_profile.html', {'user_form': user_form, 'profile_form': profile_form, 'msg': msg})
 
 @login_required(login_url="/login")
 def profile(request):

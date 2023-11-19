@@ -27,49 +27,66 @@
 
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                    {% comment %} <label class="mb-2">{{ profile_form.photo.label_tag }}</label> {% endcomment %}
+                    {{ profile_form.photo }}
+                    </div>
+                </div> 
+
+                 <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                   {{ form.year_of_birth }}
+                  {% comment %} <label class="mb-2">{{ user_form.email.label_tag }}</label> {% endcomment %}
+                   {{ user_form.email }}
                   </div>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                     {{ form.sex }} 
+                  {% comment %} <label class="mb-2">{{ user_form.full_name.label_tag }}</label> {% endcomment %}
+                   {{ user_form.full_name }}
                   </div>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                      <div class="form-outline flex-fill mb-0">
-                      {{ form.photo.label_tag }}
-                      {{ form.photo }}
-                      </div>
+                  <div class="form-outline flex-fill mb-0">
+                  {% comment %} <label class="mb-2">{{ user_form.birth_year.label_tag }}</label> {% endcomment %}
+                   {{ user_form.birth_year }}
+                  </div>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                    {{ form.nin }}
+                  {% comment %} <label class="mb-2">National ID</label> {% endcomment %}
+                    {{ user_form.national_id }}
                   </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                     {{ form.address }}
+                <div class="d-flex flex-row align-items-center mb-3">
+                  <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-1" style="width: 59%;">
+                   {% comment %} <label for="{{ user_form.phone_number.id_for_label }}">Phone</label> {% endcomment %}
+                      {{ user_form.phone_number }}     
+                  </div>
+                  <div class="form-outline flex-fill mb-1 ms-1" style="width: 41%;">
+                  {% comment %} <label for="{{ user_form.phone_belongs_to_user.id_for_label }}">Belongs to you?</label> {% endcomment %}
+                      {{ user_form.phone_belongs_to_user }}
                   </div>
                 </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                   {{ form.phone_number }}
+                   <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                         {{ profile_form.address }}
+                      </div>
+                    </div>
+
+                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                    <button type="submit" class="btn btn-success">Update Profile</button>
                   </div>
-                </div>
-                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                  <button type="submit" class="btn btn-success">Update Profile</button>
-                </div>
               </form>
             </div>
             <div
@@ -81,8 +98,8 @@
                       </div>
                   {% else %}
                       <!-- Basic avatar or placeholder -->
-                      <div class="rounded-circle overflow-hidden me-2" style="width: 200px; height: 200px; background-color: #ddd;">
-                          <i class="fas fa-user fa-2x d-flex justify-content-center align-items-center text-secondary"></i>
+                      <div class="rounded-circle overflow-hidden me-2 d-flex justify-content-center align-items-center" style="width: 200px; height: 200px; background-color: #ddd;">
+                          <i class="fas fa-user fa-2x text-secondary"></i>
                       </div>
                   {% endif %}
             </div>

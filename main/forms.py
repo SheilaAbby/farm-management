@@ -22,6 +22,7 @@ class RegisterForm(UserCreationForm):
                              widget = forms.Select(
                                  attrs = {"class": "form-control"}))
     birth_year = forms.IntegerField(help_text='Required. Enter your year of birth.',
+                                    validators=[MinValueValidator(1900), MaxValueValidator(2023)],
                                     widget=forms.NumberInput(
                                         attrs={"class": "form-control", "placeholder": "Year of Birth"}
                                     ))
@@ -33,7 +34,7 @@ class RegisterForm(UserCreationForm):
 
     national_id = forms.CharField(max_length=20, help_text='Required. Enter your national identification number.',
                                   widget=forms.TextInput(
-                                      attrs={"class": "form-control", "placeholder": "National ID"}
+                                      attrs={"class": "form-control", "placeholder": "National ID", }
                                   ))
 
     phone_number = forms.CharField(max_length=15, help_text='Required. Enter your phone number.',
@@ -55,6 +56,11 @@ class RegisterForm(UserCreationForm):
         model = CustomUser
         fields = ['full_name', 'email', 'username', 'role', 'birth_year', 'gender', 'national_id', 'phone_number', 'phone_belongs_to_user', 'password1', 'password2']
 
+    # Add autocomplete attribute to form fields
+    widgets = {
+        'email': forms.EmailInput(attrs={'autocomplete': 'username'}) 
+    }
+
 class LoginForm(forms.Form):
     username = forms.CharField(
         widget = forms.TextInput(
@@ -75,41 +81,16 @@ class LoginForm(forms.Form):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['year_of_birth', 'sex', 'photo', 'nin', 'address', 'phone_number']
-
-    # Add validators to individual fields
-    year_of_birth = forms.IntegerField(
-        required=False,
-        validators=[MinValueValidator(1900), MaxValueValidator(2023)],
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Year of Birth'})
-    )
-
-    sex = forms.ChoiceField(
-        choices=[('Female', 'Female'), ('Male', 'Male')],
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Sex'})
-    )
+        fields = ['photo', 'address']
 
     photo = forms.ImageField(required=False, 
                              widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
                              label='Upload a Profile Photo'
                              )
-
-    nin = forms.CharField(
-        max_length=20,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'National Identification Number'})
-    )
-
+  
     address = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 3, 'cols': 40})
-    )
-
-    phone_number = forms.CharField(
-        max_length=15,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'})
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 2, 'cols': 40, 'autocomplete': 'address'})
     )
 
 class FarmForm(forms.ModelForm):
@@ -167,7 +148,7 @@ class FarmForm(forms.ModelForm):
 
         # Set the farm name based on user's first name, last name, selected crop, and 'Farm'
         crop_name = self.cleaned_data['crops']
-        farm.name = f"{self.user.first_name} {self.user.last_name} {crop_name} Farm"
+        farm.name = f"{self.user.full_name} {crop_name} Farm"
 
         if commit:
             farm.save()

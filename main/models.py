@@ -13,7 +13,8 @@ class CustomUser(AbstractUser):
     national_id = models.CharField(max_length=20, null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     phone_belongs_to_user = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], default='no')
-
+    full_name = models.CharField(max_length=255, blank=True)
+    
     def age(self):
         from datetime import date
         if self.birth_year:
@@ -28,12 +29,8 @@ class CustomUser(AbstractUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
-    year_of_birth = models.IntegerField(blank=True, null=True)
-    sex = models.CharField(max_length=10, blank=True, null=True)
     photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
-    nin = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
