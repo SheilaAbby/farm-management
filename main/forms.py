@@ -1,6 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from main.models import CustomUser, UserProfile, Farm, Crop, Resource, Person, CropInformation
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from main.models import CustomUser, Farm, Crop, Resource, Person, CropInformation
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.forms import ModelMultipleChoiceField
@@ -58,8 +58,46 @@ class RegisterForm(UserCreationForm):
 
     # Add autocomplete attribute to form fields
     widgets = {
-        'email': forms.EmailInput(attrs={'autocomplete': 'username'}) 
+        'email': forms.EmailInput(attrs={'autocomplete': 'email username'}) 
     }
+
+class CustomUserUpdateForm(UserChangeForm):
+    # Additional fields not in the CustomUser model
+    photo = forms.ImageField(required=False, 
+                             widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
+                             label='Upload a Profile Photo'
+                             )
+   
+    address = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 2, 'cols': 40, 'autocomplete': 'address'})
+    )
+
+    email = forms.EmailField(max_length=254, help_text='Required. Enter your email address.', 
+                             widget = forms.TextInput(
+                                 attrs = {"class": "form-control", "placeholder": "Email (to be associated with your account)"}))
+
+    username = forms.CharField(max_length=30, help_text='Required. Enter a Username.',
+                                widget = forms.TextInput(
+                                    attrs = {"class": "form-control", "placeholder": "Username"}))
+
+    birth_year = forms.IntegerField(help_text='Required. Enter your year of birth.',
+                                    validators=[MinValueValidator(1900), MaxValueValidator(2023)],
+                                    widget=forms.NumberInput(
+                                        attrs={"class": "form-control", "placeholder": "Year of Birth"}
+                                    ))
+
+    phone_number = forms.CharField(max_length=15, help_text='Required. Enter your phone number.',
+                                   widget=forms.TextInput(
+                                       attrs={"class": "form-control", "placeholder": "Phone Number"}
+                                   ))
+    
+    phone_belongs_to_user = forms.ChoiceField(choices=[('', 'Yours ?'),('Yes', 'Yes'), ('No', 'No')],
+                             widget = forms.Select(
+                                 attrs = {"class": "form-control"}))
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'username', 'birth_year', 'phone_number', 'phone_belongs_to_user', 'photo', 'address']
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -78,20 +116,20 @@ class LoginForm(forms.Form):
         )
     )
 
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['photo', 'address']
+# class UserProfileForm(forms.ModelForm):
+#     class Meta:
+#         model = UserProfile
+#         fields = ['photo', 'address']
 
-    photo = forms.ImageField(required=False, 
-                             widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
-                             label='Upload a Profile Photo'
-                             )
+#     photo = forms.ImageField(required=False, 
+#                              widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
+#                              label='Upload a Profile Photo'
+#                              )
   
-    address = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 2, 'cols': 40, 'autocomplete': 'address'})
-    )
+#     address = forms.CharField(
+#         required=False,
+#         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 2, 'cols': 40, 'autocomplete': 'address'})
+#     )
 
 class FarmForm(forms.ModelForm):
     class Meta:

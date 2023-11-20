@@ -2,12 +2,12 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
-from .forms import RegisterForm, LoginForm, UserProfileForm, FarmForm, PersonForm, RegisterForm
+from .forms import RegisterForm, LoginForm, CustomUserUpdateForm, FarmForm, PersonForm, RegisterForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile, Farm, Person
+from .models import Farm, Person
 from .forms import FarmForm, CropInformationForm,  PersonForm
 
 
@@ -81,28 +81,23 @@ def custom_logout_view(request):
 @login_required(login_url="/login")
 def update_profile(request):
     user = request.user
-    user_profile, created = UserProfile.objects.get_or_create(user=user)
-    msg = None
 
     if request.method == 'POST':
-        user_form = RegisterForm(request.POST, instance=user)
-        profile_form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        
-        if user_form.is_valid() and profile_form.is_valid():
-            print('BOTH SAVED hERE')
-            user_form.save()
-            profile_form.save()
-            msg = 'Profile updated successfully!'
-            messages.success(request, 'Profile Updated Successfully!')
-            print('BOTH SAVED')
-            return redirect('profile') 
-        else:
-            msg = 'Error Validating Form'
-    else:
-        user_form = RegisterForm(instance=user)
-        profile_form = UserProfileForm(instance=user_profile)
+        user_form = CustomUserUpdateForm(request.POST, instance=user)
+        print('FORM initialized')
 
-    return render(request, 'main/update_profile.html', {'user_form': user_form, 'profile_form': profile_form, 'msg': msg})
+        if user_form.is_valid():
+            print('FORM VALID')
+            user_form.save()
+            messages.success(request, 'Profile Updated Successfully!')
+            return redirect('profile')
+        else:
+            # Debugging: Print form errors to the console
+            print("Form Errors:", user_form.errors)
+    else:
+        user_form = CustomUserUpdateForm(instance=user)
+
+    return render(request, 'main/update_profile.html', {'user_form': user_form})
 
 @login_required(login_url="/login")
 def profile(request):
@@ -130,7 +125,7 @@ def edit_farm(request, farm_id):
         form = FarmForm(request.POST, instance=farm, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('farmer_home')
+            return redirect('farm_details', farm_id)
     else:
         form = FarmForm(instance=farm, user=request.user)
 

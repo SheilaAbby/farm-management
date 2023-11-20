@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import CustomUser, UserProfile, Person, Farm, Crop, CropInformation, Resource, FarmImage
+from .models import CustomUser, Person, Farm, Crop, CropInformation, Resource, FarmImage
 
 # Register your models here.
 
 admin.site.register(CustomUser)
-admin.site.register(UserProfile)
+# admin.site.register(UserProfile)
 admin.site.register(Person)
 admin.site.register(Farm)
 admin.site.register(Crop)

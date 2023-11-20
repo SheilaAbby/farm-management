@@ -14,6 +14,8 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     phone_belongs_to_user = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], default='no')
     full_name = models.CharField(max_length=255, blank=True)
+    photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
     
     def age(self):
         from datetime import date
@@ -26,14 +28,6 @@ class CustomUser(AbstractUser):
     def has_farm(self):
         # Check if the user has an associated farm
         return self.farm_set.exists()  
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
-    photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
 
 class Person(models.Model):
     name = models.CharField(max_length=255)
