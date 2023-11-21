@@ -67,43 +67,33 @@ class Farm(models.Model):
 
     def __str__(self):
         return self.name
-    
-class CropInformation(models.Model):
-    farm = models.ForeignKey('Farm', on_delete=models.CASCADE, related_name='crop_information')
-    
+
+class FarmingDates(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farming_dates')
     date_planting = models.DateField(null=True, blank=True)
     date_ploughing = models.DateField(null=True, blank=True)
     date_weeding = models.DateField(null=True, blank=True)
     date_harvesting = models.DateField(null=True, blank=True)
-    
-    crop_variety = models.CharField(max_length=255, null=True, blank=True)
-    quantity_planted = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
     date_fertilizer_application = models.DateField(null=True, blank=True)
-    cost_fertilizer_application = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
+    models.CharField(max_length=255, null=True, blank=True)
+
+class FarmingCosts(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farming_costs')
     cost_planting = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cost_ploughing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cost_weeding = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cost_harvesting = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
+    transport_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    other_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+  
+class FarmProduce(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farm_produce')
+    quantity_planted = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     batch_number = models.CharField(max_length=255, null=True, blank=True)
     bags_packed = models.IntegerField(null=True, blank=True)
-    
     amount_sold = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     market = models.CharField(max_length=255, null=True, blank=True)
-    
-    transport_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    other_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
-    crop_peelers = models.ManyToManyField('Person', blank=True, related_name='peeling_information')
-    staff_contacts = models.ManyToManyField('Person', blank=True, related_name='staff_information')
-
-    def clean(self):
-        if self.date_harvesting and self.date_planting:
-            if self.date_harvesting < self.date_planting:
-                raise ValidationError(_('Harvesting date must be after planting date.'))
 
 class Resource(models.Model):
     name = models.CharField(max_length=255)

@@ -1,0 +1,110 @@
+{% extends 'main/base.html' %} 
+{% load static %}
+{% block title %}farmer's{% endblock %} 
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+   {% if messages %}
+        <div class="alert alert-success" role="alert">
+          <ul class="messages">
+              {% for message in messages %}
+                  <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                      {{ message }}
+                      {% if message.tags == 'success' %}
+                          <i class="fas fa-check fa-lg ml-2"></i>
+                      {% endif %}
+                  </li>
+              {% endfor %}
+          </ul>
+      </div>
+      {% endif %}
+     <p class="text-center text-success h1 fw-bold">Crop Farming Activities</p>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 d-flex flex-column">
+              <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+              <div class="card-header">
+                <strong>Farming Costs</strong>
+              </div>
+              <div class="card-body d-flex flex-column">
+               <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                       <form method="post" action="{% url 'update_farm_costs' farm_id %}">
+                        {% csrf_token %} 
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                           <strong>Error:</strong> Check the following fields:
+                             <ul>
+                                 {% for field, errors in form.errors.items %}
+                                   <li>{{ field }}: {{ errors|join:", " }}</li>
+                                 {% endfor %}
+                             </ul>
+                          </div>
+                        {% endif %}
+
+                    <div class="d-flex flex-row align-items-center mb-2">
+                      <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                      <div class="form-floating mb-1 mt-4"> 
+                       {{ form.cost_fertilizer_application  }}
+                      </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                      <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                      <div class="form-floating mb-1">
+                         {{ form.cost_planting }} 
+                         {% comment %} <label for="{{ form.cost_planting.id_for_label }}">Planting</label> {% endcomment %}
+                      </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                      <div class="form-floating mb-1">
+                        {{ form.cost_ploughing}}
+                        {% comment %} <label for="{{ form.cost_ploughing.id_for_label }}">Ploughing</label> {% endcomment %}
+                      </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                      {{ form.cost_weeding  }}
+                      {% comment %} <label for="{{ form.cost_weeding.id_for_label }}">Weeding</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                      {{ form.cost_harvesting }}
+                      {% comment %} <label for="{{ form.cost_harvesting.id_for_label }}">Harvesting</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                   <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                      {{ form.transport_costs }}
+                      {% comment %} <label for="{{ form.transport_costs.id_for_label }}">Transport</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                   <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                      {{ form.other_costs }}
+                      {% comment %} <label for="{{ form.transport_costs.id_for_label }}">Other</label> {% endcomment %}
+                    </div>
+                  </div>
+                    {% comment %} <a href="{% url 'update_farm_data' %}"  class="btn btn-primary" >Update Farm Data</a> {% endcomment %}
+                  </div>
+                  <button type="submit" class="btn btn-success">Update</button>
+                  </form>
+              </div>
+            </div>
+        </div>
+  </div>
+</div>
+{% block javascript %}
+    <script src="{% static 'js/custom.js' %}"></script>
+{% endblock %}
+{% endblock %}

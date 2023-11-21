@@ -73,20 +73,28 @@
               <div class="row">
                   <div class="col-md-12">
                       <h2>Farm Activities</h2>
-                      {% for crop_info in farm.crop_information.all %}
-                          <div class="card mb-3">
-                              <div class="card-body">
-                                  <h5 class="card-title">Farm Activities {{ forloop.counter }}</h5>
-                                  <p><strong>Date Planting:</strong> {{ crop_info.date_planting }}</p>
-                                  <p><strong>Date Ploughing:</strong> {{ crop_info.date_ploughing }}</p>
-                                  <!-- Add more fields as needed -->
-                              </div>
-                          </div>
-                          <a href="{% url 'create_crop_information' farm.id %}" class="btn btn-primary">Update</a>
-                      {% empty %}
-                          <p>No farm activities available for this farm.</p>
-                          <a href="{% url 'create_crop_information' farm.id %}" class="btn btn-primary">Update</a>
-                      {% endfor %}
+                    {% if farming_dates_exist %}
+                      <p>Planting, Ploughing, Harvesting..etc dates</p><a href="{% url 'update_farm_dates' farm_id=farm_id %}" class="btn btn-primary">Update Dates</a>
+                    {% else %}
+                      <a href="{% url 'add_farm_dates' farm_id=farm_id %}" class="btn btn-success">Add Dates</a>
+                    {% endif %}
+
+                    {% if farming_costs_exist %}
+                      <a href="{% url 'update_farm_costs' farm_id=farm_id %}" class="btn btn-primary mt-2">Update Costs</a>
+                    {% else %}
+                      <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-2">Add Costs</a>
+                    {% endif %}
+
+                    {% if farm_produce_exist %}
+                      <a href="{% url 'update_farm_produce' farm_id=farm_id %}" class="btn btn-primary mt-2">Update Produce</a>
+                    {% else %}
+                      <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-2">Add Produce</a>
+                    {% endif %}
+
+                    {% if not farming_dates_exist and not farming_costs_exist and not farm_produce_exist %}
+                      <p>No farm activities available for this farm...</p>
+                    {% endif %}
+
                   </div>
               </div>
               <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">

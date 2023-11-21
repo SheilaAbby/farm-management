@@ -1,0 +1,102 @@
+r{% extends 'main/base.html' %} 
+{% load static %}
+{% block title %}farmer's{% endblock %} 
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+   {% if messages %}
+        <div class="alert alert-success" role="alert">
+          <ul class="messages">
+              {% for message in messages %}
+                  <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                      {{ message }}
+                      {% if message.tags == 'success' %}
+                          <i class="fas fa-check fa-lg ml-2"></i>
+                      {% endif %}
+                  </li>
+              {% endfor %}
+          </ul>
+      </div>
+      {% endif %}
+     <p class="text-center text-success h1 fw-bold">Crop Farming Activities</p>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 d-flex flex-column">
+              <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+              <div class="card-header">
+                <strong>Farming Produce.</strong>
+              </div>
+              <div class="card-body d-flex flex-column">
+               <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                       <form method="post" action="{% url 'add_farm_produce' farm_id %}">
+                        {% csrf_token %} 
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                           <strong>Error:</strong> Check the following fields:
+                             <ul>
+                                 {% for field, errors in form.errors.items %}
+                                   <li>{{ field }}: {{ errors|join:", " }}</li>
+                                 {% endfor %}
+                             </ul>
+                          </div>
+                        {% endif %}
+
+                   <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-crop fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1 mt-4">
+                     {{ form.quantity_planted }}
+                     {% comment %} <label for="{{ form.quantity_planted.id_for_label }}">Quantity Planted</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-barcode fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                     {{ form.batch_number }} 
+                     {% comment %} <label for="{{ form.batch_number.id_for_label }}">Batch Number</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-shopping-bag fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                     {{ form.bags_packed }} 
+                      {% comment %} <label for="{{ form.bags_packed.id_for_label }}">Bags Packed</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                     {{ form.amount_sold }} 
+                      {% comment %} <label for="{{ form.amount_sold.id_for_label }}">Bags Sold</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-money-bill fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                     {{ form.price_rate }} 
+                     {% comment %} <label for="{{ form.price_rate.id_for_label }}">Price per Bag(UG Sh)</label> {% endcomment %}
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-shopping-cart fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1">
+                     {{ form.market }}  
+                     {% comment %} <label for="{{ form.market.id_for_label }}">Market Sold</label> {% endcomment %}
+                    </div>
+                  </div>
+                  </div>
+                  <button type="submit" class="btn btn-success">Update Produce</button>
+                  </form>
+              </div>
+            </div>
+        </div>
+  </div>
+</div>
+{% block javascript %}
+    <script src="{% static 'js/custom.js' %}"></script>
+{% endblock %}
+{% endblock %}

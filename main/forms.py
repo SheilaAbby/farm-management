@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from main.models import CustomUser, Farm, Crop, Resource, Person, CropInformation
+from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.forms import ModelMultipleChoiceField
@@ -116,21 +116,6 @@ class LoginForm(forms.Form):
         )
     )
 
-# class UserProfileForm(forms.ModelForm):
-#     class Meta:
-#         model = UserProfile
-#         fields = ['photo', 'address']
-
-#     photo = forms.ImageField(required=False, 
-#                              widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
-#                              label='Upload a Profile Photo'
-#                              )
-  
-#     address = forms.CharField(
-#         required=False,
-#         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 2, 'cols': 40, 'autocomplete': 'address'})
-#     )
-
 class FarmForm(forms.ModelForm):
     class Meta:
         model = Farm
@@ -192,8 +177,8 @@ class FarmForm(forms.ModelForm):
             farm.save()
 
         return farm
-    
-class CropInformationForm(forms.ModelForm):
+
+class FarmingDatesForm(forms.ModelForm):
 
     date_planting = forms.DateField(
         required=False,
@@ -224,62 +209,68 @@ class CropInformationForm(forms.ModelForm):
         widget=forms.DateInput(
             attrs={'type': 'date', 'class': 'form-control'}))
     
-    
-    quantity_planted = forms.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        required=False,  
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantity Planted'}))
-    
     date_fertilizer_application = forms.DateField(
         required=False, 
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
     
-    cost_fertilizer_application = forms.DecimalField(
-        max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={ 'class': 'form-control'}))
-    
-    cost_planting = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    cost_ploughing = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cost of Ploughing'}))
-    cost_weeding = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control','placeholder': 'Cost of Weeding'}))
-    cost_harvesting = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cost of Harvesting'}))
-    
-    batch_number = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Batch Number'}))
-    bags_packed = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bags Packed'}))
-    
-    amount_sold = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Amount Sold'}))
-    price_rate = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price per Bag'}))
-    market = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Market'}))
-    
-    transport_costs = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Transport Costs'}))
-    other_costs = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Other Costs'}))
-    
-    crop_peelers = ModelMultipleChoiceField(queryset=Person.objects.all(), required=False, widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-control', 'placeholder': 'Select Crop Peelers'}))
-    
     class Meta:
-        model = CropInformation
-        fields = ['date_planting', 'date_ploughing', 'date_weeding', 'date_harvesting',
-          'quantity_planted', 'date_fertilizer_application', 'cost_fertilizer_application',
-          'cost_ploughing', 'cost_weeding', 'cost_harvesting', 'batch_number', 'bags_packed',
-          'amount_sold', 'price_rate', 'market', 'transport_costs', 'other_costs',
-          'crop_peelers']
+        model = FarmingDates
+        fields = ['date_planting', 'date_ploughing', 'date_weeding', 'date_harvesting', 'date_fertilizer_application']
 
         def clean(self):
             cleaned_data = super().clean()
             date_planting = cleaned_data.get('date_planting')
             date_harvesting = cleaned_data.get('date_harvesting')
-            quantity_planted = cleaned_data.get('quantity_planted')
-            bags_packed = cleaned_data.get('bags_packed')
-            amount_sold = cleaned_data.get('amount_sold')
-            price_rate = cleaned_data.get('price_rate')
 
             if date_planting and date_harvesting:
                 if date_harvesting < date_planting:
                     raise forms.ValidationError('Harvesting date must be after planting date.')
             
-            # Custom validation for date_harvesting and date_planting
-            if date_planting and date_harvesting:
-                if date_harvesting < date_planting:
-                    raise ValidationError(_('Harvesting date must be after planting date.'))
+            return cleaned_data
+
+class FarmingCostsForm(forms.ModelForm):
+
+    cost_fertilizer_application = forms.DecimalField(
+        max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={ 'class': 'form-control', 'placeholder': 'Cost of Fertilizer App.'}))
+    
+    cost_planting = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cost of Planting'}))
+    cost_ploughing = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cost of Ploughing'}))
+    cost_weeding = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control','placeholder': 'Cost of Weeding'}))
+    cost_harvesting = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cost of Harvesting'}))
+    transport_costs = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Transport Costs'}))
+    other_costs = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Other Costs'}))
+    
+    class Meta:
+        model = FarmingCosts
+        fields = ['cost_fertilizer_application','cost_ploughing', 'cost_weeding', 'cost_harvesting']
+
+                 
+class FarmProduceForm(forms.ModelForm):
+
+    quantity_planted = forms.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        required=False,  
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantity Planted'}))
+ 
+   
+    batch_number = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Batch Number'}))
+    bags_packed = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bags Packed'}))
+    amount_sold = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Amount Sold'}))
+    price_rate = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price per Bag'}))
+    market = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Market'}))
+
+    class Meta:
+        model = FarmProduce
+        fields = ['quantity_planted', 'batch_number', 'bags_packed',
+          'amount_sold', 'price_rate', 'market']
+
+        def clean(self):
+            cleaned_data = super().clean()
+            quantity_planted = cleaned_data.get('quantity_planted')
+            bags_packed = cleaned_data.get('bags_packed')
+            amount_sold = cleaned_data.get('amount_sold')
+            price_rate = cleaned_data.get('price_rate')
 
             # Additional validations for quantity_planted, bags_packed, amount_sold, and price_rate
             if quantity_planted and quantity_planted <= 0:

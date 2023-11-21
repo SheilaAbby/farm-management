@@ -5,10 +5,10 @@ from django.contrib.auth.views import LoginView
 from .forms import RegisterForm, LoginForm, CustomUserUpdateForm, FarmForm, PersonForm, RegisterForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
-from .models import Farm, Person
-from .forms import FarmForm, CropInformationForm,  PersonForm
+from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce
+from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm 
 
 
 # Create your views here.
@@ -134,28 +134,122 @@ def edit_farm(request, farm_id):
 @login_required(login_url="/login")
 def farm_details(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
-    # You may add more context data based on your Farm model fields
-    return render(request, 'main/farm_details.html', {'farm': farm})
+
+    # Check if farming dates, farming costs, and farm produce exist for the farm
+    farming_dates_exist = FarmingDates.objects.filter(farm=farm).exists()
+    farming_costs_exist = FarmingCosts.objects.filter(farm=farm).exists()
+    farm_produce_exist = FarmProduce.objects.filter(farm=farm).exists()
+
+    context = {
+        'farm': farm,
+        'farm_id': farm_id,
+        'farming_dates_exist': farming_dates_exist,
+        'farming_costs_exist': farming_costs_exist,
+        'farm_produce_exist': farm_produce_exist,
+    }
+
+    return render(request, 'main/farm_details.html', context)
 
 @login_required(login_url="/login")
-def create_crop_information(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id)
+def add_farm_dates(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
 
     if request.method == 'POST':
-        form = CropInformationForm(request.POST)
+        form = FarmingDatesForm(request.POST)
         if form.is_valid():
-            crop_information = form.save(commit=False)
-            crop_information.farm = farm
-            crop_information.save()
-
-            messages.success(request, 'Farming Activities Updated Successfully!')
-            return redirect('farm_details', farm_id=farm_id)
-
+            farming_dates = form.save(commit=False)
+            farming_dates.farm = farm
+            farming_dates.save()
+            messages.success(request, 'Farming Dates Submitted Successfully!')
+            return redirect('farm_details', farm_id)
     else:
-        form = CropInformationForm()
+        form = FarmingDatesForm()
 
-    return render(request, 'main/update_crop_info.html', {'farm': farm, 'form': form})
+    return render(request, 'main/add_farm_dates.html', {'farm': farm, 'form': form, 'farm_id': farm_id})
 
+@login_required(login_url="/login")
+def update_farm_dates(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farming_dates = get_object_or_404(FarmingDates, farm=farm)
+
+    if request.method == 'POST':
+        form = FarmingDatesForm(request.POST, instance=farming_dates)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Farming Dates Updated Successfully!')
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = FarmingDatesForm(instance=farming_dates)
+
+    return render(request, 'main/update_farm_dates.html', {'farm': farm, 'form': form})
+
+@login_required(login_url="/login")
+def add_farm_costs(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+
+    if request.method == 'POST':
+        form = FarmingCostsForm(request.POST)
+        if form.is_valid():
+            farming_costs = form.save(commit=False)
+            farming_costs.farm = farm
+            farming_costs.save()
+            messages.success(request, 'Farm Costs Submitted Successfully!')
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = FarmingCostsForm()
+
+    return render(request, 'main/add_farm_costs.html', {'farm': farm, 'form': form, 'farm_id': farm_id})
+
+@login_required(login_url="/login")
+def update_farm_costs(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farming_costs = get_object_or_404(FarmingCosts, farm=farm)
+
+    if request.method == 'POST':
+        form = FarmingCostsForm(request.POST, instance=farming_costs)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Farming Costs Updated Successfully!')
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = FarmingCostsForm(instance=farming_costs)
+
+    return render(request, 'main/update_farm_costs.html', {'farm': farm, 'form': form})
+
+@login_required(login_url="/login")
+def add_farm_produce(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+
+    if request.method == 'POST':
+        form = FarmProduceForm(request.POST)
+        if form.is_valid():
+            farm_produce = form.save(commit=False)
+            farm_produce.farm = farm
+            farm_produce.save()
+            messages.success(request, 'Farm Produce Submitted Successfully!')
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = FarmProduceForm()
+
+    return render(request, 'main/add_farm_produce.html', {'farm': farm, 'form': form,'farm_id': farm_id})
+
+@login_required(login_url="/login")
+def update_farm_produce(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farm_produce = get_object_or_404(FarmProduce, farm=farm)
+
+    if request.method == 'POST':
+        form = FarmProduceForm(request.POST, instance=farm_produce)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Farming Produce Updated Successfully!')
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = FarmProduceForm(instance=farm_produce)
+
+    return render(request, 'main/update_farm_produce.html', {'farm': farm, 'form': form})
+
+@login_required(login_url="/login")
 def add_person(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id)
 
