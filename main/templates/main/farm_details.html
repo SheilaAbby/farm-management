@@ -1,48 +1,48 @@
 {% extends 'main/base.html' %} 
 {% load static %}
-{% block title %}Farm Details{% endblock %} 
+{% block title %}farmer's{% endblock %} 
 {% block content %}
-<div class="container mt-5 mb-5">
-  <div class="row d-flex justify-content-center align-items-center h-100">
-    <div class="col-lg-12 col-xl-8">
+<div class="container mt-5">
+  <div class="row justify-content-center">
          {% if messages %}
-          <div class="alert alert-success" role="alert">
-              <ul class="messages">
-                  {% for message in messages %}
-                      <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                          {{ message }}
-                          {% if message.tags == 'success' %}
-                              <i class="fas fa-check fa-lg ml-2"></i>
-                          {% endif %}
-                      </li>
-                  {% endfor %}
-              </ul>
+        <div class="alert alert-success" role="alert">
+          <ul class="messages">
+              {% for message in messages %}
+                  <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                      {{ message }}
+                      {% if message.tags == 'success' %}
+                          <i class="fas fa-check fa-lg ml-2"></i>
+                      {% endif %}
+                  </li>
+              {% endfor %}
+          </ul>
+      </div>
+    {% endif %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 d-flex flex-column">
+          <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+          <div class="card-header">
+             {% if farm.name %}
+                <p class="text-center text-success h1 fw-bold mt-4">
+                  {{ farm.name }}
+                </p>
+                {% endif %}
           </div>
-      {% endif %}
-      <div class="card text-black" style="border-radius: 25px">
-        <div class="card-body p-md-5">
-          <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-              <!-- Display user's full name -->
-              {% if farm.name %}
-              <p class="text-center text-success h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">
-                {{ farm.name }}
-              </p>
-              {% endif %}
-              <div class="d-flex flex-row align-items-center mb-4">
-              <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+        <div class="card-body d-flex flex-column">
+         <div class="d-flex flex-row align-items-center mb-4">
+            <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
               <div class="form-outline flex-fill mb-0">
-              <strong>Created On:</strong> {{ farm.created }}
+                 <strong>Created On:</strong> {{ farm.created }}
               </div>
-              </div>
-              <hr/>
+            </div>
+            <hr/>
           
-              <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                     <strong>Owner:</strong> {{ farm.user.full_name }}
-                  </div>
+            <div class="d-flex flex-row align-items-center mb-4">
+                <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                <div class="form-outline flex-fill mb-0">
+                   <strong>Owner:</strong> {{ farm.user.full_name }}
                 </div>
+              </div>
                 
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
@@ -65,76 +65,114 @@
                   </div>
                 </div>
 
-            <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary">Update Farm</a>
-            </div>
+            <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto">Edit</a>
             
-            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                <!-- Display Crop Information -->
-              <div class="row">
-                  <div class="col-md-12">
-                      <h2>Farm Activities</h2>
-                    {% if farming_dates_exist %}
-                      <p>Planting, Ploughing, Harvesting..etc dates</p><a href="{% url 'update_farm_dates' farm_id=farm_id %}" class="btn btn-primary">Update Dates</a>
-                    {% else %}
-                      <a href="{% url 'add_farm_dates' farm_id=farm_id %}" class="btn btn-success">Add Dates</a>
-                    {% endif %}
-
-                    {% if farming_costs_exist %}
-                      <a href="{% url 'update_farm_costs' farm_id=farm_id %}" class="btn btn-primary mt-2">Update Costs</a>
-                    {% else %}
-                      <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-2">Add Costs</a>
-                    {% endif %}
-
-                    {% if farm_produce_exist %}
-                      <a href="{% url 'update_farm_produce' farm_id=farm_id %}" class="btn btn-primary mt-2">Update Produce</a>
-                    {% else %}
-                      <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-2">Add Produce</a>
-                    {% endif %}
-
-                    {% if not farming_dates_exist and not farming_costs_exist and not farm_produce_exist %}
-                      <p>No farm activities available for this farm...</p>
-                    {% endif %}
-
-                  </div>
-              </div>
-              <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                <!-- Display Crop Information -->
-              <div class="row">
-            <div class="col-md-12">
-                <h2>Farm Workers</h2>
+            <div class="card-header mt-2">
+             {% if farm.name %}
+                <p class="text-center text-success mt-2">
+                   <strong>Farm Workers</strong>
+                </p>
+                {% endif %}
+            </div>
+            <div class="card-body">
                 {% for person in farm.staff_contacts.all %}
-                    <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Farm Worker {{ person.name }}</h5>
-                      <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
-                          <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary">Edit</a>
-                      </div>
-                  </div>
-              {% endfor %}
+   
+                      <h5>Farm Worker {{ person.name }}</h5>
+                        <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                        <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary">Edit</a>
+              
+                {% endfor %}
 
-            {% for person in farm.crop_peelers.all %}
-                <div class="card mb-3">
-                    <div class="card-body">
+                {% for person in farm.crop_peelers.all %}
+               
                         <h5 class="card-title">Peeler Full Names: {{ person.name}}</h5>
                         <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
-                        <!-- Add more fields as needed -->
-                    </div>
-                </div>
-                      {% endfor %}
-
-                      {% if not farm.staff_contacts.all and not farm.crop_peelers.all %}
-                          <p>No farm workers added.</p>
-                          <a href="{% url 'add_person' farm.id %}" class="btn btn-primary">Add Workers</a>
+             
+                {% endfor %}
+                  {% if not farm.staff_contacts.all and not farm.crop_peelers.all %}
+                      <p class="alert alert-danger" >No farm workers added.</p>
+                      <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-2">Add</a>
+                  {% endif %}
+            </div>
+            </div>
+        </div>
+    </div>
+     <div class="col-md-4 mb-4">
+      <div class="card h-100 d-flex flex-column">
+        <img src="{% static 'images/fertilizers.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+        <div class="card-header">
+          <strong>Farm Activities</strong>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
+              {% if not farming_dates_exist and not farming_costs_exist and not farm_produce_exist %}
+                  <div class="card-body">
+                      <p class="alert alert-danger" >No farm activities available for this farm.</p>
+                      </div>
+                    {% endif %}
+                   <div class="card-body">
+                      <div class="card-header mt-2">
+                          <p class="text-center text-success mt-2">
+                             <strong>Key Farming Dates</strong>
+                          </p>
+                        </div>
+                            
+                      {% if farming_dates_exist %}
+                            {% for farming_date in farming_dates_queryset|slice:":3" %}
+                                <div class="d-flex justify-content-between align-items-center">
+                                  <p class="mb-0">Farming Dates Submitted on: {{ farming_date.created }}</p>
+                                  <a href="{% url 'update_farm_dates' farm_id=farm_id farming_dates_id=farming_date.id %}" class="btn btn-primary">Edit</a>
+                                </div>
+                            {% endfor %}
+                           {% if farming_dates_queryset|length > 3 %}
+                            <a href="{% url 'view_more_farm_dates' farm_id=farm_id %}" class="btn btn-secondary mt-2">View More</a>
+                          {% endif %}
+                          {% else %}
+                              <a href="{% url 'add_farm_dates' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
                       {% endif %}
+                    </div>
+          
+                  <div class="card-body">
+                    <div class="card-header mt-2">
+                        <p class="text-center text-success mt-2">
+                           <strong>Costs</strong>
+                        </p>
+                      </div>
+                    {% if farming_costs_exist %}
+                      {% for farming_cost in farming_costs_queryset %}
+                      <div class="d-flex justify-content-between align-items-center">
+                        <p class="mb-0">Farming Costs Submitted on: {{ farming_cost.created }}</p>
+                        <a href="{% url 'update_farm_costs' farm_id=farm_id %}" class="btn btn-primary mt-2">Edit</a>
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
+                    {% endif %}
                   </div>
-              </div>
 
+                  <div class="card-body">
+                    <div class="card-header mt-2">
+                        <p class="text-center text-success mt-2">
+                           <strong>Farm Produce</strong>
+                        </p>
+                      </div>
+                    {% if farm_produce_exist %}
+                    {% for farm_produce in farm_produce_queryset %}
+                     <div class="d-flex justify-content-between align-items-center">
+                      <p class="mb-0">Farm Produce Submitted on: {{ farm_produce.created }}</p>
+                      <a href="{% url 'update_farm_produce' farm_id=farm_id %}" class="btn btn-primary mt-2">Edit</a>
+                      </div>
+                      {% endfor %}
+                    {% else %}
+                      <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
+                    {% endif %}
+                    </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
   </div>
 </div>
+{% block javascript %}
+    <script src="{% static 'js/custom.js' %}"></script>
 {% endblock %}
-
+{% endblock %}

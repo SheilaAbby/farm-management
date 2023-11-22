@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -76,6 +77,7 @@ class FarmingDates(models.Model):
     date_harvesting = models.DateField(null=True, blank=True)
     date_fertilizer_application = models.DateField(null=True, blank=True)
     models.CharField(max_length=255, null=True, blank=True)
+    created = models.DateTimeField(default=timezone.now)
 
 class FarmingCosts(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farming_costs')
@@ -85,6 +87,7 @@ class FarmingCosts(models.Model):
     cost_harvesting = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     transport_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     other_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    created = models.DateTimeField(default=timezone.now)
   
 class FarmProduce(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farm_produce')
@@ -94,6 +97,7 @@ class FarmProduce(models.Model):
     amount_sold = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     market = models.CharField(max_length=255, null=True, blank=True)
+    created = models.DateTimeField(default=timezone.now)
 
 class Resource(models.Model):
     name = models.CharField(max_length=255)
@@ -101,6 +105,7 @@ class Resource(models.Model):
     date_supplied = models.DateField(null=True, blank=True)
     supplier_name = models.CharField(max_length=255, null=True, blank=True)
     supplier_phone = models.CharField(max_length=20, null=True, blank=True)
+    created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.name} - {self.quantity} units"

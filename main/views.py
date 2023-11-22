@@ -140,12 +140,19 @@ def farm_details(request, farm_id):
     farming_costs_exist = FarmingCosts.objects.filter(farm=farm).exists()
     farm_produce_exist = FarmProduce.objects.filter(farm=farm).exists()
 
+    farming_dates_queryset = FarmingDates.objects.filter(farm=farm)
+    farming_costs_queryset = FarmingCosts.objects.filter(farm=farm)
+    farm_produce_queryset = FarmProduce.objects.filter(farm=farm)
+
     context = {
         'farm': farm,
         'farm_id': farm_id,
         'farming_dates_exist': farming_dates_exist,
         'farming_costs_exist': farming_costs_exist,
         'farm_produce_exist': farm_produce_exist,
+        'farming_dates_queryset': farming_dates_queryset,
+        'farming_costs_queryset': farming_costs_queryset,
+        'farm_produce_queryset': farm_produce_queryset
     }
 
     return render(request, 'main/farm_details.html', context)
@@ -168,9 +175,9 @@ def add_farm_dates(request, farm_id):
     return render(request, 'main/add_farm_dates.html', {'farm': farm, 'form': form, 'farm_id': farm_id})
 
 @login_required(login_url="/login")
-def update_farm_dates(request, farm_id):
+def update_farm_dates(request, farm_id, farming_dates_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
-    farming_dates = get_object_or_404(FarmingDates, farm=farm)
+    farming_dates = get_object_or_404(FarmingDates, id=farming_dates_id, farm=farm)
 
     if request.method == 'POST':
         form = FarmingDatesForm(request.POST, instance=farming_dates)
@@ -182,6 +189,22 @@ def update_farm_dates(request, farm_id):
         form = FarmingDatesForm(instance=farming_dates)
 
     return render(request, 'main/update_farm_dates.html', {'farm': farm, 'form': form})
+
+
+# def update_farm_dates(request, farm_id):
+#     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+#     farming_dates = get_object_or_404(FarmingDates, farm=farm)
+
+#     if request.method == 'POST':
+#         form = FarmingDatesForm(request.POST, instance=farming_dates)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Farming Dates Updated Successfully!')
+#             return redirect('farm_details', farm_id=farm_id)
+#     else:
+#         form = FarmingDatesForm(instance=farming_dates)
+
+#     return render(request, 'main/update_farm_dates.html', {'farm': farm, 'form': form})
 
 @login_required(login_url="/login")
 def add_farm_costs(request, farm_id):
