@@ -29,16 +29,6 @@ class CustomUser(AbstractUser):
     def has_farm(self):
         # Check if the user has an associated farm
         return self.farm_set.exists()  
-
-class Person(models.Model):
-    name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
-    date_of_employment = models.DateField(null=True, blank=True)
-    is_peeler = models.BooleanField(default=False) 
-    is_staff = models.BooleanField(default=False) 
-
-    def __str__(self):
-        return self.name
     
 class Crop(models.Model):
     CROP_CHOICES = [
@@ -65,6 +55,17 @@ class Farm(models.Model):
     crop_peelers = models.ManyToManyField('Person', related_name='farms_peeling', blank=True)
     staff_contacts = models.ManyToManyField('Person', related_name='farms_staff', blank=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+    
+class Person(models.Model):
+    name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    date_of_employment = models.DateField(null=True, blank=True)
+    is_peeler = models.BooleanField(default=False) 
+    is_staff = models.BooleanField(default=False) 
+    # farms = models.ManyToManyField(Farm, related_name='staff_contacts')
 
     def __str__(self):
         return self.name

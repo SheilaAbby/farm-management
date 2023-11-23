@@ -19,8 +19,6 @@ urlpatterns = [
     path('add_farm/', views.add_farm, name='add_farm'),
     path('edit_farm/<int:farm_id>/', views.edit_farm, name='edit_farm'),
     path('farm_details/<int:farm_id>/', views.farm_details, name='farm_details'),
-    # path('add_farm_data/<int:farm_id>/', views.add_farm_data, name='add_farm_data'),
-    # path('manage_farm/<int:farm_id>/crop_information/', views.create_crop_information, name='create_crop_information'),
     path('add_person/<int:farm_id>/farm_workers', views.add_person, name='add_person'),
     path('edit_person/<int:farm_id>/<int:person_id>/', views.edit_person, name='edit_person'),
     path('farm/<int:farm_id>/add_farm_dates/', views.add_farm_dates, name='add_farm_dates'),
@@ -29,6 +27,10 @@ urlpatterns = [
     path('farm/<int:farm_id>/update_farm_costs/', views.update_farm_costs, name='update_farm_costs'),
     path('farm/<int:farm_id>/add_farm_produce/', views.add_farm_produce, name='add_farm_produce'), 
     path('farm/<int:farm_id>/update_farm_produce/', views.update_farm_produce, name='update_farm_produce'),
+    path('<int:farm_id>/view_more_farm_dates/', views.view_more_farm_dates, name='view_more_farm_dates'),
+    path('<int:farm_id>/view_more_farm_costs/', views.view_more_farm_costs, name='view_more_farm_costs'),
+    path('<int:farm_id>/view_more_farm_produce/', views.view_more_farm_produce, name='view_more_farm_produce'),
+    path('<int:farm_id>/view_more_farm_staff/', views.view_more_farm_staff, name='view_more_farm_staff'),
 
 # Password Reset urls
     path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
