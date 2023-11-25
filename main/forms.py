@@ -119,12 +119,19 @@ class LoginForm(forms.Form):
 class FarmForm(forms.ModelForm):
     class Meta:
         model = Farm
-        fields = ['district', 'location_coordinates', 'land_size', 'crops']
+        fields = ['district', 'other_location', 'location_coordinates', 'land_size', 'crops', 'farm_photo', 'other_crops']
 
-    district = forms.CharField(
-        max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'District(Lango, Teso, Abim, & Nakaseke)'})
-    )
+    DISTRICT_CHOICES = [
+        ('', 'Select District'),
+        ('Lango', 'Lango'),
+        ('Teso', 'Teso'),
+        ('Abim', 'Abim'),
+        ('Nakaseke', 'Nakaseke'),
+        ('Other', 'Other'),
+    ]
+
+    district = forms.ChoiceField(choices=DISTRICT_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    other_location = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'style': 'display:none;'}))
 
     location_coordinates = forms.CharField(
         max_length=255,
@@ -148,6 +155,7 @@ class FarmForm(forms.ModelForm):
 
         # Call the parent __init__ method
         super().__init__(*args, **kwargs)
+        self.fields['other_location'].required = False
 
         # Save 'user' as an attribute of the form
         self.user = user
@@ -177,6 +185,17 @@ class FarmForm(forms.ModelForm):
             farm.save()
 
         return farm
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        district = cleaned_data.get('district')
+        other_location = cleaned_data.get('other_location')
+
+        # Validate that 'other_location' is provided if 'Other' is selected
+        if district == 'Other' and not other_location:
+            raise forms.ValidationError("Please provide an 'Other' location.")
+
+        return cleaned_data
 
 class FarmingDatesForm(forms.ModelForm):
 
@@ -288,9 +307,11 @@ class FarmProduceForm(forms.ModelForm):
             return cleaned_data
 
 class PersonForm(forms.ModelForm):
+    photo = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}), label='Upload a Profile Photo')
+
     class Meta:
         model = Person
-        fields = ['name', 'phone_number', 'date_of_employment', 'is_peeler', 'is_staff']
+        fields = ['photo', 'name', 'phone_number', 'date_of_employment', 'is_peeler', 'is_staff']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
@@ -298,6 +319,7 @@ class PersonForm(forms.ModelForm):
             'is_peeler': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+        
     def __init__(self, *args, **kwargs):
         super(PersonForm, self).__init__(*args, **kwargs)
         self.fields['is_peeler'].label = 'Is A Peeler'

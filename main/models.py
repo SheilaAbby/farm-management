@@ -46,7 +46,6 @@ class Farm(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     crops = models.CharField(max_length=255)
-    pictures = models.ManyToManyField('FarmImage', related_name='farms_images', blank=True)
     district = models.CharField(max_length=255)
     location_coordinates = models.CharField(max_length=255)
     land_size = models.DecimalField(max_digits=10, decimal_places=2)
@@ -54,6 +53,8 @@ class Farm(models.Model):
     
     crop_peelers = models.ManyToManyField('Person', related_name='farms_peeling', blank=True)
     staff_contacts = models.ManyToManyField('Person', related_name='farms_staff', blank=True)
+    farm_photo = models.ImageField(upload_to='farm_photos/', blank=True, null=True)
+    other_crops = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -65,6 +66,7 @@ class Person(models.Model):
     date_of_employment = models.DateField(null=True, blank=True)
     is_peeler = models.BooleanField(default=False) 
     is_staff = models.BooleanField(default=False) 
+    photo = models.ImageField(upload_to='workers_photos/', blank=True, null=True)
     # farms = models.ManyToManyField(Farm, related_name='staff_contacts')
 
     def __str__(self):
@@ -111,8 +113,5 @@ class Resource(models.Model):
     def __str__(self):
         return f"{self.name} - {self.quantity} units"
     
-class FarmImage(models.Model):
-    farm = models.ForeignKey('Farm', on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='farm_images/')
 
 

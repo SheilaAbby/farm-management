@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0632-3-227-49-158.ngrok-free.app', 'localhost']
+ALLOWED_HOSTS = ['2998-41-80-118-46.ngrok-free.app', 'localhost']
 
 
 # Application definition
@@ -128,7 +128,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Additional directories to look for static files during development
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# Directory where collected static files will be stored
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

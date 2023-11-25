@@ -14,14 +14,32 @@ from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,Far
 # Create your views here.
 @login_required(login_url="/login")
 def index(request):
-    return render(request, 'main/index.html')
+      if request.user.is_authenticated:
+        if  request.user.role == 'farmer': 
+            return redirect('farmer_home')
+        elif request.user.role == 'field_agent':
+            return redirect('field_agent_home') 
+        elif request.user.role == 'manager_staff':
+            return redirect('manager_home')
+      else:
+          return redirect('login') 
 
 @login_required(login_url="/login")
 def farmer_home(request):
     user = request.user 
     farms = Farm.objects.filter(user=user)
+
+    farm_exists = Farm.objects.filter(user=user).exists()
+    farm_queryset = Farm.objects.filter(user=user)
+
+    context = {
+        'farm_exists': farm_exists,
+        'farm_queryset': farm_queryset,
+        'user': user,
+        'farms': farms
+    }
  
-    return render(request, 'main/farmer_home.html', {'user': user, 'farms': farms})
+    return render(request, 'main/farmer_home.html', context)
 
 @login_required(login_url="/login")
 def field_agent_home(request):

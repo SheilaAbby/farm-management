@@ -1,147 +1,177 @@
 {% extends 'main/base.html' %} 
 {% load static %}
 {% block title %}farmer's{% endblock %} 
+
 {% block content %}
 <div class="container mt-5">
-  <div class="row justify-content-center">
-         {% if messages %}
-        <div class="alert alert-success" role="alert">
-          <ul class="messages">
-              {% for message in messages %}
-                  <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                      {{ message }}
-                      {% if message.tags == 'success' %}
-                          <i class="fas fa-check fa-lg ml-2"></i>
-                      {% endif %}
-                  </li>
-              {% endfor %}
-          </ul>
-      </div>
-    {% endif %}
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 d-flex flex-column">
-          <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
-          <div class="card-header" style="background-color: #5B362D;">
-             {% if farm.name %}
-                <p class="text-center text-success h1 fw-bold mt-4">
-                  {{ farm.name }}
-                </p>
-                {% endif %}
-          </div>
-          <div class="d-flex flex-row mb-3">
-              <div class="card-header">
-               <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
-                 <strong>Created On:</strong> {{ farm.created }}
-              </div>
+    <div class="row justify-content-center">
+        {% if messages %}
+            <div class="alert alert-success" role="alert">
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                            {{ message }}
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check fa-lg ml-2"></i>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
-        <div class="card-body d-flex flex-column">
-     
-         
-            <div class="d-flex flex-row align-items-center mb-4">
-                <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                <div class="form-outline flex-fill mb-0">
-                   <strong>Owner:</strong> {{ farm.user.full_name }}
-                </div>
-              </div>
-                
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                     <strong>Crops:</strong> {{ farm.crops }}
-                  </div>
-                </div>
-            
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                     <strong>Distcrict:</strong> {{ farm.district }}
-                  </div>
-                </div>
+        {% endif %}
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                     <strong>Location Coordinates:</strong> {{ farm.location_coordinates }}
-                  </div>
-                </div>
+  <!-- Farm Activities Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 d-flex flex-column">
+                 <!-- Farm Image -->
+                <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
 
-            <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto">Edit</a>
-            
-               {% if not farm.staff_contacts.all and not farm.crop_peelers.all %}
-                <div class="card-header mt-2" style="background-color: #B9B1AF;">
-                   {% if farm.name %}
-                      <p class="text-center text-success mt-2">
-                         <strong>Farm Workers</strong>
-                      </p>
-                      {% endif %}
-                  </div>
-                    <p class="alert alert-danger" >No farm workers added.</p>
-                    <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-2">Add</a>
-                {% endif %}
-           
-            <div class="card-body">
-            
-              {% if farm_staff_exist %}
-              <div class="card-header mt-2" style="background-color: #B9B1AF;">
-                    <p class="text-success fw-bold mt-2">
-                     Staff
-                    </p>
-              </div>
-               <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-1">Add New Staff</a>
-              {% for person in farm_staff_queryset|slice:":2"  %}
-              <div class='card-body'>
-                  <p class='mt-3'><strong>Full Name:</strong> {{ person.name }}</p>
-                  <p><strong>Phone Number:</strong> {{ person.phone_number }}</p>
-                  <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
-                  <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary">Edit</a>
-               </div>
-              {% endfor %}
-               {% if farm_staff_queryset|length > 2 %}
-                  <a href="{% url 'view_more_farm_staff' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More Staff</a>
-                {% endif %}
-              {% endif %}
-                
-                {% if farm_peelers_exist %}
-                <div class="card-header mt-2" style="background-color: #B9B1AF;">
-                    <p class="text-success fw-bold mt-2">
-                     Peelers
-                    </p>
-              </div>
-               <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-1">Add New Peeler</a>
-                {% for person in farm.crop_peelers.all %}
-                <div class='card-body'>
-                        <p><strong>Full Name:</strong> {{ person.name }}</p>
-                        <p><strong>Phone Number:</strong> {{ person.phone_number }}</p>
-                        <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
-                        <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary">Edit</a>
-                  </div>
-                {% endfor %}
-                {% endif %}
-            </div>
-            </div>
-        </div>
-    </div>
-     <div class="col-md-4 mb-4">
-      <div class="card h-100 d-flex flex-column">
-        <img src="{% static 'images/fertilizers.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
-        <div class="card-header">
-          <strong>Farm Activities</strong>
-        </div>
-        <div class="card-body d-flex flex-column">
-          <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
-              {% if not farming_dates_exist and not farming_costs_exist and not farm_produce_exist %}
-                  <div class="card-body">
-                      <p class="alert alert-danger" >No farm activities available for this farm.</p>
-                      </div>
+                <!-- Farm Header -->
+                <div class="card-header" style="background-color: #5B362D;">
+                    {% if farm.name %}
+                        <p class="text-center text-success h1 fw-bold mt-4">
+                            {{ farm.name }}
+                        </p>
                     {% endif %}
-                   <div class="card-body">
-                      <div class="card-header mt-2">
-                          <p class="text-center text-success mt-2">
-                             <strong>Key Farming Dates</strong>
-                          </p>
+                </div>
+
+                 <!-- Created On -->
+                <div class="d-flex flex-row mb-2">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                        <strong>Created On:</strong> {{ farm.created }}
+                    </div>
+                </div>
+
+                <!-- Farm Activities Content -->
+                <div class="card-body d-flex flex-column">
+
+                   <div class="d-flex flex-row align-items-center mb-2">
+                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                        <div class="form-outline flex-fill mb-0">
+                            <strong>Owner:</strong> {{ farm.user.full_name }}
                         </div>
-                            
-                      {% if farming_dates_exist %}
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-2">
+                        <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
+                        <div class="form-outline flex-fill mb-0">
+                            <strong>Crops:</strong> {{ farm.crops }}
+                        </div>
+                    </div>
+
+                   <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                       <strong>Distcrict:</strong> {{ farm.district }}
+                    </div>
+                   </div>
+
+                   <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                       <strong>Location Coordinates:</strong> {{ farm.location_coordinates }}
+                    </div>
+                   </div>
+
+                     <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto">Edit</a>
+
+                    <!-- Farm Workers Section -->
+                    {% if not farm.staff_contacts.all and not farm.crop_peelers.all %}
+                        <div class="card-header mt-3" style="background-color: #B9B1AF;">
+                            {% if farm.name %}
+                                <p class="text-center text-success">
+                                    <strong>Farm Workers</strong>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <p class="alert alert-danger small mt-3">No farm workers added.</p>
+                        <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-2">Add</a>
+                    {% endif %}
+
+                    <div class="card-body">
+                          {% if farm_staff_exist %}
+                            <div class="card-header mt-2" style="background-color: #B9B1AF;">
+                                  <p class="text-success fw-bold mt-2">
+                                   Staff
+                                  </p>
+                            </div>
+                           <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-1">Add New Staff</a>
+                          {% for person in farm_staff_queryset|slice:":2"  %}
+                          <div class="d-flex justify-content-start align-items-center">
+                              {% if person.photo %}
+                                  <img src="{{ person.photo.url }}" alt="{{ person.name }} Photo" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                              {% else %}
+                                  <!-- Default avatar image -->
+                                  <img src="{% static 'images/avatar.jpeg' %}" alt="Default Avatar" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                              {% endif %}
+
+                              <div>
+                                  <p class='mb-1'><strong>Full Name:</strong> {{ person.name }}</p>
+                                  <p class='mb-1'><strong>Phone Number:</strong> {{ person.phone_number }}</p>
+                                  <p class='mb-1'><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                                  <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary">Edit</a>
+                              </div>
+                          </div>
+                      
+                          {% endfor %}
+                           {% if farm_staff_queryset|length > 2 %}
+                              <a href="{% url 'view_more_farm_staff' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More Staff</a>
+                            {% endif %}
+                          {% endif %}
+                        
+                    </div>
+                          {% if farm_peelers_exist %}
+                          <div class="card-header mt-2" style="background-color: #B9B1AF;">
+                              <p class="text-success fw-bold mt-2">
+                               Peelers
+                              </p>
+                        </div>
+                         <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-1">Add New Peeler</a>
+                          {% for person in farm.crop_peelers.all %}
+                      <div class='card-body'>
+                        <div class="d-flex justify-content-start align-items-center">
+                            {% if person.photo %}
+                                <img src="{{ person.photo.url }}" alt="{{ person.name }} Photo" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                            {% else %}
+                                <!-- Default avatar image -->
+                                <img src="{% static 'images/avatar.jpeg' %}" alt="Default Avatar" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                            {% endif %}
+
+                            <div>
+                                <p class='mb-1'><strong>Full Name:</strong> {{ person.name }}</p>
+                                <p class='mb-1'><strong>Phone Number:</strong> {{ person.phone_number }}</p>
+                                <p class='mb-1'><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                                <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary">Edit</a>
+                            </div>
+                        </div>
+                       </div>
+                          {% endfor %}
+                          {% endif %}
+                </div>
+            </div>
+        </div>
+    
+        <!-- Farm Activities Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 d-flex flex-column">
+                <!-- Farm Activities Header -->
+                <div class="card-header" style="background-color: #81594F;">
+                    <strong class='h2'>Farm Activities</strong>
+                </div>
+
+                <!-- Farm Activities Content -->
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
+
+                    <!-- Key Farming Dates Section -->
+                    <div class="card-body">
+                          <div class="card-header">
+                            <p class="text-center text-success">
+                               <strong>Key Farming Dates</strong>
+                            </p>
+                        </div>
+                         {% if farming_dates_exist %}
                             <a href="{% url 'add_farm_dates' farm_id=farm_id %}" class="btn btn-success mt-3">Add New</a>
                             {% for farming_date in farming_dates_queryset|slice:":3" %}
                                 <div class="d-flex justify-content-between align-items-center mt-2">
@@ -153,59 +183,69 @@
                             <a href="{% url 'view_more_farm_dates' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
                           {% endif %}
                           {% else %}
-                              <a href="{% url 'add_farm_dates' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
+                          <div class='mt-3'>
+                              <p class="alert alert-danger small" >No farm dates available for this farm.</p>
+                              <a href="{% url 'add_farm_dates' farm_id=farm_id %}" class="btn btn-success class='mt-3'">Add</a>
+                           </div>
                       {% endif %}
+
                     </div>
-          
-                  <div class="card-body">
-                    <div class="card-header mt-2">
-                        <p class="text-center text-success mt-2">
+
+                    <!-- Farm Costs Section -->
+                    <div class="card-body">
+                       <div class="card-header">
+                        <p class="text-center text-success">
                            <strong>Costs</strong>
                         </p>
                       </div>
-                    {% if farming_costs_exist %}
-                       <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-3">Add New</a>
-                      {% for farming_cost in farming_costs_queryset|slice:":3" %}
-                      <div class="d-flex justify-content-between align-items-center mt-2">
-                        <p class="mb-0">Farming Costs Submitted on: {{ farming_cost.created }}</p>
-                        <a href="{% url 'update_farm_costs' farm_id=farm_id %}" class="btn btn-primary mt-2">Edit</a>
+                        {% if farming_costs_exist %}
+                           <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-3">Add New</a>
+                          {% for farming_cost in farming_costs_queryset|slice:":3" %}
+                          <div class="d-flex justify-content-between align-items-center mt-2">
+                            <p class="mb-0">Farming Costs Submitted on: {{ farming_cost.created }}</p>
+                            <a href="{% url 'update_farm_costs' farm_id=farm_id %}" class="btn btn-primary mt-2">Edit</a>
+                            </div>
+                          {% endfor %}
+                          {% if farming_costs_queryset|length > 3 %}
+                            <a href="{% url 'view_more_farm_costs' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
+                          {% endif %}
+                        {% else %}
+                        <div class='mt-3'>
+                            <p class="alert alert-danger small" >No farm Costs available for this farm.</p>
+                            <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
                         </div>
-                      {% endfor %}
-                      {% if farming_costs_queryset|length > 3 %}
-                        <a href="{% url 'view_more_farm_costs' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
-                      {% endif %}
-                    {% else %}
-                      <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
-                    {% endif %}
-                  </div>
+                        {% endif %}
+                    </div>
 
-                  <div class="card-body">
-                    <div class="card-header mt-2">
-                        <p class="text-center text-success mt-2">
+                    <!-- Farm Produce Section -->
+                    <div class="card-body">
+                        <div class="card-header">
+                        <p class="text-center text-success">
                            <strong>Farm Produce</strong>
                         </p>
                       </div>
-                    {% if farm_produce_exist %}
-                     <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-3">Add New</a>
-                    {% for farm_produce in farm_produce_queryset|slice:":3" %}
-                     <div class="d-flex justify-content-between align-items-center mt-2">
-                      <p class="mb-0">Farm Produce Submitted on: {{ farm_produce.created }}</p>
-                      <a href="{% url 'update_farm_produce' farm_id=farm_id %}" class="btn btn-primary mt-2">Edit</a>
-                      </div>
-                      {% endfor %}
-                       {% if farm_produce_queryset|length > 3 %}
-                        <a href="{% url 'view_more_farm_produce' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
-                      {% endif %}
-                    {% else %}
-                      <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
-                    {% endif %}
+                        {% if farm_produce_exist %}
+                         <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-3">Add New</a>
+                        {% for farm_produce in farm_produce_queryset|slice:":3" %}
+                         <div class="d-flex justify-content-between align-items-center mt-2">
+                          <p class="mb-0">Farm Produce Submitted on: {{ farm_produce.created }}</p>
+                          <a href="{% url 'update_farm_produce' farm_id=farm_id %}" class="btn btn-primary mt-2">Edit</a>
+                          </div>
+                          {% endfor %}
+                           {% if farm_produce_queryset|length > 3 %}
+                            <a href="{% url 'view_more_farm_produce' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
+                          {% endif %}
+                        {% else %}
+                        <div class='mt-3'>
+                            <p class="alert alert-danger small" >No farm produce available for this farm.</p>
+                            <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-2">Add</a>
+                         </div>
+                        {% endif %}
                     </div>
+                </div>
             </div>
-          </div>
         </div>
-  </div>
+    </div>
 </div>
-{% block javascript %}
-    <script src="{% static 'js/custom.js' %}"></script>
 {% endblock %}
-{% endblock %}
+

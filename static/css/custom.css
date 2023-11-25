@@ -3,12 +3,12 @@
     background-repeat: no-repeat;
     background-size: cover;
     animation: backgroundAnimation 20s linear infinite; /* Adjust the duration as needed */
-    background-image: url("/static/images/background3.jpeg"); /* Relative or absolute URL to your image */
+    background-image: url("/static/images/background1.jpeg"); /* Relative or absolute URL to your image */
 }
 
 @keyframes backgroundAnimation {
     0% {
-        background-image: url("/static/images/background5.jpeg");
+        background-image: url("/static/images/background1.jpeg");
     }
     33% {
         background-image: url("/static/images/background2.jpeg");

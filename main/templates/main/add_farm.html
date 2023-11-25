@@ -29,6 +29,9 @@
                   <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
                      {{ form.district }} 
+                     <div class='mt-3'>
+                     {{ form.other_location }}
+                     </div>
                   </div>
                 </div>
 
@@ -59,10 +62,6 @@
                 </div>
               </form>
             </div>
-            <div
-              class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-              <h1>Farm Details to Display Here</h1>
-            </div>
           </div>
         </div>
       </div>
@@ -91,6 +90,17 @@ getLocationButton.addEventListener('click', function () {
             console.error('Geolocation is not supported by this browser.');
         }
     });
+  
+document.addEventListener('DOMContentLoaded', function() {
+    var districtField = document.getElementById('id_district');
+    var otherLocationField = document.getElementById('id_other_location');
+
+    districtField.addEventListener('change', function() {
+        var selectedOption = this.value;
+        otherLocationField.style.display = (selectedOption === 'Other') ? 'block' : 'none';
+    });
+});
+
 </script>
 {% endblock %}
 
