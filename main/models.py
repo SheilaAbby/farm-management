@@ -84,6 +84,7 @@ class FarmingDates(models.Model):
 
 class FarmingCosts(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farming_costs')
+    cost_fertilizer_application = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cost_planting = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cost_ploughing = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cost_weeding = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)

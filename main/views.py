@@ -253,7 +253,7 @@ def update_farm_dates(request, farm_id, farming_dates_id):
     else:
         form = FarmingDatesForm(instance=farming_dates)
 
-    return render(request, 'main/update_farm_dates.html', {'farm': farm, 'form': form})
+    return render(request, 'main/update_farm_dates.html', {'farm': farm, 'form': form, 'farm_id': farm_id, 'farming_dates_id': farming_dates_id})
 
 @login_required(login_url="/login")
 def add_farm_costs(request, farm_id):
@@ -286,7 +286,7 @@ def update_farm_costs(request, farm_id, farming_costs_id):
     else:
         form = FarmingCostsForm(instance=farming_costs)
 
-    return render(request, 'main/update_farm_costs.html', {'farm': farm, 'form': form})
+    return render(request, 'main/update_farm_costs.html', {'farm': farm, 'form': form, 'farm_id': farm_id, 'farming_costs_id': farming_costs_id})
 
 @login_required(login_url="/login")
 def add_farm_produce(request, farm_id):
@@ -319,7 +319,7 @@ def update_farm_produce(request, farm_id, farm_produce_id):
     else:
         form = FarmProduceForm(instance=farm_produce)
 
-    return render(request, 'main/update_farm_produce.html', {'farm': farm, 'form': form})
+    return render(request, 'main/update_farm_produce.html', {'farm': farm, 'form': form, 'farm_id': farm_id, 'farm_produce_id': farm_produce_id})
 
 @login_required(login_url="/login")
 def view_more_farm_dates(request, farm_id):
