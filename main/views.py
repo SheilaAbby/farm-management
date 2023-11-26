@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
@@ -161,6 +161,18 @@ def edit_person(request, farm_id, person_id):
     return render(request, 'main/edit_person.html', {'form': form, 'farm': farm, 'person': person})
 
 @login_required(login_url="/login")
+def delete_person(request, farm_id, person_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    person = get_object_or_404(Person, id=person_id)
+
+    if request.method == 'POST':
+        person.delete()
+        messages.success(request, 'Farm Worker Deleted Successfully!')
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
+
+@login_required(login_url="/login")
 def add_farm(request):
     if request.method == 'POST':
         form = FarmForm(request.POST, user=request.user)
@@ -199,9 +211,9 @@ def farm_details(request, farm_id):
     farm_peelers_exist = farm.crop_peelers.exists()
     farm_staff_exist = farm.staff_contacts.exists()
     
-    farming_dates_queryset = FarmingDates.objects.filter(farm=farm)
-    farming_costs_queryset = FarmingCosts.objects.filter(farm=farm)
-    farm_produce_queryset = FarmProduce.objects.filter(farm=farm)
+    farming_dates_queryset = FarmingDates.objects.filter(farm=farm).order_by('-created')
+    farming_costs_queryset = FarmingCosts.objects.filter(farm=farm).order_by('-created')
+    farm_produce_queryset = FarmProduce.objects.filter(farm=farm).order_by('-created')
     farm_peelers_queryset = farm.crop_peelers.all()
     farm_staff_queryset = farm.staff_contacts.all()
 
