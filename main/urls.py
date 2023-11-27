@@ -32,7 +32,7 @@ urlpatterns = [
     path('<int:farm_id>/view_more_farm_produce/', views.view_more_farm_produce, name='view_more_farm_produce'),
     path('<int:farm_id>/view_more_farm_staff/', views.view_more_farm_staff, name='view_more_farm_staff'),
     path('farm/<int:farm_id>/delete_person/<int:person_id>/', views.delete_person, name='delete_person'),
-
+    path('farm_details/<int:farm_id>/create_resource/', views.create_resource, name='create_resource'),
 
 # Password Reset urls
     path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),

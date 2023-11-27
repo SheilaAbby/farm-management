@@ -7,8 +7,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
-from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce
-from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm 
+from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource
+from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm
 
 
 # Create your views here.
@@ -386,3 +386,21 @@ def view_more_farm_staff(request, farm_id):
     }
 
     return render(request, 'main/view_more_farm_staff.html', context)
+
+@login_required(login_url="/login")
+def create_resource(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+
+    if request.method == 'POST':
+        form = ResourceForm(request.POST)
+        if form.is_valid():
+            resource = form.save(commit=False)
+            resource.save()
+            farm.resources_supplied.add(resource)
+            messages.success(request, 'Resource Submitted Successfully!')
+            # Redirect to a success page or display a success message
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = ResourceForm()
+
+    return render(request, 'main/add_resources.html', {'form': form, 'farm_id':farm_id})

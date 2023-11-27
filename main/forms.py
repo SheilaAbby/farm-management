@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce
@@ -328,3 +329,33 @@ class PersonForm(forms.ModelForm):
         super(PersonForm, self).__init__(*args, **kwargs)
         self.fields['is_peeler'].label = 'Is A Peeler'
         self.fields['is_staff'].label = 'Is A Staff'
+
+class ResourceForm(forms.ModelForm):
+    class Meta:
+        model = Resource
+        fields = ['name', 'quantity', 'date_supplied', 'supplier_name', 'supplier_phone']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Resource Name'}),
+            'date_supplied': forms.DateInput(attrs={'class': 'form-control','type': 'date'}),
+            'supplier_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Name of the Supplier'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantity Received'}),
+            'supplier_phone':forms.TextInput(attrs={"class": "form-control", "placeholder": "Phone Number"})
+        }
+
+    def clean_date_supplied(self):
+        date_supplied = self.cleaned_data['date_supplied']
+
+        # Check if the date supplied is not in the future
+        if date_supplied and date_supplied > timezone.now().date():
+            raise ValidationError('Date supplied cannot be in the future.')
+
+        return date_supplied
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data['quantity']
+
+        # Check if the quantity is non-negative
+        if quantity < 0:
+            raise ValidationError('Quantity should be a non-negative number.')
+
+        return quantity

@@ -111,11 +111,9 @@ class Resource(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     date_supplied = models.DateField(null=True, blank=True)
     supplier_name = models.CharField(max_length=255, null=True, blank=True)
-    supplier_phone = models.CharField(max_length=20, null=True, blank=True)
+    supplier_phone = models.CharField(max_length=15, null=True, blank=True)
     created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.name} - {self.quantity} units"
     
-
-

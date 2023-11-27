@@ -75,7 +75,7 @@
                    </div>
 
                      <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto mb-3"><i class="fas fa-edit"></i></a>
-                     <a href="{% url 'add_farm' %}" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Farm Resources</a>
+                     <a href="{% url 'create_resource' farm_id=farm.id %}" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Farm Resources</a>
 
                     <!-- Farm Workers Section -->
                     {% if not farm.staff_contacts.all and not farm.crop_peelers.all %}
