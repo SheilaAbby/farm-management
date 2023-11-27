@@ -26,11 +26,11 @@
             <div>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li><a class="nav-link btn text-success" href="{% url 'index' %}">Home</a></li>
-                        <li class="btn text-success" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!">Training</li>
-                        <li class="btn text-success" data-bs-toggle="popover1" title="Real Time Chat" data-bs-content="Coming soon!">ChatRoom</li>
-                        <li class="btn text-success" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG">About</li>
-                        <li class="btn text-success" data-bs-toggle="popover2" title="Blog/News" data-bs-content="Coming Soon!">Blog</li>
+                        <li><a class="nav-link btn text-success" href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="btn text-success" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!"><i class="fas fa-chalkboard"></i> Training</li>
+                        <li class="btn text-success" data-bs-toggle="popover1" title="Real Time Chat" data-bs-content="Coming soon!"><i class="fas fa-comments"></i> ChatRoom</li>
+                        <li class="btn text-success" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG"><i class="fas fa-info-circle"></i> About</li>
+                        <li class="btn text-success" data-bs-toggle="popover2" title="Blog/News" data-bs-content="Coming Soon!"><i class="fas fa-newspaper"></i> Blog</li>
                     {% endif %}
                 </ul>
             </div>
