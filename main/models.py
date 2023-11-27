@@ -18,6 +18,9 @@ class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     
+    # Additional field to hold text when phone number doesn't belong to the user
+    phone_number_owner = models.CharField(max_length=255, blank=True, null=True)
+
     def age(self):
         from datetime import date
         if self.birth_year:

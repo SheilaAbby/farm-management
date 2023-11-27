@@ -19,8 +19,6 @@ def index(request):
             return redirect('farmer_home')
         elif request.user.role == 'field_agent':
             return redirect('field_agent_home') 
-        elif request.user.role == 'manager_staff':
-            return redirect('manager_home')
       else:
           return redirect('login') 
 

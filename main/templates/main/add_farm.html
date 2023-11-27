@@ -1,71 +1,84 @@
-{% extends 'main/base.html' %} 
+r{% extends 'main/base.html' %} 
 {% load static %}
-{% block title %}Add Farm{% endblock %} 
+{% block title %}add new farm{% endblock %} 
 {% block content %}
-<div class="container my-5 container h-100">
-  <div class="row d-flex justify-content-center align-items-center h-100">
-    <div class="col-lg-12 col-xl-11">
-      <div class="card text-black" style="border-radius: 25px">
-        <div class="card-body p-md-5">
-          <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-              <p class="text-center text-success h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">
-                Add a Farm
-              </p>
-              <hr/>
-              <form method="post" class="mx-1 mx-md-4" enctype="multipart/form-data">
-                {% csrf_token %} {% if form.errors %}
-                <div class="alert alert-danger">
-                  <strong>Error:</strong> Please check the following fields:
-                  <ul>
-                    {% for field in form %} {% for error in field.errors %}
-                    <li>{{ field.label_tag }}: {{ error }}</li>
-                    {% endfor %} {% endfor %}
-                  </ul>
-                </div>
-                {% endif %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+   {% if messages %}
+        <div class="alert alert-success" role="alert">
+          <ul class="messages">
+              {% for message in messages %}
+                  <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                      {{ message }}
+                      {% if message.tags == 'success' %}
+                          <i class="fas fa-check fa-lg ml-2"></i>
+                      {% endif %}
+                  </li>
+              {% endfor %}
+          </ul>
+      </div>
+      {% endif %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 d-flex flex-column">
+              <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+              <div class="card-header">
+                <strong>Add a New Farm</strong>
+              </div>
+              <div class="card-body d-flex flex-column">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                       <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %} 
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                           <strong>Error:</strong> Check the following fields:
+                             <ul>
+                                 {% for field, errors in form.errors.items %}
+                                   <li>{{ field }}: {{ errors|join:", " }}</li>
+                                 {% endfor %}
+                             </ul>
+                          </div>
+                        {% endif %}
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                     {{ form.district }} 
+                   <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1 mt-4">
+                      {{ form.district }} 
                      <div class='mt-3'>
                      {{ form.other_location }}
                      </div>
+                    </div>
                   </div>
-                </div>
 
-               <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                      <input type="text" id="location-coordinates" name="location_coordinates" class="form-control mb-3" readonly>
-                      <button type="button" id="get-location-btn" class="btn btn-primary">Get Location</button>
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <input type="text" id="location-coordinates" name="location_coordinates" class="form-control mb-3" readonly>
+                          <button type="button" id="get-location-btn" class="btn btn-primary">Get Location</button>
+                      </div>
+                    </div>
+
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-landmark fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1 mt-4">
+                     {{ form.land_size }}
+                      <label for="{{ form.land_size.id_for_label }}">Land Size(in acres)</label>
+                    </div>
                   </div>
-                </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-landmark fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                    {{ form.land_size }}
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
+                    <div class="form-floating mb-1 mt-4">
+                      {{ form.crops }}
+                    </div>
                   </div>
-                </div>
 
-                <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
-                  <div class="form-outline flex-fill mb-0">
-                     {{ form.crops }}
+                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                     <button type="submit" class="btn btn-success">Add Farm</button>
                   </div>
-                </div>
-
-                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                  <button type="submit" class="btn btn-success">Add Farm</button>
-                </div>
-              </form>
+                  </form>
+              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
   </div>
 </div>
 {% endblock %}
@@ -100,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         otherLocationField.style.display = (selectedOption === 'Other') ? 'block' : 'none';
     });
 });
-
 </script>
 {% endblock %}
 

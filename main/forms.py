@@ -18,7 +18,7 @@ class RegisterForm(UserCreationForm):
     username = forms.CharField(max_length=30, help_text='Required. Enter a Username.',
                                 widget = forms.TextInput(
                                     attrs = {"class": "form-control", "placeholder": "Username"}))
-    role = forms.ChoiceField(choices=[('', 'Select a Role'),('farmer', 'Farmer'), ('field_agent', 'Field Agent'), ('manager_staff', 'Manager/Staff')],
+    role = forms.ChoiceField(choices=[('', 'Select a Role'),('farmer', 'Farmer'), ('field_agent', 'Field Agent')],
                              widget = forms.Select(
                                  attrs = {"class": "form-control"}))
     birth_year = forms.IntegerField(help_text='Required. Enter your year of birth.',
@@ -42,9 +42,13 @@ class RegisterForm(UserCreationForm):
                                        attrs={"class": "form-control", "placeholder": "Phone Number"}
                                    ))
     
-    phone_belongs_to_user = forms.ChoiceField(choices=[('', 'Yours ?'),('Yes', 'Yes'), ('No', 'No')],
+    phone_belongs_to_user = forms.ChoiceField(choices=[('', 'Your Phone ?'),('Yes', 'Yes'), ('No', 'No')],
                              widget = forms.Select(
-                                 attrs = {"class": "form-control"}))
+                                 attrs = {"class": "form-control", "id": "phone_belongs_to_user"}))
+    
+    # Additional field to hold text when phone number doesn't belong to the user
+    phone_number_owner = forms.CharField(max_length=255, required=False,
+                                       widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Relationship with the owner ?"}))
     
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
