@@ -4,10 +4,10 @@ r{% extends 'main/base.html' %}
 {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-6 mb-4">
             <div class="card h-100 d-flex flex-column">
               <div>
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Windwood Farm Management Logo">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid">
               </div> 
               <div class="card-header text-center">
                 <strong class="text-success">Sign Up</strong>
@@ -87,7 +87,7 @@ r{% extends 'main/base.html' %}
                     {{ form.phone_number }}
                     <label for="{{ form.phone_number.id_for_label }}">Phone</label>
                 </div>
-                <div class="form-floating mb-1 ms-1" style="width: 41%;">
+                <div class="form-floating mb-1 ms-4" style="width: 41%;">
                     {{ form.phone_belongs_to_user }}
                     <label for="{{ form.phone_belongs_to_user.id_for_label }}"></label>
                 </div>
@@ -95,7 +95,7 @@ r{% extends 'main/base.html' %}
                
                
                <div class="mb-3" id="relationshipField" style="display: none;">
-                    <input type="text" class="form-control" id="phoneOwner" name="phone_number_owner" placeholder="Relationship with the owner?" disabled>
+                    <input type="text" class="form-control" id="phoneOwner" name="phone_number_owner" placeholder="What is your relationship with the owner?" disabled>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-2">
