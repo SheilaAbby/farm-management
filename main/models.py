@@ -67,8 +67,8 @@ class Person(models.Model):
     is_peeler = models.BooleanField(default=False) 
     is_staff = models.BooleanField(default=False) 
     photo = models.ImageField(upload_to='workers_photos/', blank=True, null=True)
-    # farms = models.ManyToManyField(Farm, related_name='staff_contacts')
-
+    created = models.DateTimeField(default=timezone.now)
+  
     def __str__(self):
         return self.name
 

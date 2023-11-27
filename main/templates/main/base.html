@@ -26,11 +26,11 @@
             <div>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li class="btn text-success fw-bold" data-bs-toggle="popover2" title="Blog/News" data-bs-content="Coming Soon!">Blog</li>
+                        <li><a class="nav-link btn text-success fw-bold" href="{% url 'index' %}">Home</a></li>
                         <li class="btn text-success fw-bold" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!">Training</li>
                         <li class="btn text-success fw-bold" data-bs-toggle="popover1" title="Real Time Chat" data-bs-content="Coming soon!">ChatRoom</li>
                         <li class="btn text-success fw-bold" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG">About</li>
-                        <li><a class="nav-link btn text-success fw-bold" href="{% url 'index' %}">Home</a></li>
+                        <li class="btn text-success fw-bold" data-bs-toggle="popover2" title="Blog/News" data-bs-content="Coming Soon!">Blog</li>
                     {% endif %}
                 </ul>
             </div>
@@ -40,9 +40,9 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <!-- Display user avatar or default avatar -->
-                                {% if user.profile.photo %}
+                                {% if user.photo %}
                                     <div class="rounded-circle overflow-hidden me-2" style="width: 30px; height: 30px;">
-                                        <img src="{{ user.profile.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
+                                        <img src="{{ user.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
                                     </div>
                                 {% else %}
                                     <!-- Basic avatar or placeholder -->

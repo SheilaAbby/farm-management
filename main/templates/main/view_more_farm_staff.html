@@ -16,6 +16,12 @@
           <div class="card-body d-flex flex-column">
                  {% for person in additional_farm_staff %}
                     <div class='card-body'>
+                    {% if person.photo %}
+                        <img src="{{ person.photo.url }}" alt="{{ person.name }} Photo" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                    {% else %}
+                        <!-- Default avatar image -->
+                        <img src="{% static 'images/avatar.jpeg' %}" alt="Default Avatar" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                    {% endif %}
                       <p class='mt-3'><strong>Full Name:</strong> {{ person.name }}</p>
                       <p><strong>Phone Number:</strong> {{ person.phone_number }}</p>
                       <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>

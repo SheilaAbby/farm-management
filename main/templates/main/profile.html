@@ -89,9 +89,9 @@
             </div>
             <div
               class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-              {% if user.profile.photo %}
+              {% if user.photo %}
               <div class="rounded-circle overflow-hidden" style="width: 150px; height: 150px;">
-              <img src="{{ user.profile.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
+              <img src="{{ user.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
               </div>
               {% else %}
               <p>No photo available</p>

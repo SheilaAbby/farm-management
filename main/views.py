@@ -101,21 +101,16 @@ def update_profile(request):
     user = request.user
 
     if request.method == 'POST':
-        user_form = CustomUserUpdateForm(request.POST, instance=user)
-        print('FORM initialized')
+        user_form = CustomUserUpdateForm(request.POST, request.FILES, instance=user)
 
         if user_form.is_valid():
-            print('FORM VALID')
             user_form.save()
             messages.success(request, 'Profile Updated Successfully!')
             return redirect('profile')
-        else:
-            # Debugging: Print form errors to the console
-            print("Form Errors:", user_form.errors)
     else:
         user_form = CustomUserUpdateForm(instance=user)
 
-    return render(request, 'main/update_profile.html', {'user_form': user_form})
+    return render(request, 'main/update_profile.html', {'user_form': user_form, 'user': user})
 
 @login_required(login_url="/login")
 def profile(request):
@@ -126,7 +121,7 @@ def add_person(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id)
 
     if request.method == 'POST':
-        form = PersonForm(request.POST)
+        form = PersonForm(request.POST, request.FILES)
         if form.is_valid():
             person = form.save(commit=False)
             person.save()
@@ -214,8 +209,8 @@ def farm_details(request, farm_id):
     farming_dates_queryset = FarmingDates.objects.filter(farm=farm).order_by('-created')
     farming_costs_queryset = FarmingCosts.objects.filter(farm=farm).order_by('-created')
     farm_produce_queryset = FarmProduce.objects.filter(farm=farm).order_by('-created')
-    farm_peelers_queryset = farm.crop_peelers.all()
-    farm_staff_queryset = farm.staff_contacts.all()
+    farm_peelers_queryset = farm.crop_peelers.order_by('-created')
+    farm_staff_queryset = farm.staff_contacts.order_by('-created')
 
     context = {
         'farm': farm,
