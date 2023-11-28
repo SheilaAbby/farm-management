@@ -1,6 +1,6 @@
 r{% extends 'main/base.html' %} 
 {% load static %}
-{% block title %}farmer's{% endblock %} 
+{% block title %}{{farm.name}} | Submit Produce{% endblock %} 
 {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
@@ -23,7 +23,7 @@ r{% extends 'main/base.html' %}
             <div class="card h-100 d-flex flex-column">
               <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
               <div class="card-header">
-                <strong>Farming Produce.</strong>
+                <strong>Farming Produce</strong>
               </div>
               <div class="card-body d-flex flex-column">
                <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>

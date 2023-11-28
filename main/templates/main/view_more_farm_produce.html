@@ -17,7 +17,7 @@
                  {% for farming_produce in additional_farm_produce %}
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="mb-0">Farm Produce Submitted on: {{ farming_produce.created }}</p>
-                        <a href="{% url 'update_farm_produce' farm_id=farm_id farm_produce_id=farming_produce.id %}" class="btn btn-primary">Edit</a>
+                        <a href="{% url 'update_farm_produce' farm_id=farm_id farm_produce_id=farming_produce.id %}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                     </div>
                 {% endfor %}
             </div>

@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{% static 'fontawesomefree/css/fontawesome.css' %}">
     <link rel="stylesheet" href="{% static 'fontawesomefree/css/brands.css' %}">
     <link rel="stylesheet" href="{% static 'fontawesomefree/css/solid.css' %}">
+    <!-- Google Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
 </head>
@@ -20,7 +22,7 @@
             <!-- Logo section -->
             <div>
                 <a class="navbar-brand" href="/">
-                    <img src="{% static 'images/logo-3.jpeg' %}" alt="Windwood Farm Management Logo">
+                    <img src="{% static 'images/logo-5.jpeg' %}" alt="Windwood Farm Management Logo">
                 </a>
             </div>
             <div>
@@ -41,12 +43,12 @@
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <!-- Display user avatar or default avatar -->
                                 {% if user.photo %}
-                                    <div class="rounded-circle overflow-hidden me-2" style="width: 30px; height: 30px;">
+                                    <div class="rounded-circle overflow-hidden me-2" style="width: 60px; height: 60px;">
                                         <img src="{{ user.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
                                     </div>
                                 {% else %}
                                     <!-- Basic avatar or placeholder -->
-                                    <div class="rounded-circle overflow-hidden me-2" style="width: 30px; height: 30px; background-color: #ddd;">
+                                    <div class="rounded-circle overflow-hidden me-2" style="width: 60px; height: 60px; background-color: #ddd;">
                                         <i class="fas fa-user fa-2x d-flex justify-content-center align-items-center text-secondary"></i>
                                     </div>
                                 {% endif %}

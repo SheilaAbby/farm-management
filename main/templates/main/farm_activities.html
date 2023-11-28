@@ -7,8 +7,8 @@
 <div class="row justify-content-center mb-3">
   <div class="col-md-4 mb-4">
     <div class="card h-100 d-flex flex-column">
-         <div class="card-header" style="background-color: #81594F;">
-            <strong class='h2'>Farming Activities 🚜  </strong>
+         <div class="card-header" style="background-color: #5B362D;">
+            <strong class='h2 text-success'>{{farm.name}} - Farming Activities 🚜 </strong>
         </div>
          <div class="card-body d-flex flex-column">
         <p class="text-success fw-bold">Ready for a bountiful harvest? Update your farm activity dates for optimal planning and yield. Your success starts with up-to-date information!</p>
@@ -40,14 +40,14 @@
                     <div class="card-body">
                           <div class="card-header">
                             <p class="text-center text-success">
-                               <strong>Key Farming Dates</strong>
+                              <strong style="display: inline-block; margin-right: 5px;">Key Farming Dates</strong><span class="material-icons" style="vertical-align: middle; font-size: 3.0em;">schedule</span>
                             </p>
                         </div>
                          {% if farming_dates_exist %}
                             <a href="{% url 'add_farm_dates' farm_id=farm_id %}" class="btn btn-success mt-3"><i class="fas fa-plus"></i></a>
                             {% for farming_date in farming_dates_queryset|slice:":3" %}
                                 <div class="d-flex justify-content-between align-items-center mt-2">
-                                  <p class="mb-0">Farming Dates Submitted on: {{ farming_date.created }}</p>
+                                  <p class="mb-0">Farming Dates Submitted on: <b>{{ farming_date.created }}</b></p>
                                   <a href="{% url 'update_farm_dates' farm_id=farm.id farming_dates_id=farming_date.id %}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                                 </div>
                             {% endfor %}
@@ -74,14 +74,14 @@
                     <div class="card-body">
                        <div class="card-header">
                         <p class="text-center text-success">
-                           <strong>Costs</strong>
+                           <strong style="display: inline-block; margin-right: 5px;">Farming Costs</strong><span class="material-icons" style="vertical-align: middle; font-size: 3.0em;">attach_money</span>
                         </p>
                       </div>
                         {% if farming_costs_exist %}
                            <a href="{% url 'add_farm_costs' farm_id=farm_id %}" class="btn btn-success mt-3"><i class="fas fa-plus"></i></a>
                           {% for farming_cost in farming_costs_queryset|slice:":3" %}
                           <div class="d-flex justify-content-between align-items-center mt-2">
-                            <p class="mb-0">Farming Costs Submitted on: {{ farming_cost.created }}</p>
+                            <p class="mb-0">Farming Costs Submitted on: <b>{{ farming_cost.created }}</b></p>
                             <a href="{% url 'update_farm_costs' farm_id=farm_id farming_costs_id=farming_cost.id%}" class="btn btn-primary mt-2"><i class="fas fa-edit"></i></a>
                             </div>
                           {% endfor %}
@@ -107,14 +107,14 @@
                     <div class="card-body">
                         <div class="card-header">
                         <p class="text-center text-success">
-                           <strong>Farm Produce</strong>
+                           <strong style="display: inline-block; margin-right: 5px;">Farm Produce</strong><span class="material-icons" style="vertical-align: middle; font-size: 3.0em;">shopping_bag</span>
                         </p>
                       </div>
                         {% if farm_produce_exist %}
                          <a href="{% url 'add_farm_produce' farm_id=farm_id %}" class="btn btn-success mt-3"><i class="fas fa-plus"></i></a>
                         {% for farm_produce in farm_produce_queryset|slice:":3" %}
                          <div class="d-flex justify-content-between align-items-center mt-2">
-                          <p class="mb-0">Farm Produce Submitted on: {{ farm_produce.created }}</p>
+                          <p class="mb-0">Farm Produce Submitted on: <b>{{ farm_produce.created }}</b></p>
                           <a href="{% url 'update_farm_produce' farm_id=farm_id farm_produce_id=farm_produce.id %}" class="btn btn-primary mt-2"><i class="fas fa-edit"></i></a>
                           </div>
                           {% endfor %}
