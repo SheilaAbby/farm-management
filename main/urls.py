@@ -34,6 +34,8 @@ urlpatterns = [
     path('farm/<int:farm_id>/delete_person/<int:person_id>/', views.delete_person, name='delete_person'),
     path('farm_details/<int:farm_id>/create_resource/', views.create_resource, name='create_resource'),
     path('farm_resources/<int:farm_id>/', views.farm_resources, name='farm_resources'),
+    path('farm_workers/<int:farm_id>/', views.farm_workers, name='farm_workers'),
+    path('farm_activities/<int:farm_id>/', views.farm_activities, name='farm_activities'),
 
 
 # Password Reset urls

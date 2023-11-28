@@ -44,4 +44,9 @@
     .no-underline {
         text-decoration: none;
     }
+
+    .btn-brown {
+        background-color: #8B4513; /* Use your preferred brown color code */
+        color: white;
+    }
  

@@ -197,32 +197,9 @@ def edit_farm(request, farm_id):
 def farm_details(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
 
-    # Check if farming dates, farming costs, and farm produce, workers exist for the farm
-    farming_dates_exist = FarmingDates.objects.filter(farm=farm).exists()
-    farming_costs_exist = FarmingCosts.objects.filter(farm=farm).exists()
-    farm_produce_exist = FarmProduce.objects.filter(farm=farm).exists()
-    farm_peelers_exist = farm.crop_peelers.exists()
-    farm_staff_exist = farm.staff_contacts.exists()
-    
-    farming_dates_queryset = FarmingDates.objects.filter(farm=farm).order_by('-created')
-    farming_costs_queryset = FarmingCosts.objects.filter(farm=farm).order_by('-created')
-    farm_produce_queryset = FarmProduce.objects.filter(farm=farm).order_by('-created')
-    farm_peelers_queryset = farm.crop_peelers.order_by('-created')
-    farm_staff_queryset = farm.staff_contacts.order_by('-created')
-
     context = {
         'farm': farm,
-        'farm_id': farm_id,
-        'farming_dates_exist': farming_dates_exist,
-        'farming_costs_exist': farming_costs_exist,
-        'farm_produce_exist': farm_produce_exist,
-        'farm_peelers_exist': farm_peelers_exist,
-        'farm_staff_exist': farm_staff_exist,
-        'farming_dates_queryset': farming_dates_queryset,
-        'farming_costs_queryset': farming_costs_queryset,
-        'farm_produce_queryset': farm_produce_queryset,
-        'farm_peelers_queryset': farm_peelers_queryset,
-        'farm_staff_queryset': farm_staff_queryset
+        'farm_id': farm_id
     }
 
     return render(request, 'main/farm_details.html', context)
@@ -410,3 +387,53 @@ def farm_resources(request, farm_id):
     resources = farm.resources_supplied.order_by('-created')
 
     return render(request, 'main/farm_resources.html', {'farm': farm, 'resources': resources})
+
+@login_required(login_url="/login")
+def farm_workers(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+
+    # Check if workers exist for the farm
+  
+    farm_peelers_exist = farm.crop_peelers.exists()
+    farm_staff_exist = farm.staff_contacts.exists()
+   
+    farm_peelers_queryset = farm.crop_peelers.order_by('-created')
+    farm_staff_queryset = farm.staff_contacts.order_by('-created')
+
+    context = {
+        'farm': farm,
+        'farm_id': farm_id,
+        'farm_peelers_exist': farm_peelers_exist,
+        'farm_staff_exist': farm_staff_exist,
+        'farm_peelers_queryset': farm_peelers_queryset,
+        'farm_staff_queryset': farm_staff_queryset
+    }
+
+    return render(request, 'main/farm_workers.html', context)
+
+@login_required(login_url="/login")
+def farm_activities(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+
+    # Check if farming dates, farming costs, and farm produce, workers exist for the farm
+    farming_dates_exist = FarmingDates.objects.filter(farm=farm).exists()
+    farming_costs_exist = FarmingCosts.objects.filter(farm=farm).exists()
+    farm_produce_exist = FarmProduce.objects.filter(farm=farm).exists()
+   
+    
+    farming_dates_queryset = FarmingDates.objects.filter(farm=farm).order_by('-created')
+    farming_costs_queryset = FarmingCosts.objects.filter(farm=farm).order_by('-created')
+    farm_produce_queryset = FarmProduce.objects.filter(farm=farm).order_by('-created')
+
+    context = {
+        'farm': farm,
+        'farm_id': farm_id,
+        'farming_dates_exist': farming_dates_exist,
+        'farming_costs_exist': farming_costs_exist,
+        'farm_produce_exist': farm_produce_exist,
+        'farming_dates_queryset': farming_dates_queryset,
+        'farming_costs_queryset': farming_costs_queryset,
+        'farm_produce_queryset': farm_produce_queryset
+    }
+
+    return render(request, 'main/farm_activities.html', context)
