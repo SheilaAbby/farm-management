@@ -20,6 +20,7 @@ class CustomUser(AbstractUser):
     
     # Additional field to hold text when phone number doesn't belong to the user
     phone_number_owner = models.CharField(max_length=255, blank=True, null=True)
+    farmer_orgs = models.CharField(max_length=255, blank=True)
 
     def age(self):
         from datetime import date

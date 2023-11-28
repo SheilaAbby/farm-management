@@ -24,16 +24,23 @@
           <div class="row justify-content-center">
             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
               <!-- Display user's full name -->
-              {% if user.first_name or user.last_name %}
+              {% if user.full_name%}
               <p class="text-center text-success h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">
-                {{ user.first_name }} {{ user.last_name }}
+                {{ user.full_name }}
               </p>
               {% endif %}
               <div class="d-flex flex-row align-items-center mb-4">
-              <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
-              <div class="form-outline flex-fill mb-0">
-              <strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}
-              </div>
+                <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                  <strong>Joined: </strong> {{ user.date_joined|date:"F d, Y" }}
+                  </div>
+                  {% if user.farmer_orgs%}
+                  <span class="material-icons me-2" style="vertical-align: middle; font-size: 1.5em;">loyalty</span>
+                  <div class="form-outline flex-fill mb-0 mt-0">
+                  <strong style="display: inline-block; margin-right: 5px;">Member: </strong> {{ user.farmer_orgs }}
+                  {% comment %} <strong>Member Of:</strong> {{ user.farmer_orgs }} {% endcomment %}
+                  </div>
+                   {% endif %}
               </div>
               <hr/>
              <div class="d-flex flex-row align-items-center mb-4">

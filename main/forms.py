@@ -100,9 +100,14 @@ class CustomUserUpdateForm(UserChangeForm):
     phone_belongs_to_user = forms.ChoiceField(choices=[('', 'Yours ?'),('Yes', 'Yes'), ('No', 'No')],
                              widget = forms.Select(
                                  attrs = {"class": "form-control"}))
+    
+    farmer_orgs = forms.CharField(max_length=200,required=False,
+                                widget = forms.TextInput(
+                                    attrs = {"class": "form-control", "placeholder": "Farmer Associations"}))
+    
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'birth_year', 'phone_number', 'phone_belongs_to_user', 'photo', 'address']
+        fields = ['email', 'username', 'birth_year', 'phone_number', 'phone_belongs_to_user', 'photo', 'address', 'farmer_orgs']
 
 class LoginForm(forms.Form):
     username = forms.CharField(
