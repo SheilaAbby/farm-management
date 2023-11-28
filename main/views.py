@@ -399,8 +399,14 @@ def create_resource(request, farm_id):
             farm.resources_supplied.add(resource)
             messages.success(request, 'Resource Submitted Successfully!')
             # Redirect to a success page or display a success message
-            return redirect('farm_details', farm_id=farm_id)
+            return redirect('farm_resources', farm_id=farm_id)
     else:
         form = ResourceForm()
 
     return render(request, 'main/add_resources.html', {'form': form, 'farm_id':farm_id})
+
+def farm_resources(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+    resources = farm.resources_supplied.order_by('-created')
+
+    return render(request, 'main/farm_resources.html', {'farm': farm, 'resources': resources})
