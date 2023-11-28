@@ -184,9 +184,10 @@ def edit_farm(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
 
     if request.method == 'POST':
-        form = FarmForm(request.POST, instance=farm, user=request.user)
+        form = FarmForm(request.POST, request.FILES, instance=farm, user=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Farm Details updated successfully!')
             return redirect('farm_details', farm_id)
     else:
         form = FarmForm(instance=farm, user=request.user)

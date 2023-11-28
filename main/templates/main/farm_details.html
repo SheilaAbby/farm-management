@@ -1,11 +1,12 @@
 {% extends 'main/base.html' %} 
 {% load static %}
-{% block title %}Farm Details - {{ farm.name }}{% endblock %} 
+{% block title %}Farm Details | {{ farm.name }}{% endblock %} 
 
 {% block content %}
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        {% if messages %}
+<div class="row justify-content-center mb-3">
+  <div class="col-md-4 mb-4">
+          {% if messages %}
             <div class="alert alert-success" role="alert">
                 <ul class="messages">
                     {% for message in messages %}
@@ -19,13 +20,20 @@
                 </ul>
             </div>
         {% endif %}
-
+</div>
+    <div class="row justify-content-center">
+  
        <!-- Farm Activities Card -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 d-flex flex-column">
+             {% if farm.farm_photo %}
                  <!-- Farm Image -->
-                <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
-
+                 <img src="{{ farm.farm_photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
+       
+                  {% else %}     
+                 <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+                  {% endif %}
+          
                 <!-- Farm Header -->
                 <div class="card-header" style="background-color: #5B362D;">
                     {% if farm.name %}
@@ -39,9 +47,11 @@
                 <div class="d-flex flex-row mb-2">
                     <div class="card-header">
                       <div class="d-flex align-items-center mb-3 mt-3">
-                        <a href="{% url 'farm_activities' farm_id=farm.id %}" class="btn btn-link me-2 text-decoration-none text-success"><i class="fas fa-tractor"></i> Farming Activities</a>
-                        <a href="{% url 'farm_resources' farm_id=farm.id %}" class="btn btn-link me-2 text-decoration-none text-success"><i class="fas fa-box"></i> Farm Resources</a>
-                        <a href="{% url 'farm_workers' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success"><i class="fas fa-users"></i> Farm Workers</a>
+                        <a href="{% url 'farm_activities' farm_id=farm.id %}" class="btn btn-link me-2 text-decoration-none text-success"><i class="fas fa-tractor"></i>Activities</a>
+                        <a href="{% url 'farm_resources' farm_id=farm.id %}" class="btn btn-link me-2 text-decoration-none text-success"><i class="fas fa-box"></i> Resources</a>
+                        <a href="{% url 'farm_workers' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success"><i class="fas fa-users"></i> Workers</a>
+                        <a href="{% url 'farm_workers' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success"><span class="material-icons me-3" style="vertical-align: middle; font-size: 1.8em;">photo_camera_back</span>Photos</a>
+                        
                       </div>
                         <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
                         <strong>Created On:</strong> {{ farm.created }}
@@ -65,6 +75,13 @@
                         </div>
                     </div>
 
+                     <div class="d-flex flex-row align-items-center mb-2">
+                        <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
+                        <div class="form-outline flex-fill mb-0">
+                            <strong>Other Crops:</strong> {{ farm.other_crops }}
+                        </div>
+                    </div>
+
                    <div class="d-flex flex-row align-items-center mb-2">
                     <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
@@ -78,7 +95,7 @@
                        <strong>Location Coordinates:</strong> {{ farm.location_coordinates }}
                     </div>
                    </div>
-                     <a href="{% url 'edit_farm' farm.id %}" class="btn btn-secondary d-flex justify-content-center mx-auto mb-3"><i class="fas fa-edit"></i></a>
+                     <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto mb-3"><i class="fas fa-edit"></i></a>
                 </div>
             </div>
         </div>

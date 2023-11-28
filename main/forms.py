@@ -136,7 +136,7 @@ class FarmForm(forms.ModelForm):
     ]
 
     district = forms.ChoiceField(choices=DISTRICT_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    other_location = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'style': 'display:none;'}))
+    other_location = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Other Location', 'style': 'display:none;'}))
 
     location_coordinates = forms.CharField(
         max_length=255,
@@ -154,6 +154,11 @@ class FarmForm(forms.ModelForm):
         choices=[('', 'Select Crop')],  # Initial empty choice
         widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Crop'}),
     )
+
+    other_crops = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Other Crops on the Farm'}))
+
+    farm_photo = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}), label='Upload Farm Photo')
+    
     def __init__(self, *args, **kwargs):
         # Extract 'user' from kwargs
         user = kwargs.pop('user', None)

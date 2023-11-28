@@ -1,6 +1,6 @@
 {% extends 'main/base.html' %} 
 {% load static %}
-{% block title %}Update Farm{% endblock %} 
+{% block title %}{{farm.name}} | Update Farm{% endblock %} 
 {% block content %}
 <div class="container my-5 container h-100">
   <div class="row d-flex justify-content-center align-items-center h-100">
@@ -13,23 +13,80 @@
                 Update Farm
               </p>
               <hr/>
-             <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+              <form method="post" enctype="multipart/form-data" action="{% url 'edit_farm' farm_id=farm.id%}">
+                {% csrf_token %} {% if form.errors %}
+                <div class="alert alert-danger">
+                  <strong>Error:</strong> Please check the following fields:
+                  <ul>
+                    {% for field in form %} {% for error in field.errors %}
+                    <li>{{ field.label_tag }}: {{ error }}</li>
+                    {% endfor %} {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                    {{ form.district }}
+                     <div class='mt-3'>
+                     {{ form.other_location }}
+                     </div>
+                    </div>
+                </div> 
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                      <input type="text" id="location-coordinates" name="location_coordinates" class="form-control mb-3" readonly>
+                        <button type="button" id="get-location-btn" class="btn btn-primary">Get Location</button>
+                    </div>
+                  </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                 <span class="material-icons me-3" style="vertical-align: middle; font-size: 1.8em;">photo_camera_back</span>
+                  <div class="form-outline flex-fill mb-0">
+                   {{ form.land_size }}
+                  </div>
+                </div>
+          
+                <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
+                  <div class="form-outline flex-fill mb-0">
+                    {{ form.crops }}
+                  </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-3">
+                 <span class="material-icons me-3" style="vertical-align: middle; font-size: 1.8em;">photo_camera_back</span>
+                  <div class="form-outline flex-fill mb-1">
+                  <label for="form.farm_photo.id">Upload Farm Photo</label>
+                      {{ form.farm_photo }}     
+                  </div>
+                </div>
+
+                   <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                         {{ form.other_crops }}
+                      </div>
+                    </div>
+
+                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                    <button type="submit" class="btn btn-success">Update Farm Info</button>
+                  </div>
               </form>
             </div>
-            <div
-              class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
               <!-- Display user avatar or default avatar -->
-                  {% if user.profile.photo %}
+                  {% if farm.farm_photo %}
                       <div class="rounded-circle overflow-hidden me-2" style="width: 200px; height: 200px;">
-                          <img src="{{ user.profile.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
+                          <img src="{{ farm.farm_photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
                       </div>
                   {% else %}
                       <!-- Basic avatar or placeholder -->
-                      <div class="rounded-circle overflow-hidden me-2" style="width: 200px; height: 200px; background-color: #ddd;">
-                          <i class="fas fa-user fa-2x d-flex justify-content-center align-items-center text-secondary"></i>
+                      <div class="rounded-circle overflow-hidden me-2 d-flex justify-content-center align-items-center" style="width: 200px; height: 200px; background-color: #ddd;">
+                          <i class="fas fa-seedling fa-2x text-secondary"></i>
                       </div>
                   {% endif %}
             </div>
@@ -39,4 +96,37 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block javascript %}
+<script>
+      // Code for location-related functionality
+const locationCoordinatesInput = document.getElementById('location-coordinates');
+const getLocationButton = document.getElementById('get-location-btn');
+
+getLocationButton.addEventListener('click', function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const locationCoordinates = `${latitude}, ${longitude}`;
+
+            locationCoordinatesInput.value = locationCoordinates;
+        }, function (error) {
+            console.error('Error getting location:', error.message);
+        });
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    });
+  
+document.addEventListener('DOMContentLoaded', function() {
+    var districtField = document.getElementById('id_district');
+    var otherLocationField = document.getElementById('id_other_location');
+
+    districtField.addEventListener('change', function() {
+        var selectedOption = this.value;
+        otherLocationField.style.display = (selectedOption === 'Other') ? 'block' : 'none';
+    });
+});
+</script>
 {% endblock %}
