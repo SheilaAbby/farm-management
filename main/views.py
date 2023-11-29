@@ -64,7 +64,7 @@ def sign_up(request):
     else:
             form =  form = RegisterForm()
     return render(request, 'registration/custom_signup.html', {'form': form, 'msg': msg})
-   
+
 def login_view(request):
     form = LoginForm(request.POST or None)
     msg = None
@@ -74,15 +74,18 @@ def login_view(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             
-            if user is not None and user.role == 'farmer':
-                login(request, user)
-                return redirect('farmer_home')
-            elif user is not None and user.role == 'field_agent':
-                login(request, user)
-                return redirect('field_agent_home')
-            elif user is not None and user.role == 'manager_staff':
-                login(request, user)
-                return redirect('manager_home')
+            if user is not None:
+                if user.groups.filter(name='farmer').exists():
+                    login(request, user)
+                    return redirect('farmer_home')
+                elif user.groups.filter(name='field_agent').exists():
+                    login(request, user)
+                    return redirect('field_agent_home')
+                elif user.groups.filter(name='manager_staff').exists():
+                    login(request, user)
+                    return redirect('manager_home')
+                else:
+                    msg = 'User does not belong to a valid group.'
             else:
                 msg = 'Invalid username or password. Please try again.'
         else:

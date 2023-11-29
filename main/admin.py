@@ -19,13 +19,14 @@ admin.site.site_title = 'Windwood Farm Management'
 admin.site.index_title = 'Windwood Farm Management'
 
 class CustomUserAdmin(UserAdmin):
-    list_filter = ('role',)
-    def get_search_results(self, request, queryset, search_term):
-        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+     
+     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
 
-        # Customize the queryset based on the roles you want to include
-        queryset = queryset.exclude(role__in=['lead_agronomist'])
+    # Add groups to the list filter
+     list_filter = ('groups',)
 
-        return queryset, use_distinct
+    #  fieldsets = UserAdmin.fieldsets + (
+    #     (None, {'fields': ('group',)}),  # You can keep this field for reference if needed
+    #  )
 
 admin.site.register(CustomUser, CustomUserAdmin)

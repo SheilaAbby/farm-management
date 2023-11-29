@@ -19,9 +19,7 @@ class RegisterForm(UserCreationForm):
     username = forms.CharField(max_length=30, help_text='Required. Enter a Username.',
                                 widget = forms.TextInput(
                                     attrs = {"class": "form-control", "placeholder": "Username"}))
-    role = forms.ChoiceField(choices=[('', 'Select a Role'),('farmer', 'Farmer'), ('field_agent', 'Field Agent')],
-                             widget = forms.Select(
-                                 attrs = {"class": "form-control"}))
+  
     birth_year = forms.IntegerField(help_text='Required. Enter your year of birth.',
                                     validators=[MinValueValidator(1900), MaxValueValidator(2023)],
                                     widget=forms.NumberInput(
@@ -59,7 +57,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['full_name', 'email', 'username', 'role', 'birth_year', 'gender', 'national_id', 'phone_number', 'phone_belongs_to_user', 'password1', 'password2']
+        fields = ['full_name', 'email', 'username', 'birth_year', 'gender', 'national_id', 'phone_number', 'phone_belongs_to_user', 'password1', 'password2']
 
     # Add autocomplete attribute to form fields
     widgets = {

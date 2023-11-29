@@ -7,8 +7,8 @@ from django.contrib.auth import get_user_model
 
 # Create your models here.
 class CustomUser(AbstractUser):
+
     # Add additional fields as needed
-    role = models.CharField(max_length=50)
     birth_year = models.IntegerField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=[('male', 'Male'), ('female', 'Female')], null=True, blank=True)
     national_id = models.CharField(max_length=20, null=True, blank=True)
