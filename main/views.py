@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -9,23 +10,30 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource
 from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm
+from main.models import CustomUser 
 
-# Create your views here.
-@login_required(login_url="/login")
+
+def is_farmer_or_field_agent(user):
+    return user.groups.filter(name__in=['farmer', 'field_agent']).exists()
+
+@user_passes_test(is_farmer_or_field_agent)
 def index(request):
-      if request.user.is_authenticated:
-        if  request.user.role == 'farmer': 
+    if request.user.is_authenticated:
+        # Redirect to appropriate view based on user group
+        if 'farmer' in request.user.groups.values_list('name', flat=True):
             return redirect('farmer_home')
-        elif request.user.role == 'field_agent':
-            return redirect('field_agent_home') 
-      else:
-          return redirect('login') 
+        elif 'field_agent' in request.user.groups.values_list('name', flat=True):
+            return redirect('farmer_home')
+    else:
+        return redirect('login') 
       
-@user_passes_test(lambda u: u.groups.filter(name='farmer').exists())
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def farmer_home(request):
     user = request.user 
     farms = Farm.objects.filter(user=user)
+    is_field_agent = user.groups.filter(name='field_agent').exists()
+    farms_in_agent_district = Farm.objects.filter(Q(district=user.district) | Q(other_location=user.other_location))
 
     farm_exists = Farm.objects.filter(user=user).exists()
     farm_queryset = Farm.objects.filter(user=user)
@@ -34,7 +42,9 @@ def farmer_home(request):
         'farm_exists': farm_exists,
         'farm_queryset': farm_queryset,
         'user': user,
-        'farms': farms
+        'farms': farms,
+        'is_field_agent': is_field_agent,
+        'farms_in_agent_district': farms_in_agent_district,
     }
  
     return render(request, 'main/farmer_home.html', context)
@@ -95,6 +105,7 @@ def custom_logout_view(request):
     logout(request)
     return redirect(reverse_lazy('login')) 
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def update_profile(request):
     user = request.user
@@ -111,10 +122,12 @@ def update_profile(request):
 
     return render(request, 'main/update_profile.html', {'user_form': user_form, 'user': user})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def profile(request):
     return render(request, 'main/profile.html')
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def add_person(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id)
@@ -138,6 +151,7 @@ def add_person(request, farm_id):
 
     return render(request, 'main/add_person.html', {'form': form, 'farm': farm})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def edit_person(request, farm_id, person_id):
     farm = get_object_or_404(Farm, id=farm_id)
@@ -154,6 +168,7 @@ def edit_person(request, farm_id, person_id):
 
     return render(request, 'main/edit_person.html', {'form': form, 'farm': farm, 'person': person})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def delete_person(request, farm_id, person_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -166,6 +181,7 @@ def delete_person(request, farm_id, person_id):
 
     return JsonResponse({'success': False})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer']).exists())
 @login_required(login_url="/login")
 def add_farm(request):
     if request.method == 'POST':
@@ -180,6 +196,7 @@ def add_farm(request):
 
     return render(request, 'main/add_farm.html', {'form': form})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer']).exists())
 @login_required(login_url="/login")
 def edit_farm(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -195,6 +212,7 @@ def edit_farm(request, farm_id):
 
     return render(request, 'main/edit_farm.html', {'form': form, 'farm': farm})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer']).exists())
 @login_required(login_url="/login")
 def farm_details(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -206,6 +224,7 @@ def farm_details(request, farm_id):
 
     return render(request, 'main/farm_details.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def add_farm_dates(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -223,6 +242,7 @@ def add_farm_dates(request, farm_id):
 
     return render(request, 'main/add_farm_dates.html', {'farm': farm, 'form': form, 'farm_id': farm_id})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def update_farm_dates(request, farm_id, farming_dates_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -239,6 +259,7 @@ def update_farm_dates(request, farm_id, farming_dates_id):
 
     return render(request, 'main/update_farm_dates.html', {'farm': farm, 'form': form, 'farm_id': farm_id, 'farming_dates_id': farming_dates_id})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def add_farm_costs(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -256,6 +277,7 @@ def add_farm_costs(request, farm_id):
 
     return render(request, 'main/add_farm_costs.html', {'farm': farm, 'form': form, 'farm_id': farm_id})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def update_farm_costs(request, farm_id, farming_costs_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -272,6 +294,7 @@ def update_farm_costs(request, farm_id, farming_costs_id):
 
     return render(request, 'main/update_farm_costs.html', {'farm': farm, 'form': form, 'farm_id': farm_id, 'farming_costs_id': farming_costs_id})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def add_farm_produce(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -289,6 +312,7 @@ def add_farm_produce(request, farm_id):
 
     return render(request, 'main/add_farm_produce.html', {'farm': farm, 'form': form,'farm_id': farm_id})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def update_farm_produce(request, farm_id, farm_produce_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -305,6 +329,7 @@ def update_farm_produce(request, farm_id, farm_produce_id):
 
     return render(request, 'main/update_farm_produce.html', {'farm': farm, 'form': form, 'farm_id': farm_id, 'farm_produce_id': farm_produce_id})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def view_more_farm_dates(request, farm_id):
     # Retrieve all farm dates for the given farm
@@ -320,6 +345,7 @@ def view_more_farm_dates(request, farm_id):
 
     return render(request, 'main/view_more_farm_dates.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def view_more_farm_costs(request, farm_id):
     # Retrieve all farm dates for the given farm
@@ -335,6 +361,7 @@ def view_more_farm_costs(request, farm_id):
 
     return render(request, 'main/view_more_farm_costs.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def view_more_farm_produce(request, farm_id):
     # Retrieve all farm dates for the given farm
@@ -350,6 +377,7 @@ def view_more_farm_produce(request, farm_id):
 
     return render(request, 'main/view_more_farm_produce.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def view_more_farm_staff(request, farm_id):
     # Retrieve all farm staff for the given farm
@@ -366,6 +394,7 @@ def view_more_farm_staff(request, farm_id):
 
     return render(request, 'main/view_more_farm_staff.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def create_resource(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id)
@@ -384,12 +413,14 @@ def create_resource(request, farm_id):
 
     return render(request, 'main/add_resources.html', {'form': form, 'farm_id':farm_id})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 def farm_resources(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id)
     resources = farm.resources_supplied.order_by('-created')
 
     return render(request, 'main/farm_resources.html', {'farm': farm, 'resources': resources})
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def farm_workers(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -413,6 +444,7 @@ def farm_workers(request, farm_id):
 
     return render(request, 'main/farm_workers.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def farm_activities(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
@@ -439,3 +471,4 @@ def farm_activities(request, farm_id):
     }
 
     return render(request, 'main/farm_activities.html', context)
+

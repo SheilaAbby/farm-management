@@ -16,7 +16,8 @@ class CustomUser(AbstractUser):
     phone_belongs_to_user = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], default='no')
     full_name = models.CharField(max_length=255, blank=True)
     photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
+    district = models.TextField(blank=True, null=True)
+    other_location = models.TextField(blank=True, null=True)
     
     # Additional field to hold text when phone number doesn't belong to the user
     phone_number_owner = models.CharField(max_length=255, blank=True, null=True)
@@ -51,6 +52,7 @@ class Farm(models.Model):
     name = models.CharField(max_length=255)
     crops = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
+    other_location = models.CharField(max_length=255, default="Lango")
     location_coordinates = models.CharField(max_length=255)
     land_size = models.DecimalField(max_digits=10, decimal_places=2)
     resources_supplied = models.ManyToManyField('Resource', related_name='farms', blank=True)

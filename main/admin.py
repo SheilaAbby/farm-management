@@ -25,8 +25,4 @@ class CustomUserAdmin(UserAdmin):
     # Add groups to the list filter
      list_filter = ('groups',)
 
-    #  fieldsets = UserAdmin.fieldsets + (
-    #     (None, {'fields': ('group',)}),  # You can keep this field for reference if needed
-    #  )
-
 admin.site.register(CustomUser, CustomUserAdmin)

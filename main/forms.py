@@ -71,11 +71,19 @@ class CustomUserUpdateForm(UserChangeForm):
                              label='Upload a Profile Photo'
                              )
    
-    address = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Address', 'rows': 2, 'cols': 40, 'autocomplete': 'address'})
-    )
+    DISTRICT_CHOICES = [
+        ('', 'Select District'),
+        ('Lango', 'Lango'),
+        ('Teso', 'Teso'),
+        ('Abim', 'Abim'),
+        ('Nakaseke', 'Nakaseke'),
+        ('Other', 'Other'),
+    ]
 
+    district = forms.ChoiceField(choices=DISTRICT_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+
+    other_location = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Other Location', 'style': 'display:none;'}))
+  
     email = forms.EmailField(max_length=254, help_text='Required. Enter your email address.', 
                              widget = forms.TextInput(
                                  attrs = {"class": "form-control", "placeholder": "Email (to be associated with your account)"}))
@@ -105,8 +113,19 @@ class CustomUserUpdateForm(UserChangeForm):
     
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'birth_year', 'phone_number', 'phone_belongs_to_user', 'photo', 'address', 'farmer_orgs']
+        fields = ['email', 'username', 'birth_year', 'phone_number', 'phone_belongs_to_user', 'photo', 'district', 'other_location','farmer_orgs']
 
+    def clean(self):
+        cleaned_data = super().clean()
+        district = cleaned_data.get('district')
+        other_location = cleaned_data.get('other_location')
+
+        # Validate that 'other_location' is provided if 'Other' is selected
+        if district == 'Other' and not other_location:
+            raise forms.ValidationError("Please provide an 'Other' location.")
+
+        return cleaned_data
+    
 class LoginForm(forms.Form):
     username = forms.CharField(
         widget = forms.TextInput(

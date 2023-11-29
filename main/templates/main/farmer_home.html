@@ -51,6 +51,33 @@
       </div>
     </div>
     {% endif %}
+
+    {% if is_field_agent %}
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img src="{% static 'images/cassava.jpeg' %}" class="card-img-top" alt="Cassava Image">
+            <div class="card-header">
+              <p class="fw-bold">Welcome, Field Agent! </p>
+              <hr>
+              {% if not user.district %}
+                <p class="fw-bold">To map you to farms, Update your Profile!</p>
+              {% endif %}
+              {% if user.district or user.other_location %}
+                <p>Farms Registered in your District:</p>
+                <ul>
+                  {% for farm in farms_in_agent_district %}
+                    <li>{{ farm.name }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+            <div class="card-body">
+              <p class="card-text">Cassava, maize, and rice are crucial staple crops globally. Cassava is a versatile root crop, while maize and rice, as cereal grains, play vital roles in providing sustenance and ensuring food security for millions worldwide.</p>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
   </div>
 </div>
 {% block javascript %}

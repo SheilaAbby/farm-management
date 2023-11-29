@@ -48,9 +48,9 @@
                                     </div>
                                 {% else %}
                                     <!-- Basic avatar or placeholder -->
-                                    <div class="rounded-circle overflow-hidden me-2" style="width: 60px; height: 60px; background-color: #ddd;">
-                                        <i class="fas fa-user fa-2x d-flex justify-content-center align-items-center text-secondary"></i>
-                                    </div>
+                                    {% comment %} <div class="rounded-circle overflow-hidden me-2" style="width: 35px; height: 35px; background-color: #ddd;"> {% endcomment %}
+                                        <span class="material-icons" style="font-size: 1.8em;">person_pin</span>
+                                    {% comment %} </div> {% endcomment %}
                                 {% endif %}
                                 <strong>{{ user.username }}</strong>
                             </a>
