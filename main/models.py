@@ -120,3 +120,21 @@ class Resource(models.Model):
     def __str__(self):
         return f"{self.name} - {self.quantity} units"
     
+User = get_user_model()
+
+class FarmVisitRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+     
+    visit_date = models.DateField()
+    purpose = models.TextField()
+    requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name='farm_visits')
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='farm_visits')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+
+
+    def __str__(self):
+        return f"Visit to {self.farm} on {self.visit_date}"

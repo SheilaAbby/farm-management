@@ -9,7 +9,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource
-from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm
+from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm
 from main.models import CustomUser 
 
 
@@ -212,14 +212,32 @@ def edit_farm(request, farm_id):
 
     return render(request, 'main/edit_farm.html', {'form': form, 'farm': farm})
 
-@user_passes_test(lambda u: u.groups.filter(name__in=['farmer']).exists())
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def farm_details(request, farm_id):
+    user = request.user
     farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    is_field_agent = user.groups.filter(name='field_agent').exists()
+
+    # Process farm visit form submission
+    if request.method == 'POST':
+        form = FarmVisitRequestForm(request.POST)
+
+        if form.is_valid():
+            visit = form.save(commit=False)
+            visit.requester = user
+            visit.farm = farm
+            visit.save()
+            messages.success(request, 'Farm visit request submitted successfully!')
+            return redirect('farm_details', farm_id=farm_id)
+    else:
+        form = FarmVisitRequestForm()
 
     context = {
         'farm': farm,
-        'farm_id': farm_id
+        'farm_id': farm_id,
+        'is_field_agent': is_field_agent,
+        'form': form,
     }
 
     return render(request, 'main/farm_details.html', context)

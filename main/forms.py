@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce
+from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce, FarmVisitRequest
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.forms import ModelMultipleChoiceField
@@ -386,3 +386,22 @@ class ResourceForm(forms.ModelForm):
             raise ValidationError('Quantity should be a non-negative number.')
 
         return quantity
+
+class FarmVisitRequestForm(forms.ModelForm):
+    class Meta:
+        model = FarmVisitRequest
+        fields = ['visit_date', 'purpose']
+        
+        widgets = {
+            'visit_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'purpose': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Purpose of Visit', 'style': 'height: 100px; width: 300px;'}),
+        }
+
+    def clean_visit_date(self):
+        visit_date = self.cleaned_data.get('visit_date')
+
+        # Check if the visit_date is in the past
+        if visit_date < timezone.now().date():
+            raise forms.ValidationError("Visit date cannot be in the past.")
+
+        return visit_date

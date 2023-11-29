@@ -22,8 +22,7 @@
         {% endif %}
 </div>
 <div class="row justify-content-center">
-  
-       <!-- Farm Activities Card -->
+
         <div class="col-md-5 col-sm-12 mb-4">
             <div class="card h-100 d-flex flex-column">
              {% if farm.farm_photo %}
@@ -114,6 +113,70 @@
                 </div>
             </div>
         </div>
+        {% if is_field_agent %}
+         <div class="col-md-5 col-sm-12 mb-4">
+            <div class="card h-100 d-flex flex-column">
+             
+                <!-- Farm Header -->
+                <div class="card-header">
+                    <div class="col-auto">
+                       <div class="col-auto d-flex align-items-center">
+                        <span class="material-icons text-success">tour</span>
+                        <p class="fw-bold mt-3 ms-2 text-success">Need to schedule a farm visit?</p>
+                    </div>
+                    <hr>
+                </div>
+      
+               <div class="row justify-content-center align-items-center mt-5">
+                  
+                 <div class="card-body d-flex flex-column">
+               
+                    <form method="post" action="{% url 'farm_details' farm_id=farm.id %}">
+                        {% csrf_token %} 
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                           <strong>Error:</strong> Check the following fields:
+                             <ul>
+                                 {% for field, errors in form.errors.items %}
+                                   <li>{{ field }}: {{ errors|join:", " }}</li>
+                                 {% endfor %}
+                             </ul>
+                          </div>
+                        {% endif %}
+
+                         <div class="col-auto">
+                           <div class="col-auto d-flex align-items-center">
+                            <span class="material-icons text-danger">priority_high</span>
+                            <p class="fw-bold mt-2 ms-2 text-danger">To be conducted upon Manager Approval</p>
+                        </div>
+
+                       <div class="d-flex flex-row align-items-center mb-4">
+                        <i class="fas fa-seedling fa-lg me-3 fa-fw"></i>
+                        <div class="form-floating mb-1 mt-4">
+                          {{ form.purpose }} 
+                          <label for="{{ form.purpose.id_for_label }}">Purpose of Visit</label>
+                        </div>
+                      </div>
+
+                      <div class="d-flex flex-row align-items-center mb-4">
+                        <i class="fas fa-calendar fa-lg me-3 fa-fw"></i>
+                        <div class="form-floating mb-1 mt-4">
+                         {{ form.visit_date }}
+                          <label for="{{ form.visit_date.id_for_label }}">Proposed Visit Date</label>
+                        </div>
+                      </div>
+
+                      <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                         <button type="submit" class="btn btn-success">Schedule</button>
+                      </div>
+                  </form>
+             
+                </div>
+             </div>
+            </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
