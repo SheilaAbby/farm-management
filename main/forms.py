@@ -43,7 +43,7 @@ class RegisterForm(UserCreationForm):
                                        attrs={"class": "form-control", "placeholder": "Phone Number"}
                                    ))
     
-    phone_belongs_to_user = forms.ChoiceField(choices=[('', 'Is this yours ?'),('Yes', 'Yes'), ('No', 'No')],
+    phone_belongs_to_user = forms.ChoiceField(choices=[('', 'This is mine ?'),('Yes', 'Yes'), ('No', 'No')],
                              widget = forms.Select(
                                  attrs = {"class": "form-control", "id": "phone_belongs_to_user"}))
     

@@ -6,10 +6,9 @@ from .forms import RegisterForm, LoginForm, CustomUserUpdateForm, FarmForm, Pers
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource
 from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm
-
 
 # Create your views here.
 @login_required(login_url="/login")
@@ -21,7 +20,8 @@ def index(request):
             return redirect('field_agent_home') 
       else:
           return redirect('login') 
-
+      
+@user_passes_test(lambda u: u.groups.filter(name='farmer').exists())
 @login_required(login_url="/login")
 def farmer_home(request):
     user = request.user 

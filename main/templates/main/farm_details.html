@@ -21,10 +21,10 @@
             </div>
         {% endif %}
 </div>
-    <div class="row justify-content-center">
+<div class="row justify-content-center">
   
        <!-- Farm Activities Card -->
-        <div class="col-md-4 mb-4">
+        <div class="col-md-5 col-sm-12 mb-4">
             <div class="card h-100 d-flex flex-column">
              {% if farm.farm_photo %}
                  <!-- Farm Image -->
@@ -44,19 +44,17 @@
                 </div>
 
                  <!-- Created On -->
-                <div class="d-flex flex-row mb-2">
+                {% comment %} <div class="d-flex flex-row mb-2"> {% endcomment %}
                     <div class="card-header">
                       <div class="d-flex align-items-center mb-3 mt-3">
-                        <a href="{% url 'farm_activities' farm_id=farm.id %}" class="btn btn-link me-2 text-decoration-none text-success"><i class="fas fa-tractor"></i>Activities</a>
-                        <a href="{% url 'farm_resources' farm_id=farm.id %}" class="btn btn-link me-2 text-decoration-none text-success"><i class="fas fa-box"></i> Resources</a>
-                        <a href="{% url 'farm_workers' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success"><i class="fas fa-users"></i> Workers</a>
-                        <a href="{% url 'farm_workers' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success"><span class="material-icons me-3" style="vertical-align: middle; font-size: 1.8em;">photo_camera_back</span>Photos</a>
-                        
+                        <a href="{% url 'farm_activities' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success"><i class="fas fa-tractor"></i>Activities</a>
+                        <a href="{% url 'farm_resources' farm_id=farm.id %}" class="btn btn-link me-1 text-decoration-none text-success"><i class="fas fa-box"></i> Resources</a>
+                        <a href="{% url 'farm_workers' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success me-1"><i class="fas fa-users"></i> Workers</a>
                       </div>
                         <i class="fas fa-calendar-alt fa-lg me-3 fa-fw"></i>
                         <strong>Created On:</strong> {{ farm.created }}
                     </div>
-                </div>
+                {% comment %} </div> {% endcomment %}
 
                 <!-- Farm Activities Content -->
                 <div class="card-body d-flex flex-column">
@@ -95,7 +93,24 @@
                        <strong>Location Coordinates:</strong> {{ farm.location_coordinates }}
                     </div>
                    </div>
-                     <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto mb-3"><i class="fas fa-edit"></i></a>
+
+                   <a href="{% url 'edit_farm' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto mb-3"><i class="fas fa-edit"></i></a>
+                   <hr>
+
+                   <div class="row justify-content-center align-items-center">
+                        <div class="col-auto">
+                            <span class="material-icons">lightbulb</span>
+                        </div>
+                        <div class="col-auto">
+                            <p class="fw-bold">Need to Share Farm Photos ?</p>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{% url 'farm_workers' farm_id=farm.id %}" class="btn btn-link text-decoration-none text-success">
+                                <span class="material-icons me-3" style="vertical-align: middle; font-size: 1.8em;">photo_camera_back</span>Add More Farm Photos
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
