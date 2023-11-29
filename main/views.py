@@ -39,13 +39,11 @@ def farmer_home(request):
  
     return render(request, 'main/farmer_home.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name='field_agent').exists())
 @login_required(login_url="/login")
 def field_agent_home(request):
     return render(request, 'main/field_agent_home.html')
 
-@login_required(login_url="/login")
-def lead_agronomist_home(request):
-    return render(request, 'main/lead_agronomist_home.html')
 
 @login_required(login_url="/login")
 def manager_home(request):
@@ -85,7 +83,7 @@ def login_view(request):
                     login(request, user)
                     return redirect('manager_home')
                 else:
-                    msg = 'User does not belong to a valid group.'
+                    msg = 'Account does not belong to a valid group. Please Check with the Site Admin'
             else:
                 msg = 'Invalid username or password. Please try again.'
         else:
