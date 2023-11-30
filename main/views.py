@@ -146,7 +146,7 @@ def add_person(request, farm_id):
                 farm.staff_contacts.add(person)
 
             messages.success(request, 'Person created successfully!')
-            return redirect('farm_details', farm_id=farm_id)
+            return redirect('farm_workers', farm_id=farm_id)
     else:
         form = PersonForm()
 
@@ -415,6 +415,21 @@ def view_more_farm_staff(request, farm_id):
     }
 
     return render(request, 'main/view_more_farm_staff.html', context)
+
+def view_more_farm_peelers(request, farm_id):
+    # Retrieve all farm staff for the given farm
+    farm = get_object_or_404(Farm, id=farm_id)
+    peelers = farm.crop_peelers.all()
+
+    # Exclude the first 2 staff
+    additional_farm_peelers = peelers[2:]
+
+    context = {
+        'additional_farm_peelers': additional_farm_peelers,
+        'farm_id': farm_id,
+    }
+
+    return render(request, 'main/view_more_farm_peelers.html', context)
 
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")

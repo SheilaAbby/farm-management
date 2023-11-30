@@ -22,9 +22,9 @@
                         <!-- Default avatar image -->
                         <img src="{% static 'images/avatar.jpeg' %}" alt="Default Avatar" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
                     {% endif %}
-                      <p class='mt-3'><strong>Full Name:</strong> {{ person.name }}</p>
-                      <p><strong>Phone Number:</strong> {{ person.phone_number }}</p>
-                      <p><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                      <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">account_circle</span><strong>Full Name:</strong> {{ person.name }}</p>
+                      <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">phone_android</span><strong>Phone Number:</strong> {{ person.phone_number }}</p>
+                      <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">badge</span><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
                       <a href="{% url 'edit_person' farm_id=farm_id person_id=person.id  %}" class="btn btn-primary">Edit</a>
                    </div>
                 {% endfor %}
