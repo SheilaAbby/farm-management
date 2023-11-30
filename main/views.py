@@ -258,7 +258,7 @@ def add_farm_dates(request, farm_id):
             farming_dates.farm = farm
             farming_dates.save()
             messages.success(request, 'Farming Dates Submitted Successfully!')
-            return redirect('farm_details', farm_id)
+            return redirect('farm_activities', farm_id)
     else:
         form = FarmingDatesForm()
 
@@ -275,7 +275,7 @@ def update_farm_dates(request, farm_id, farming_dates_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Farming Dates Updated Successfully!')
-            return redirect('farm_details', farm_id=farm_id)
+            return redirect('farm_activities', farm_id=farm_id)
     else:
         form = FarmingDatesForm(instance=farming_dates)
 
@@ -293,7 +293,7 @@ def add_farm_costs(request, farm_id):
             farming_costs.farm = farm
             farming_costs.save()
             messages.success(request, 'Farm Costs Submitted Successfully!')
-            return redirect('farm_details', farm_id=farm_id)
+            return redirect('farm_activities', farm_id=farm_id)
     else:
         form = FarmingCostsForm()
 
@@ -310,7 +310,7 @@ def update_farm_costs(request, farm_id, farming_costs_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Farming Costs Updated Successfully!')
-            return redirect('farm_details', farm_id=farm_id)
+            return redirect('farm_activities', farm_id=farm_id)
     else:
         form = FarmingCostsForm(instance=farming_costs)
 
@@ -328,7 +328,7 @@ def add_farm_produce(request, farm_id):
             farm_produce.farm = farm
             farm_produce.save()
             messages.success(request, 'Farm Produce Submitted Successfully!')
-            return redirect('farm_details', farm_id=farm_id)
+            return redirect('farm_activities', farm_id=farm_id)
     else:
         form = FarmProduceForm()
 
@@ -345,7 +345,7 @@ def update_farm_produce(request, farm_id, farm_produce_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Farming Produce Updated Successfully!')
-            return redirect('farm_details', farm_id=farm_id)
+            return redirect('farm_activities', farm_id=farm_id)
     else:
         form = FarmProduceForm(instance=farm_produce)
 

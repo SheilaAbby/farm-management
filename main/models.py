@@ -103,14 +103,17 @@ class FarmingCosts(models.Model):
     cost_harvesting = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     transport_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     other_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created = models.DateTimeField(default=timezone.now)
   
 class FarmProduce(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farm_produce')
     quantity_planted = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     batch_number = models.CharField(max_length=255, null=True, blank=True)
-    bags_packed = models.IntegerField(null=True, blank=True)
+    bags_harvested = models.IntegerField(null=True, blank=True)
     amount_sold = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    amount_kgs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    estimated_amount_kgs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     market = models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(default=timezone.now)

@@ -308,8 +308,20 @@ class FarmingCostsForm(forms.ModelForm):
     
     class Meta:
         model = FarmingCosts
-        fields = ['cost_fertilizer_application','cost_ploughing', 'cost_weeding', 'cost_harvesting']
+        fields = ['cost_fertilizer_application','cost_ploughing', 'cost_weeding', 'cost_harvesting', 'cost_planting','transport_costs', 'other_costs']
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
 
+        # Calculate total cost
+        total_cost = sum([getattr(instance, field_name) or 0 for field_name in self.Meta.fields])
+
+        instance.total_cost = total_cost
+
+        if commit:
+            instance.save()
+
+        return instance
                  
 class FarmProduceForm(forms.ModelForm):
 
@@ -319,30 +331,41 @@ class FarmProduceForm(forms.ModelForm):
         required=False,  
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantity Planted'}))
  
+    amount_kgs = forms.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        required=False,  
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Amount in Kgs'}))
+
+    estimated_amount_kgs = forms.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        required=False,  
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Estimated Amount in Kgs'}))
    
     batch_number = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Batch Number'}))
-    bags_packed = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bags Packed'}))
+    bags_harvested = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bags Packed'}))
     amount_sold = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Amount Sold'}))
     price_rate = forms.DecimalField(max_digits=10, decimal_places=2, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price per Bag'}))
     market = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Market'}))
 
     class Meta:
         model = FarmProduce
-        fields = ['quantity_planted', 'batch_number', 'bags_packed',
-          'amount_sold', 'price_rate', 'market']
+        fields = ['quantity_planted', 'batch_number', 'bags_harvested',
+          'amount_sold', 'price_rate', 'market', 'amount_kgs', 'estimated_amount_kgs']
 
         def clean(self):
             cleaned_data = super().clean()
             quantity_planted = cleaned_data.get('quantity_planted')
-            bags_packed = cleaned_data.get('bags_packed')
+            bags_harvested = cleaned_data.get('bags_harvested')
             amount_sold = cleaned_data.get('amount_sold')
             price_rate = cleaned_data.get('price_rate')
 
-            # Additional validations for quantity_planted, bags_packed, amount_sold, and price_rate
+            # Additional validations for quantity_planted, bags_harvested, amount_sold, and price_rate
             if quantity_planted and quantity_planted <= 0:
                 raise ValidationError(_('Quantity planted must be greater than zero.'))
 
-            if bags_packed and bags_packed < 0:
+            if bags_harvested and bags_harvested < 0:
                 raise ValidationError(_('Bags packed cannot be negative.'))
 
             if amount_sold and amount_sold < 0:
