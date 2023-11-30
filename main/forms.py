@@ -267,18 +267,33 @@ class FarmingDatesForm(forms.ModelForm):
     class Meta:
         model = FarmingDates
         fields = ['date_planting', 'date_ploughing', 'date_weeding', 'date_harvesting', 'date_fertilizer_application']
+       
+    def clean(self):
+        cleaned_data = super().clean()
+        date_planting = cleaned_data.get('date_planting')
+        date_ploughing = cleaned_data.get('date_ploughing')
+        date_weeding = cleaned_data.get('date_weeding')
+        date_harvesting = cleaned_data.get('date_harvesting')
+        date_fertilizer_application = cleaned_data.get('date_fertilizer_application')
 
-        def clean(self):
-            cleaned_data = super().clean()
-            date_planting = cleaned_data.get('date_planting')
-            date_harvesting = cleaned_data.get('date_harvesting')
+        if date_ploughing and date_planting and date_ploughing <= date_planting:
+            raise ValidationError({'date_ploughing': 'Ploughing date should be after planting date.'})
 
-            if date_planting and date_harvesting:
-                if date_harvesting < date_planting:
-                    raise forms.ValidationError('Harvesting date must be after planting date.')
-            
-            return cleaned_data
+        if date_weeding and date_ploughing and date_weeding <= date_ploughing:
+            raise ValidationError({'date_weeding': 'Weeding date should be after ploughing date.'})
+        
+        if date_planting and date_harvesting:
+            if date_harvesting < date_planting:
+                raise forms.ValidationError('Harvesting date must be after planting date.')
 
+        if date_harvesting and date_weeding and date_harvesting <= date_weeding:
+            raise ValidationError({'date_harvesting': 'Harvesting date should be after weeding date.'})
+
+        if date_harvesting and date_fertilizer_application and date_fertilizer_application >= date_harvesting:
+            raise ValidationError({'date_fertilizer_application': 'Fertilizer application date should be before harvesting date.'})
+        
+        return cleaned_data
+        
 class FarmingCostsForm(forms.ModelForm):
 
     cost_fertilizer_application = forms.DecimalField(
