@@ -8,7 +8,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource
+from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest
 from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm
 from main.models import CustomUser 
 
@@ -233,10 +233,13 @@ def farm_details(request, farm_id):
     else:
         form = FarmVisitRequestForm()
 
+    farm_visit_requests = FarmVisitRequest.objects.filter(farm=farm)
+
     context = {
         'farm': farm,
         'farm_id': farm_id,
         'is_field_agent': is_field_agent,
+        'farm_visit_requests': farm_visit_requests,
         'form': form,
     }
 

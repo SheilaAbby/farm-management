@@ -130,6 +130,27 @@
                <div class="row justify-content-center align-items-center mt-5">
                   
                  <div class="card-body d-flex flex-column">
+
+                 <!-- Display farm visit requests -->
+                    {% if farm_visit_requests %}
+                        <div class="mt-1 mb-4">
+                            <h5>Latest Farm Visit Requests</h5>
+                            <ul class="list-group">
+                                {% for request in farm_visit_requests|dictsortreversed:"created" %}
+                                    <li class="list-group-item">
+                                        <strong>{{ request.requester.username }}</strong> requested a visit on {{ request.visit_date|date:"F j, Y" }} for the purpose of {{ request.purpose }}.
+                                        <b>Status:</b>
+                                        {% if request.status == 'approved' %}
+                                            <span class="text-success">{{ request.status }}</span>
+                                        {% else %}
+                                            <span class="text-danger">{{ request.status }}</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
                
                     <form method="post" action="{% url 'farm_details' farm_id=farm.id %}">
                         {% csrf_token %} 

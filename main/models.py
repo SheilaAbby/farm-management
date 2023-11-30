@@ -134,6 +134,7 @@ class FarmVisitRequest(models.Model):
     requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name='farm_visits')
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='farm_visits')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created = models.DateTimeField( default='2023-11-14')
 
 
     def __str__(self):
