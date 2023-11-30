@@ -1,9 +1,10 @@
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
+import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
-from .forms import RegisterForm, LoginForm, CustomUserUpdateForm, FarmForm, PersonForm, RegisterForm
+from .forms import RegisterForm, LoginForm, CustomUserUpdateForm, FarmForm, PersonForm, RegisterForm, FarmPhotoForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
@@ -493,3 +494,38 @@ def farm_activities(request, farm_id):
 
     return render(request, 'main/farm_activities.html', context)
 
+@login_required(login_url="/login")
+def farm_photos(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    media_path = 'media/farm_photos/'
+    image_names = [filename for filename in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, filename))]
+  
+    if request.method == 'POST':
+        form = FarmPhotoForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            photo = form.save(commit=False)
+            photo.farm = farm
+            photo.uploaded_by = request.user 
+            photo.save()
+            messages.success(request, 'Farm photo uploaded successfully!')
+            return redirect('farm_photos', farm_id=farm_id)
+    else:
+        form = FarmPhotoForm()
+
+    context = {
+        'farm': farm,
+        'farm_id': farm_id,
+        'form': form,
+        'image_names': image_names,
+        'media_path': media_path
+    }
+
+    return render(request, 'main/farm_photos.html', context)
+
+def get_image_names(request):
+    media_path = 'media/farm_photos/'
+    image_names = [filename for filename in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, filename))]
+    
+
+    return JsonResponse({'image_names': image_names})

@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+import os
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -59,12 +60,17 @@ class Farm(models.Model):
     
     crop_peelers = models.ManyToManyField('Person', related_name='farms_peeling', blank=True)
     staff_contacts = models.ManyToManyField('Person', related_name='farms_staff', blank=True)
-    farm_photo = models.ImageField(upload_to='farm_photos/', blank=True, null=True)
     other_crops = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+    
+    def get_latest_photos(self, count=5):
+        return self.farm_photos.all().order_by('-uploaded_at')[:count]
+    
+    def get_image_url(self, image_name):
+        return os.path.join('farm_photos', str(self.id), image_name)
     
 class Person(models.Model):
     name = models.CharField(max_length=255)
@@ -139,3 +145,10 @@ class FarmVisitRequest(models.Model):
 
     def __str__(self):
         return f"Visit to {self.farm} on {self.visit_date}"
+
+class FarmPhoto(models.Model):
+    farm = models.ForeignKey('Farm', on_delete=models.CASCADE, related_name='farm_photos')
+    photo = models.ImageField(upload_to='farm_photos/')
+    description = models.TextField()
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    uploaded_at = models.DateTimeField(auto_now_add=True)

@@ -34,5 +34,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
  });
+
+//  // Sample data for status images (replace with your own image URLs)
+// const statusImages = [
+//   'image1.jpg',
+//   'image2.jpg',
+//   'image3.jpg',
+//   // Add more image URLs as needed
+// ];
+
+
+
   
   

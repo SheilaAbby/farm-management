@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce, FarmVisitRequest
+from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce, FarmVisitRequest, FarmPhoto
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.forms import ModelMultipleChoiceField
@@ -146,7 +146,7 @@ class LoginForm(forms.Form):
 class FarmForm(forms.ModelForm):
     class Meta:
         model = Farm
-        fields = ['district', 'other_location', 'location_coordinates', 'land_size', 'crops', 'farm_photo', 'other_crops']
+        fields = ['district', 'other_location', 'location_coordinates', 'land_size', 'crops', 'other_crops']
 
     DISTRICT_CHOICES = [
         ('', 'Select District'),
@@ -179,7 +179,7 @@ class FarmForm(forms.ModelForm):
 
     other_crops = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Other Crops on the Farm'}))
 
-    farm_photo = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}), label='Upload Farm Photo')
+    # farm_photo = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control'}), label='Upload Farm Photo')
     
     def __init__(self, *args, **kwargs):
         # Extract 'user' from kwargs
@@ -393,8 +393,8 @@ class FarmVisitRequestForm(forms.ModelForm):
         fields = ['visit_date', 'purpose']
         
         widgets = {
-            'visit_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'purpose': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Purpose of Visit', 'style': 'height: 100px; width: 300px;'}),
+            'visit_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'style': 'height: 20px; width: 200px;'}),
+            'purpose': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Purpose of Visit', 'style': 'height: 100px; width: 200px;'}),
         }
 
     def clean_visit_date(self):
@@ -405,3 +405,12 @@ class FarmVisitRequestForm(forms.ModelForm):
             raise forms.ValidationError("Visit date cannot be in the past.")
 
         return visit_date
+    
+class FarmPhotoForm(forms.ModelForm):
+    class Meta:
+        model = FarmPhoto
+        fields = ['photo', 'description']
+        widgets = {
+            'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter photo description'}),
+        }

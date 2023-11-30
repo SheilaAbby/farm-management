@@ -21,32 +21,24 @@
     }
 }
 
-.gradient-custom-3 {
-    /* fallback for old browsers */
-    background: #84fab0;
-    
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
-    
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5))
-    }
-    .gradient-custom-4 {
-    /* fallback for old browsers */
-    background: #84fab0;
-    
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1));
-    
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1))
-    }
-    .no-underline {
-        text-decoration: none;
+    .photo-container {
+        position: relative;
+        overflow: hidden;
     }
 
-    .btn-brown {
-        background-color: #8B4513; /* Use your preferred brown color code */
-        color: white;
+    .photo-description {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 15px; /* Increased padding */
+        font-size: 16px; /* Increased font size */
+        opacity: 0;
+        transition: opacity 0.5s;
     }
- 
+
+    .photo-container:hover .photo-description {
+        opacity: 1;
+    }
