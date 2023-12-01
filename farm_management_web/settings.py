@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['f384-41-80-116-195.ngrok-free.app', 'localhost']
+ALLOWED_HOSTS = ['c434-41-80-118-35.ngrok-free.app', 'localhost']
 
 
 # Application definition

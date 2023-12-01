@@ -27,12 +27,22 @@
         </div>
         <div class="card-body d-flex flex-column">
          <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
-         {% for farm in farms %}
+         <hr class="mt-2">
+         <a href="{% url 'add_farm' %}" class="btn btn-success mt-2 mb-3"><i class="fas fa-plus me-3"></i>Register</a>
+         <ul>
+         {% for farm in latest_user_farms %}
           <div class="d-flex justify-content-between align-items-center mb-2">
-                <a href="{% url 'farm_details' farm.id %}" class="card-text mb-0" style="text-decoration: none;">{{ farm.name }}</a>
+              <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+                  <span class="material-icons card-text mb-0 me-2">photo_camera_back</span>
+                  <span class="card-text mb-0"><b>{{ farm.name }}</b></span>
+              </a>
             </div>
            {% endfor %}
-           <a href="{% url 'add_farm' %}" class="btn btn-primary mt-2">Add More Farms</a>
+           </ul>
+           
+           {% if farms|length > 3 %}
+              <a href="" class="text-success mt-2">View More</a>
+           {% endif %}
         </div>
       </div>
     </div>
@@ -63,17 +73,25 @@
                 <p class="fw-bold">To map you to farms, Update your Profile!</p>
               {% endif %}
               {% if user.district %}
-                <p class="fw-bold"><p>Farms Registered in your District: {{user.district}}</p></p>
+                <p class="fw-bold"><p>Farms Registered in your District: <b class="text-success">{{user.district}}</b></p></p>
               {% endif %}
             </div>
             <div class="card-body">
                  {% if user.district %}
                 <ul>
                   {% for farm in farms_in_agent_district %}
-                    <li><span class="material-icons me-3" style="vertical-align: middle; font-size: 1.8em;">photo_camera_back</span><a href="{% url 'farm_details' farm.id %}" class="card-text mb-0" style="text-decoration: none;">{{ farm.name }}</a></li>
+                     <div class="d-flex justify-content-between align-items-center mb-2">
+                        <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+                            <span class="material-icons card-text mb-0 me-2">photo_camera_back</span>
+                            <span class="card-text mb-0"><b>{{ farm.name }}</b></span>
+                        </a>
+                      </div>
                   {% endfor %}
                 </ul>
               {% endif %}
+              {% if farms_in_agent_district|length > 3 %}
+              <a href="" class="text-success mt-2">View More</a>
+               {% endif %}              
             </div>
           </div>
         </div>

@@ -35,10 +35,12 @@ def farmer_home(request):
     farms = Farm.objects.filter(user=user)
     farms = Farm.objects.filter(user=user)
     is_field_agent = user.groups.filter(name='field_agent').exists()
-    farms_in_agent_district = Farm.objects.filter(Q(district=user.district))
+    farms_in_agent_district = Farm.objects.filter(Q(district=user.district)).order_by('-created')[:5]
 
     farm_exists = Farm.objects.filter(user=user).exists()
     farm_queryset = Farm.objects.filter(user=user)
+
+    latest_user_farms = Farm.objects.filter(user=user).order_by('-created')[:5]
 
     context = {
         'farm_exists': farm_exists,
@@ -47,6 +49,7 @@ def farmer_home(request):
         'farms': farms,
         'is_field_agent': is_field_agent,
         'farms_in_agent_district': farms_in_agent_district,
+        'latest_user_farms': latest_user_farms
     }
  
     return render(request, 'main/farmer_home.html', context)
