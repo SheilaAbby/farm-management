@@ -1,0 +1,37 @@
+{% extends 'main/base.html' %} 
+{% load static %}
+{% block title %}{{farm.name}} Peelers{% endblock %} 
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+     
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 d-flex flex-column">
+          <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+          <div class="card-header">
+                <p class="text-center text-success h1 fw-bold mt-4">
+                 View More Farm Peelers
+                </p>
+          </div>
+          <div class="card-body d-flex flex-column">
+                 {% for person in additional_farm_peelers %}
+                    <div class='card-body'>
+                    {% if person.photo %}
+                        <img src="{{ person.photo.url }}" alt="{{ person.name }} Photo" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                    {% else %}
+                        <!-- Default avatar image -->
+                        <img src="{% static 'images/avatar.jpeg' %}" alt="Default Avatar" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                    {% endif %}
+                      <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">account_circle</span><strong>Full Name:</strong> {{ person.name }}</p>
+                      <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">phone_android</span><strong>Phone Number:</strong> {{ person.phone_number }}</p>
+                      <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">badge</span><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                      <a href="{% url 'edit_person' farm_id=farm_id person_id=person.id  %}" class="btn btn-primary">Edit</a>
+                   </div>
+                {% endfor %}
+            </div>
+        </div>
+       </div>
+    </div>
+</div>
+{% endblock %}
+
