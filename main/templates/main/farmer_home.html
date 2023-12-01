@@ -41,7 +41,11 @@
            </ul>
            
            {% if farms|length > 3 %}
-              <a href="" class="text-success mt-2">View More</a>
+            <a href="" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+                  <span class="material-icons card-text mb-0 me-2">table_view</span>
+                  <span class="card-text mb-0"><b>View More</b></span>
+              </a>
+              {% comment %} <span class="material-icons">table_view</span><a href="" class="text-success mt-2">View More</a> {% endcomment %}
            {% endif %}
         </div>
       </div>
@@ -90,7 +94,10 @@
                 </ul>
               {% endif %}
               {% if farms_in_agent_district|length > 3 %}
-              <a href="" class="text-success mt-2">View More</a>
+                 <a href="" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+                    <span class="material-icons card-text mb-0 me-2">table_view</span>
+                    <span class="card-text mb-0"><b>View More</b></span>
+                </a>
                {% endif %}              
             </div>
           </div>

@@ -52,7 +52,10 @@
                                 </div>
                             {% endfor %}
                            {% if farming_dates_queryset|length > 3 %}
-                            <a href="{% url 'view_more_farm_dates' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
+                              <a href="{% url 'view_more_farm_dates' farm_id=farm_id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success mt-3">
+                                  <span class="material-icons card-text mb-0 me-2">table_view</span>
+                                  <span class="card-text mb-0"><b>View More</b></span>
+                              </a>
                           {% endif %}
                           {% else %}
                           <div class='mt-3'>
@@ -86,7 +89,10 @@
                             </div>
                           {% endfor %}
                           {% if farming_costs_queryset|length > 3 %}
-                            <a href="{% url 'view_more_farm_costs' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
+                              <a href="{% url 'view_more_farm_costs' farm_id=farm_id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success mt-3">
+                                  <span class="material-icons card-text mb-0 me-2">table_view</span>
+                                  <span class="card-text mb-0"><b>View More</b></span>
+                              </a>
                           {% endif %}
                         {% else %}
                         <div class='mt-3'>
@@ -119,7 +125,10 @@
                           </div>
                           {% endfor %}
                            {% if farm_produce_queryset|length > 3 %}
-                            <a href="{% url 'view_more_farm_produce' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More</a>
+                               <a href="{% url 'view_more_farm_produce' farm_id=farm_id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success mt-3">
+                                  <span class="material-icons card-text mb-0 me-2">table_view</span>
+                                  <span class="card-text mb-0"><b>View More</b></span>
+                              </a>
                           {% endif %}
                         {% else %}
                         <div class='mt-3'>

@@ -69,7 +69,7 @@ class Crop(models.Model):
         return self.name
     
 class Farm(models.Model):
-    
+
     DISTRICT_CHOICES = [
         ('', 'Select District'),
         ('Lango', 'Lango'),
@@ -153,7 +153,7 @@ class FarmProduce(models.Model):
     bags_harvested = models.IntegerField(null=True, blank=True)
     amount_sold = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     amount_kgs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    estimated_amount_kgs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    estimated_amount_tonnes = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     market = models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(default=timezone.now)

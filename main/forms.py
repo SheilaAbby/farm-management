@@ -276,8 +276,8 @@ class FarmingDatesForm(forms.ModelForm):
         date_harvesting = cleaned_data.get('date_harvesting')
         date_fertilizer_application = cleaned_data.get('date_fertilizer_application')
 
-        if date_ploughing and date_planting and date_ploughing <= date_planting:
-            raise ValidationError({'date_ploughing': 'Ploughing date should be after planting date.'})
+        if date_ploughing and date_planting and date_ploughing > date_planting:
+            raise ValidationError({'date_ploughing': 'Ploughing date should be before planting date.'})
 
         if date_weeding and date_ploughing and date_weeding <= date_ploughing:
             raise ValidationError({'date_weeding': 'Weeding date should be after ploughing date.'})
@@ -337,11 +337,11 @@ class FarmProduceForm(forms.ModelForm):
         required=False,  
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Amount in Kgs'}))
 
-    estimated_amount_kgs = forms.DecimalField(
+    estimated_amount_tonnes = forms.DecimalField(
         max_digits=10, 
         decimal_places=2, 
         required=False,  
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Estimated Amount in Kgs'}))
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Estimated Amount in Tonnes'}))
    
     batch_number = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Batch Number'}))
     bags_harvested = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bags Packed'}))
@@ -352,7 +352,7 @@ class FarmProduceForm(forms.ModelForm):
     class Meta:
         model = FarmProduce
         fields = ['quantity_planted', 'batch_number', 'bags_harvested',
-          'amount_sold', 'price_rate', 'market', 'amount_kgs', 'estimated_amount_kgs']
+          'amount_sold', 'price_rate', 'market', 'amount_kgs', 'estimated_amount_tonnes']
 
         def clean(self):
             cleaned_data = super().clean()
