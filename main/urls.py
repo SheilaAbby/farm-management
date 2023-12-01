@@ -11,7 +11,6 @@ urlpatterns = [
     path('logout/', views.custom_logout_view, name='logout'),
     path('sign-up/', views.sign_up, name='custom_signup'),
     path('farmer_home/', views.farmer_home, name='farmer_home'),
-    path('field_agent_home/', views.field_agent_home, name='field_agent_home'),
     path('manager_home/', views.manager_home, name='manager_home'),
     path('update_profile/', views.update_profile, name='update_profile'),
     path('profile/', views.profile, name='profile'),

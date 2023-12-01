@@ -80,17 +80,16 @@
                       <strong>NIN:</strong> {{ user.national_id }}
                   </div>
                 </div>
+
+                {% if user.district  %}
                 <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-map-marker-alt fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">
-                  {% if user.district  %}
                      <strong>District:</strong> {{ user.district }}
-                     {% endif %}
-                     {% if user.other_location  %}
-                     <strong>Other Location:</strong> {{ user.other_location }}
-                     {% endif %}
                   </div>
                 </div>
+                {% endif %}
+                
               <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
                   <div class="form-outline flex-fill mb-0">

@@ -33,8 +33,9 @@ def index(request):
 def farmer_home(request):
     user = request.user 
     farms = Farm.objects.filter(user=user)
+    farms = Farm.objects.filter(user=user)
     is_field_agent = user.groups.filter(name='field_agent').exists()
-    farms_in_agent_district = Farm.objects.filter(Q(district=user.district) | Q(other_location=user.other_location))
+    farms_in_agent_district = Farm.objects.filter(Q(district=user.district))
 
     farm_exists = Farm.objects.filter(user=user).exists()
     farm_queryset = Farm.objects.filter(user=user)
@@ -49,12 +50,6 @@ def farmer_home(request):
     }
  
     return render(request, 'main/farmer_home.html', context)
-
-@user_passes_test(lambda u: u.groups.filter(name='field_agent').exists())
-@login_required(login_url="/login")
-def field_agent_home(request):
-    return render(request, 'main/field_agent_home.html')
-
 
 @login_required(login_url="/login")
 def manager_home(request):
@@ -89,7 +84,7 @@ def login_view(request):
                     return redirect('farmer_home')
                 elif user.groups.filter(name='field_agent').exists():
                     login(request, user)
-                    return redirect('field_agent_home')
+                    return redirect('farmer_home')
                 elif user.groups.filter(name='manager_staff').exists():
                     login(request, user)
                     return redirect('manager_home')
@@ -217,8 +212,9 @@ def edit_farm(request, farm_id):
 @login_required(login_url="/login")
 def farm_details(request, farm_id):
     user = request.user
-    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farm = get_object_or_404(Farm, id=farm_id)
     is_field_agent = user.groups.filter(name='field_agent').exists()
+    
 
     # Process farm visit form submission
     if request.method == 'POST':
@@ -511,7 +507,7 @@ def farm_activities(request, farm_id):
 
 @login_required(login_url="/login")
 def farm_photos(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farm = get_object_or_404(Farm, id=farm_id)
     media_path = 'media/farm_photos/'
     image_names = [filename for filename in os.listdir(media_path) if os.path.isfile(os.path.join(media_path, filename))]
   

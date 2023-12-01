@@ -59,15 +59,15 @@
             <div class="card-header">
               <p class="fw-bold">Welcome, Field Agent! </p>
               <hr>
-              {% if not user.district or not user.other_location %}
+              {% if not user.district %}
                 <p class="fw-bold">To map you to farms, Update your Profile!</p>
               {% endif %}
-              {% if user.district or user.other_location %}
-                <p class="fw-bold"><p>Farms Registered in your District:</p></p>
+              {% if user.district %}
+                <p class="fw-bold"><p>Farms Registered in your District: {{user.district}}</p></p>
               {% endif %}
             </div>
             <div class="card-body">
-                 {% if user.district or user.other_location %}
+                 {% if user.district %}
                 <ul>
                   {% for farm in farms_in_agent_district %}
                     <li><span class="material-icons me-3" style="vertical-align: middle; font-size: 1.8em;">photo_camera_back</span><a href="{% url 'farm_details' farm.id %}" class="card-text mb-0" style="text-decoration: none;">{{ farm.name }}</a></li>

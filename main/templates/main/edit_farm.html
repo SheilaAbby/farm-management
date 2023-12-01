@@ -120,12 +120,12 @@ getLocationButton.addEventListener('click', function () {
     });
   
 document.addEventListener('DOMContentLoaded', function() {
-    var districtField = document.getElementById('id_district');
-    var otherLocationField = document.getElementById('id_other_location');
-
-    districtField.addEventListener('change', function() {
-        var selectedOption = this.value;
-        otherLocationField.style.display = (selectedOption === 'Other') ? 'block' : 'none';
+  var districtField = document.getElementById('{{ form.district.id_for_label }}');
+  var otherLocationField = document.getElementById('{{ form.other_location.id_for_label }}');
+  districtField.addEventListener('change', function() {
+    var selectedOption = this.value;
+    otherLocationField.style.display = (selectedOption === 'Other') ? 'block' : 'none';
+    
     });
 });
 </script>

@@ -7,7 +7,16 @@ from django.contrib.auth import get_user_model
 import os
 
 # Create your models here.
-class CustomUser(AbstractUser):
+class CustomUser(AbstractUser): 
+    
+    DISTRICT_CHOICES = [
+        ('', 'Select District'),
+        ('Lango', 'Lango'),
+        ('Teso', 'Teso'),
+        ('Abim', 'Abim'),
+        ('Nakaseke', 'Nakaseke'),
+        ('Other', 'Other'),
+    ]
 
     # Add additional fields as needed
     birth_year = models.IntegerField(null=True, blank=True)
@@ -17,7 +26,7 @@ class CustomUser(AbstractUser):
     phone_belongs_to_user = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], default='no')
     full_name = models.CharField(max_length=255, blank=True)
     photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
-    district = models.TextField(blank=True, null=True)
+    district = models.TextField(blank=True, null=True, choices=DISTRICT_CHOICES)
     other_location = models.TextField(blank=True, null=True)
     
     # Additional field to hold text when phone number doesn't belong to the user
@@ -34,7 +43,18 @@ class CustomUser(AbstractUser):
     @property
     def has_farm(self):
         # Check if the user has an associated farm
-        return self.farm_set.exists()  
+        return self.farm_set.exists() 
+    
+    
+    
+    def save(self, *args, **kwargs):
+
+       if self.other_location and self.other_location != self.DISTRICT_CHOICES[0][0]:
+            # Update district only if it was originally set to 'Other'
+            if self.district == self.DISTRICT_CHOICES[-1][0]:
+                self.district = self.other_location
+
+       super().save(*args, **kwargs)
     
 class Crop(models.Model):
     CROP_CHOICES = [
@@ -49,11 +69,21 @@ class Crop(models.Model):
         return self.name
     
 class Farm(models.Model):
+    
+    DISTRICT_CHOICES = [
+        ('', 'Select District'),
+        ('Lango', 'Lango'),
+        ('Teso', 'Teso'),
+        ('Abim', 'Abim'),
+        ('Nakaseke', 'Nakaseke'),
+        ('Other', 'Other'),
+    ]
+     
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     crops = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
-    other_location = models.CharField(max_length=255, default="Lango")
+    other_location = models.CharField(max_length=255)
     location_coordinates = models.CharField(max_length=255)
     land_size = models.DecimalField(max_digits=10, decimal_places=2)
     resources_supplied = models.ManyToManyField('Resource', related_name='farms', blank=True)
@@ -63,6 +93,8 @@ class Farm(models.Model):
     other_crops = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    
+
     def __str__(self):
         return self.name
     
@@ -71,6 +103,14 @@ class Farm(models.Model):
     
     def get_image_url(self, image_name):
         return os.path.join('farm_photos', str(self.id), image_name)
+    def save(self, *args, **kwargs):
+
+       if self.other_location and self.other_location != self.DISTRICT_CHOICES[0][0]:
+            # Update district only if it was originally set to 'Other'
+            if self.district == self.DISTRICT_CHOICES[-1][0]:
+                self.district = self.other_location
+
+       super().save(*args, **kwargs)
     
 class Person(models.Model):
     name = models.CharField(max_length=255)
