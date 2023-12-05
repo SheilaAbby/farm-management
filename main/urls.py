@@ -25,6 +25,7 @@ urlpatterns = [
     path('farm/<int:farm_id>/update_farm_costs/<int:farming_costs_id>/', views.update_farm_costs, name='update_farm_costs'),
     path('farm/<int:farm_id>/add_farm_produce/', views.add_farm_produce, name='add_farm_produce'), 
     path('farm/<int:farm_id>/update_farm_produce/<int:farm_produce_id>/', views.update_farm_produce, name='update_farm_produce'),
+    path('view_more_farms/', views.view_more_farms, name='view_more_farms'),
     path('<int:farm_id>/view_more_farm_dates/', views.view_more_farm_dates, name='view_more_farm_dates'),
     path('<int:farm_id>/view_more_farm_costs/', views.view_more_farm_costs, name='view_more_farm_costs'),
     path('<int:farm_id>/view_more_farm_produce/', views.view_more_farm_produce, name='view_more_farm_produce'),

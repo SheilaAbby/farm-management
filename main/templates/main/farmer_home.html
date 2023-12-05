@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
-     {% if user.has_farm %}
+     {% if user.has_farm or is_field_agent %}
       <div class="col-md-4 mb-4">
         {% if messages %}
         <div class="alert alert-success" role="alert">
@@ -23,13 +23,25 @@
       <div class="card h-100 d-flex flex-column">
         <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
         <div class="card-header">
-          <strong>Your Registered Farms</strong>
+          {% if not is_field_agent %} <strong>Your Registered Farms</strong>{% endif%}
+          {% if is_field_agent %}
+          <strong>Welcome, Field Agent {{user.full_name}} ! </strong>
+          {% if not user.district %}
+            <p class="fw-bold">To map you to farms, Update your Profile!</p>
+          {% endif %}
+         
+          {% if user.district %}
+            <p class="fw-bold"><p>Farms Registered in your District: <b class="text-success">{{user.district}}</b></p></p>
+          {% endif %}
+          {% endif %}
+
         </div>
         <div class="card-body d-flex flex-column">
          <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
          <hr class="mt-2">
          <a href="{% url 'add_farm' %}" class="btn btn-success mt-2 mb-3"><i class="fas fa-plus me-3"></i>Register</a>
-         <ul>
+   
+         {% if not is_field_agent %}
          {% for farm in latest_user_farms %}
           <div class="d-flex justify-content-between align-items-center mb-2">
               <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
@@ -38,14 +50,31 @@
               </a>
             </div>
            {% endfor %}
-           </ul>
-           
-           {% if farms|length > 3 %}
-            <a href="" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+           {% if farms|length > 5 %}
+            <a href="{% url 'view_more_farms' %}" style="text-decoration: none; display: flex; align-items: center;">
                   <span class="material-icons card-text mb-0 me-2">table_view</span>
-                  <span class="card-text mb-0"><b>View More</b></span>
+                  <span class="card-text mb-0">View More</span>
               </a>
-              {% comment %} <span class="material-icons">table_view</span><a href="" class="text-success mt-2">View More</a> {% endcomment %}
+           {% endif %}
+           {% endif %}
+           
+           {% if is_field_agent %}
+           {% for farm in farms_in_agent_district %}
+             <div class="d-flex justify-content-between align-items-center mb-2">
+              <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+                  <span class="material-icons card-text mb-0 me-2">photo_camera_back</span>
+                  <span class="card-text mb-0"><b>{{ farm.name }}</b></span>
+                  <a href="{% url 'edit_farm' farm_id=farm.id %}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+              </a>
+            </div>
+            
+           {% endfor %}
+           {% if all_farms_in_agent_district|length > 5 %}
+            <a href="{% url 'view_more_farms' %}" style="text-decoration: none; display: flex; align-items: center;">
+                  <span class="material-icons card-text mb-0 me-2">table_view</span>
+                  <span class="card-text mb-0">View More</span>
+              </a>
+           {% endif %}
            {% endif %}
         </div>
       </div>
@@ -65,46 +94,6 @@
       </div>
     </div>
     {% endif %}
-
-    {% if is_field_agent %}
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <img src="{% static 'images/cassava.jpeg' %}" class="card-img-top" alt="Cassava Image">
-            <div class="card-header">
-              <p class="fw-bold">Welcome, Field Agent! </p>
-              <hr>
-              {% if not user.district %}
-                <p class="fw-bold">To map you to farms, Update your Profile!</p>
-              {% endif %}
-              {% if user.district %}
-                <p class="fw-bold"><p>Farms Registered in your District: <b class="text-success">{{user.district}}</b></p></p>
-              {% endif %}
-            </div>
-            <div class="card-body">
-                 {% if user.district %}
-                <ul>
-                  {% for farm in farms_in_agent_district %}
-                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
-                            <span class="material-icons card-text mb-0 me-2">photo_camera_back</span>
-                            <span class="card-text mb-0"><b>{{ farm.name }}</b></span>
-                        </a>
-                      </div>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-              {% if farms_in_agent_district|length > 3 %}
-                 <a href="" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
-                    <span class="material-icons card-text mb-0 me-2">table_view</span>
-                    <span class="card-text mb-0"><b>View More</b></span>
-                </a>
-               {% endif %}              
-            </div>
-          </div>
-        </div>
-      {% endif %}
-
-  </div>
 </div>
 {% block javascript %}
     <script src="{% static 'js/custom.js' %}"></script>

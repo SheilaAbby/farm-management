@@ -36,6 +36,7 @@ def farmer_home(request):
     farms = Farm.objects.filter(user=user)
     is_field_agent = user.groups.filter(name='field_agent').exists()
     farms_in_agent_district = Farm.objects.filter(Q(district=user.district)).order_by('-created')[:5]
+    all_farms_in_agent_district = Farm.objects.filter(Q(district=user.district)).order_by('-created')
 
     farm_exists = Farm.objects.filter(user=user).exists()
     farm_queryset = Farm.objects.filter(user=user)
@@ -49,7 +50,8 @@ def farmer_home(request):
         'farms': farms,
         'is_field_agent': is_field_agent,
         'farms_in_agent_district': farms_in_agent_district,
-        'latest_user_farms': latest_user_farms
+        'latest_user_farms': latest_user_farms,
+        'all_farms_in_agent_district': all_farms_in_agent_district
     }
  
     return render(request, 'main/farmer_home.html', context)
@@ -354,7 +356,7 @@ def update_farm_produce(request, farm_id, farm_produce_id):
 @login_required(login_url="/login")
 def view_more_farm_dates(request, farm_id):
     # Retrieve all farm dates for the given farm
-    all_farm_dates = FarmingDates.objects.filter(farm_id=farm_id)
+    all_farm_dates = FarmingDates.objects.filter(farm_id=farm_id).order_by('-created')
 
     # Exclude the first 3 farm dates
     additional_farm_dates = all_farm_dates[3:]
@@ -370,7 +372,7 @@ def view_more_farm_dates(request, farm_id):
 @login_required(login_url="/login")
 def view_more_farm_costs(request, farm_id):
     # Retrieve all farm dates for the given farm
-    all_farm_dates = FarmingCosts.objects.filter(farm_id=farm_id)
+    all_farm_dates = FarmingCosts.objects.filter(farm_id=farm_id).order_by('-created')
 
     # Exclude the first 3 farm dates
     additional_farm_dates = all_farm_dates[3:]
@@ -543,3 +545,25 @@ def get_image_names(request):
     
 
     return JsonResponse({'image_names': image_names})
+
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@login_required(login_url="/login")
+def view_more_farms(request):
+    user = request.user
+    is_field_agent = user.groups.filter(name='field_agent').exists()
+
+    # Retrieve all farm dates for the given farm
+    all_user_farms = Farm.objects.filter(user=user).order_by('-created')
+    all_farms_in_agent_district = Farm.objects.filter(Q(district=user.district)).order_by('-created')
+
+    # Exclude the first 5 farms
+    additional_user_farms = all_user_farms[5:]
+    additional_agent_farms = all_farms_in_agent_district[5:]
+
+    context = {
+        'additional_user_farms': additional_user_farms,
+        'additional_agent_farms': additional_agent_farms,
+        'is_field_agent': is_field_agent
+    }
+
+    return render(request, 'main/view_more_farms.html', context)
