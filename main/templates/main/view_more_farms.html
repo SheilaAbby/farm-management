@@ -1,0 +1,37 @@
+{% extends 'main/base.html' %} 
+{% load static %}
+{% block title %}{{user.full_name}} | Farms{% endblock %} 
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+     
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 d-flex flex-column">
+          <img src="{% static 'images/cassava.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
+          <div class="card-header">
+            View All Farms
+          </div>
+          
+          <div class="card-body d-flex flex-column">
+                 {% for farm in additional_user_farms %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="material-icons card-text mb-0 me-2">photo_camera_back</span><p class="mb-0">Farm Added on: <b>{{ farm.created }}</b> | <b class="text-success">Added by: {{farm.user.full_name}}</b></p>
+                        <a href="{% url 'edit_farm' farm_id=farm.id %}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                    </div>
+                    
+                {% endfor %}
+                {% if is_field_agent %}
+                {% for farm in additional_agent_farms %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="material-icons card-text mb-0 me-2">photo_camera_back</span><p class="mb-0">Farm Added on: <b>{{ farm.created }}</b> | <b class="text-success">Added by: {{farm.user.full_name}}</b></p>
+                        <a href="{% url 'edit_farm' farm_id=farm.id %}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                    </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+       </div>
+    </div>
+</div>
+{% endblock %}
+
