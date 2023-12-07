@@ -1,4 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+
+   // Get the search link and results div
+   const searchLink = document.getElementById('search-link');
+   const searchSectionDiv = document.getElementById('search-section');
+
+   // Add a click event listener to the search link
+   searchLink.addEventListener('click', function (event) {
+       // Prevent the default link behavior
+       event.preventDefault();
+
+       // Toggle the visibility of the search results div
+       if (searchSectionDiv.style.display === 'none') {
+        searchSectionDiv.style.display = 'block';
+       } else {
+        searchSectionDiv.style.display = 'none';
+       }
+   });
  
   // Define the data attribute that your elements share
   var dataAttribute = "data-bs-toggle";
@@ -34,14 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
  });
-
-//  // Sample data for status images (replace with your own image URLs)
-// const statusImages = [
-//   'image1.jpg',
-//   'image2.jpg',
-//   'image3.jpg',
-//   // Add more image URLs as needed
-// ];
 
 
 

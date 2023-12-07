@@ -10,7 +10,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest
-from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm
+from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm
 from main.models import CustomUser 
 
 
@@ -567,3 +567,17 @@ def view_more_farms(request):
     }
 
     return render(request, 'main/view_more_farms.html', context)
+
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@login_required(login_url="/login")
+def search_view(request):
+    search_form = SearchForm(request.GET)
+    results = []
+    user = request.user
+
+    if search_form.is_valid():
+        query = search_form.cleaned_data['query']
+        # Perform the search query based on your model and fields
+        results = Farm.objects.filter(user=user)
+
+    return render(request, 'main/base.html', {'search_form': search_form, 'results': results})

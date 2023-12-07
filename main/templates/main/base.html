@@ -29,10 +29,12 @@
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li><a class="nav-link btn text-success" href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li>
-                        <li class="btn text-success" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!"><i class="fas fa-chalkboard"></i> Training</li>
-                        <li class="btn text-success" data-bs-toggle="popover1" title="Real Time Chat" data-bs-content="Coming soon!"><i class="fas fa-comments"></i> ChatRoom</li>
-                        <li class="btn text-success" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG"><i class="fas fa-info-circle"></i> About</li>
-                        <li class="btn text-success" data-bs-toggle="popover2" title="Blog/News" data-bs-content="Coming Soon!"><i class="fas fa-newspaper"></i> Blog</li>
+                        <li class="nav-item btn text-success" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!"><i class="fas fa-chalkboard"></i> Training</li>
+                        <li class="nav-item btn text-success" data-bs-toggle="popover1" title="Real Time Chat" data-bs-content="Coming soon!"><i class="fas fa-comments"></i> ChatRoom</li>
+                        <li class="nav-item btn text-success" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG"><i class="fas fa-info-circle"></i> About</li>
+                        <li class="nav-item btn text-success" data-bs-toggle="popover2" title="Blog/News" data-bs-content="Coming Soon!"><i class="fas fa-newspaper"></i> Blog</li>
+                        <li class="nav-item btn text-success" data-bs-toggle="popover2" title="Contact Us" data-bs-content="Jonathan Otim (CEO) - +256785039195 jonathanotim@gmail.com oscarbrianojok@gmail.com"><i class="fas fa-phone me-2"></i>Contact</li>
+                        <li id="search-nav-item" class="nav-item btn text-success"><a href="{% url 'search_view' %}" id="search-link"><i class="fas fa-search text-success me-2"></i></a>Search</li>
                     {% endif %}
                 </ul>
             </div>
@@ -74,6 +76,34 @@
     <div id="dynamic-background" class="bg-light p-4 rounded">
         <div class="bg-light p-4 rounded text-center col-md-12 mb-5">
             <h1 class="mb-4 text-success">Windwood Farm Management</h1>
+
+                       <!-- Centered Search section -->
+              <div class="container d-flex justify-content-center align-items-center">
+                <div id="search-section" style="display: none;">
+                    <form id="search-form" method="get" action="{% url 'search_view' %}">
+                        {{ search_form.query }}
+                        <button type="submit" class="btn btn-success d-flex align-items-center mt-2">
+                            <i class="material-icons mt-1">search</i>
+                        </button>
+                    </form>
+                    <div id="search-results">
+                        {% if results %}
+                            {% for farm in results %}
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+                                        <span class="material-icons card-text mb-0 me-2">photo_camera_back</span>
+                                        <span class="card-text mb-0"><b>{{ farm.name }} - {{ farm.location }}</b></span>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No results found..</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            </div>
+
         </div>
         <div class="container">
             {% block content %}{% endblock %}

@@ -452,3 +452,9 @@ class FarmPhotoForm(forms.ModelForm):
             'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter photo description'}),
         }
+
+class SearchForm(forms.Form):
+    query = forms.CharField(
+        label='Search...',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your search query.', 'style': 'width: 300px;'})
+    )
