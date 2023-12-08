@@ -164,52 +164,52 @@
     </div>
 </div>
 {% endblock %}
- {% block javascript %}
+{% block javascript %}
 <script>
-var farmId = {{ farm_id }};
-var csrfToken = "{{ csrf_token }}"; 
-document.addEventListener('DOMContentLoaded', function () {
-    var deleteButtons = document.querySelectorAll('.delete-person');
-    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-    var deletePersonMessage = document.getElementById('delete-person-message');
+    var farmId = {{ farm_id }};
+    var csrfToken = "{{ csrf_token }}"; 
+    document.addEventListener('DOMContentLoaded', function () {
+        var deleteButtons = document.querySelectorAll('.delete-person');
+        var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        var deletePersonMessage = document.getElementById('delete-person-message');
 
-    deleteButtons.forEach(function (button) {
-        button.addEventListener('click', function () {
-            var personId = this.getAttribute('data-person-id');
-            var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var personId = this.getAttribute('data-person-id');
+                var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
 
-            // Update the modal content
-            deletePersonMessage.textContent = 'Are you sure you want to delete this person?';
+                // Update the modal content
+                deletePersonMessage.textContent = 'Are you sure you want to delete this person?';
 
-            confirmDeleteBtn.addEventListener('click', function () {
-                // Send an AJAX request to delete the person
-                fetch('/farm/' + farmId + '/delete_person/' + personId + '/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrfToken,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ person_id: personId }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Optionally, update the UI or reload the page
-                            location.reload();
-                        } else {
-                            // Handle the error case
-                        }
-                    });
+                confirmDeleteBtn.addEventListener('click', function () {
+                    // Send an AJAX request to delete the person
+                    fetch('/farm/' + farmId + '/delete_person/' + personId + '/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ person_id: personId }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Optionally, update the UI or reload the page
+                                location.reload();
+                            } else {
+                                // Handle the error case
+                            }
+                        });
 
-                // Hide the modal
-                modal.hide();
+                    // Hide the modal
+                    modal.hide();
+                });
+
+                // Show the modal
+                modal.show();
             });
-
-            // Show the modal
-            modal.show();
         });
     });
-});
 </script>
  {% endblock %}
 

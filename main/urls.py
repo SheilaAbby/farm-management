@@ -39,7 +39,7 @@ urlpatterns = [
     path('farm/<int:farm_id>/farm_photos/', views.farm_photos, name='farm_photos'),
     path('get_image_names/', views.get_image_names, name='get_image_names'),
     path('search/', views.search_view, name='search_view'),
-
+    path('farm/<int:farm_id>/delete_farm/', views.delete_farm, name='delete_farm'),
 
 # Password Reset urls
     path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),

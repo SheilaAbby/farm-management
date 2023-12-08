@@ -33,7 +33,6 @@ def index(request):
 def farmer_home(request):
     user = request.user 
     farms = Farm.objects.filter(user=user)
-    farms = Farm.objects.filter(user=user)
     is_field_agent = user.groups.filter(name='field_agent').exists()
     farms_in_agent_district = Farm.objects.filter(Q(district=user.district)).order_by('-created')[:5]
     all_farms_in_agent_district = Farm.objects.filter(Q(district=user.district)).order_by('-created')
@@ -250,7 +249,7 @@ def farm_details(request, farm_id):
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def add_farm_dates(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farm = get_object_or_404(Farm, id=farm_id)
 
     if request.method == 'POST':
         form = FarmingDatesForm(request.POST)
@@ -285,7 +284,7 @@ def update_farm_dates(request, farm_id, farming_dates_id):
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def add_farm_costs(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farm = get_object_or_404(Farm, id=farm_id)
 
     if request.method == 'POST':
         form = FarmingCostsForm(request.POST)
@@ -320,7 +319,7 @@ def update_farm_costs(request, farm_id, farming_costs_id):
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def add_farm_produce(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farm = get_object_or_404(Farm, id=farm_id)
 
     if request.method == 'POST':
         form = FarmProduceForm(request.POST)
@@ -485,7 +484,10 @@ def farm_workers(request, farm_id):
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def farm_activities(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    user = request.user
+    is_field_agent = user.groups.filter(name='field_agent').exists()
+    farm = get_object_or_404(Farm, id=farm_id)
+    all_farms_in_agent_district = Farm.objects.filter(Q(district=user.district)).order_by('-created')
 
     # Check if farming dates, farming costs, and farm produce, workers exist for the farm
     farming_dates_exist = FarmingDates.objects.filter(farm=farm).exists()
@@ -505,7 +507,9 @@ def farm_activities(request, farm_id):
         'farm_produce_exist': farm_produce_exist,
         'farming_dates_queryset': farming_dates_queryset,
         'farming_costs_queryset': farming_costs_queryset,
-        'farm_produce_queryset': farm_produce_queryset
+        'farm_produce_queryset': farm_produce_queryset,
+        'is_field_agent': is_field_agent,
+        'all_farms_in_agent_district': all_farms_in_agent_district
     }
 
     return render(request, 'main/farm_activities.html', context)
@@ -581,3 +585,15 @@ def search_view(request):
         results = Farm.objects.filter(user=user)
 
     return render(request, 'main/base.html', {'search_form': search_form, 'results': results})
+
+@user_passes_test(lambda u: u.groups.filter(name__in=['field_agent']).exists())
+@login_required(login_url="/login")
+def delete_farm(request, farm_id):
+    farm = get_object_or_404(Farm, id=farm_id)
+  
+    if request.method == 'POST':
+        farm.delete()
+        messages.success(request, 'Farm Deleted Successfully!')
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
