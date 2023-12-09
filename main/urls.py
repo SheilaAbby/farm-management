@@ -41,7 +41,13 @@ urlpatterns = [
     path('search/', views.search_view, name='search_view'),
     path('farm/<int:farm_id>/delete_farm/', views.delete_farm, name='delete_farm'),
     path('fetch_messages/', views.fetch_messages, name='fetch_messages'),
+    
+    # handles creation of new messages + replies
+    path('windwood/chatroom/<int:message_id>/', views.send_message_view, name='send_message_view'),
+
+    # handles creation of new messages
     path('windwood/chatroom/', views.send_message, name='send_message'),
+    
 
     # Password Reset urls
     path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),

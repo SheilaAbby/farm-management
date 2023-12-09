@@ -10,10 +10,10 @@ from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic.edit import FormView
-from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest, Message
+from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest, Message, Reply
 from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm, MessageForm
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
+from django.utils import timezone
 
 
 def is_farmer_or_field_agent(user):
@@ -603,6 +603,7 @@ def delete_farm(request, farm_id):
 # def chatroom(request):
 #     return render(request, 'main/chatroom.html')
 
+# handles creation of new messages
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def send_message(request):
@@ -633,6 +634,57 @@ def send_message(request):
     else:
         form = MessageForm()
     return render(request, 'main/chatroom.html', {'form': form})
+
+# handles creation of new messages + replies
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@login_required(login_url="/login")
+def send_message_view(request, message_id=None):
+    if request.method == 'POST':
+        sender = request.user
+        content = request.POST.get('content', '')
+
+        if message_id is None:
+            # This is a new message
+            # Process and save the message
+            recipient_group_farmer = Group.objects.filter(name='farmer').first()
+            recipient_group_field_agent = Group.objects.filter(name='field_agent').first()
+
+            recipients_farmer = recipient_group_farmer.user_set.all()
+            recipients_field_agent = recipient_group_field_agent.user_set.all()
+
+            all_recipients = list(recipients_farmer) + list(recipients_field_agent)
+
+            for recipient in all_recipients:
+                Message.objects.create(sender=sender, recipient=recipient, content=content)
+
+            # Return a JsonResponse with the message data
+            new_message = Message.objects.filter(sender=sender, content=content).latest('created')
+            message_data = {
+                'sender': new_message.sender.username,
+                'content': new_message.content,
+                'created': new_message.created.strftime('%Y-%m-%d %H:%M:%S'),  # Format as needed
+            }
+            return JsonResponse({'success': True, 'message': message_data})
+
+        else:
+            # This is a reply to an existing message
+            # Find the original message
+            original_message = Message.objects.get(id=message_id)
+
+            # Process and save the reply
+            Reply.objects.create(message=original_message, sender=sender, content=content)
+
+            # Return a JsonResponse with the reply data
+            reply_data = {
+                'sender': sender.username,
+                'content': content,
+                'created': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+            }
+            return JsonResponse({'success': True, 'reply': reply_data})
+
+    else:
+        form = MessageForm()
+        return render(request, 'main/chatroom.html', {'form': form})
 
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")

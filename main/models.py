@@ -202,3 +202,8 @@ class Message(models.Model):
     content = models.TextField()
     created = models.DateTimeField(default=timezone.now)
 
+class Reply(models.Model):
+    message = models.ForeignKey(Message, related_name='replies', on_delete=models.SET_NULL, null=True)
+    sender = models.ForeignKey(User, related_name='sent_replies', on_delete=models.CASCADE)
+    content = models.TextField()
+    created = models.DateTimeField(default=timezone.now)

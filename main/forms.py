@@ -461,3 +461,4 @@ class SearchForm(forms.Form):
 
 class MessageForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=True)
+

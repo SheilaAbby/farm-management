@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import CustomUser, Person, Farm, Crop, Resource, FarmingDates,FarmingCosts, FarmProduce, FarmVisitRequest
+from .models import CustomUser, Person, Farm, Crop, Resource, FarmingDates,FarmingCosts, FarmProduce, FarmVisitRequest, Message
 from django.contrib.auth.admin import UserAdmin
 
-# Register your models here.
+# Register your models here. 
 
 admin.site.register(Crop)
 admin.site.register(Farm)
@@ -12,6 +12,7 @@ admin.site.register(FarmingCosts)
 admin.site.register(FarmProduce)
 admin.site.register(Resource)
 admin.site.register(FarmVisitRequest)
+admin.site.register(Message)
 
 # Customize Admin App
 
