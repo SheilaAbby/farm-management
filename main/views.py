@@ -9,9 +9,11 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest
-from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm
-from main.models import CustomUser 
+from django.views.generic.edit import FormView
+from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest, Message
+from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm, MessageForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 
 
 def is_farmer_or_field_agent(user):
@@ -597,3 +599,42 @@ def delete_farm(request, farm_id):
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})
+
+# def chatroom(request):
+#     return render(request, 'main/chatroom.html')
+
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@login_required(login_url="/login")
+def send_message_view(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            # Get the user who sent the message
+            sender = request.user
+
+            # Get all users in the 'farmer' and 'field_agent' groups
+            recipient_group_farmer = Group.objects.filter(name='farmer').first()
+            recipient_group_field_agent = Group.objects.filter(name='field_agent').first()
+
+            recipients_farmer = recipient_group_farmer.user_set.all()
+            recipients_field_agent = recipient_group_field_agent.user_set.all()
+
+            # Concatenate the lists of recipients
+            all_recipients = list(recipients_farmer) + list(recipients_field_agent)
+
+            # Get the message content from the form
+            content = form.cleaned_data['content']
+
+            # Save the message to the database for each recipient
+            for recipient in all_recipients:
+                Message.objects.create(sender=sender, recipient=recipient, content=content)
+
+            # You can customize this logic based on your needs
+            # For example, you might want to send a notification or update the UI
+
+            # Return HttpResponse to stay on the same page
+            return redirect('chatroom')
+    else:
+        form = MessageForm()
+
+    return render(request, 'main/chatroom.html', {'form': form})

@@ -458,3 +458,6 @@ class SearchForm(forms.Form):
         label='Search...',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your search query.', 'style': 'width: 300px;'})
     )
+
+class MessageForm(forms.Form):
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=True)

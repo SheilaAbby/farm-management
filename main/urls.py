@@ -40,8 +40,9 @@ urlpatterns = [
     path('get_image_names/', views.get_image_names, name='get_image_names'),
     path('search/', views.search_view, name='search_view'),
     path('farm/<int:farm_id>/delete_farm/', views.delete_farm, name='delete_farm'),
+    path('windwood/chatroom/', views.send_message_view, name='chatroom'),
 
-# Password Reset urls
+    # Password Reset urls
     path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
     path('reset_password_sent', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),

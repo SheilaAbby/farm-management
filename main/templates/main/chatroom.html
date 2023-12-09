@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %} 
+{% load static %}
+{% block title %}Farm Details | {{ farm.name }}{% endblock %} 
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center mb-3">
+        <div class="col-md-4 mb-4">
+            {% if messages %}
+                <div class="alert alert-success" role="alert">
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                                {{ message }}
+                                {% if message.tags == 'success' %}
+                                    <i class="fas fa-check fa-lg ml-2"></i>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-sm-12 mb-4">
+                <div class="card h-100 d-flex flex-column">
+                    <!-- Farm Header -->
+                    <div class="card-header" style="background-color: #5B362D;"></div>
+                    <!-- Farm Activities Content -->
+                    <div class="card-body d-flex flex-column">
+                        <p>Chat Here</p>
+                        <!-- Message Form -->
+                        <form method="post" action="{% url 'chatroom' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="messageContent" class="form-label">Compose Message</label>
+                                <textarea class="form-control" id="messageContent" name="content" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
