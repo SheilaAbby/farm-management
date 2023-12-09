@@ -30,7 +30,7 @@
                     {% if user.is_authenticated %}
                         <li><a class="nav-link btn text-success" href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li>
                         <li class="nav-item btn text-success" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!"><i class="fas fa-chalkboard"></i> Training</li>
-                        <li class="nav-item btn text-success"><a href="{% url 'chatroom' %}" class="text-success text-decoration-none"><i class="fas fa-comments"></i> ChatRoom</li>
+                        <li class="nav-item btn text-success"><a href="{% url 'send_message' %}" class="text-success text-decoration-none"><i class="fas fa-comments"></i>ChatRoom</a></li>
                         <li class="nav-item btn text-success" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG"><i class="fas fa-info-circle"></i> About</li>
                         <li class="nav-item btn text-success" data-bs-toggle="popover2" title="Contact Us" data-bs-content="Jonathan Otim (CEO) - +256785039195 jonathanotim@gmail.com oscarbrianojok@gmail.com"><i class="fas fa-phone me-2"></i>Contact</li>
                         <li id="search-nav-item" class="nav-item btn text-success"><a href="{% url 'search_view' %}" id="search-link"><i class="fas fa-search text-success me-2"></i></a>Search</li>

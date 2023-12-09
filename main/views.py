@@ -605,36 +605,39 @@ def delete_farm(request, farm_id):
 
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
-def send_message_view(request):
+def send_message(request):
     if request.method == 'POST':
-        form = MessageForm(request.POST)
-        if form.is_valid():
-            # Get the user who sent the message
-            sender = request.user
+        sender = request.user
+        content = request.POST.get('content', '')
 
-            # Get all users in the 'farmer' and 'field_agent' groups
-            recipient_group_farmer = Group.objects.filter(name='farmer').first()
-            recipient_group_field_agent = Group.objects.filter(name='field_agent').first()
+        recipient_group_farmer = Group.objects.filter(name='farmer').first()
+        recipient_group_field_agent = Group.objects.filter(name='field_agent').first()
 
-            recipients_farmer = recipient_group_farmer.user_set.all()
-            recipients_field_agent = recipient_group_field_agent.user_set.all()
+        recipients_farmer = recipient_group_farmer.user_set.all()
+        recipients_field_agent = recipient_group_field_agent.user_set.all()
 
-            # Concatenate the lists of recipients
-            all_recipients = list(recipients_farmer) + list(recipients_field_agent)
+        all_recipients = list(recipients_farmer) + list(recipients_field_agent)
 
-            # Get the message content from the form
-            content = form.cleaned_data['content']
+        for recipient in all_recipients:
+            Message.objects.create(sender=sender, recipient=recipient, content=content)
 
-            # Save the message to the database for each recipient
-            for recipient in all_recipients:
-                Message.objects.create(sender=sender, recipient=recipient, content=content)
+        # Assuming your message model has a 'created' field
+        new_message = Message.objects.filter(sender=sender, content=content).latest('created')
+        message_data = {
+            'sender': new_message.sender.username,
+            'content': new_message.content,
+            'created': new_message.created.strftime('%Y-%m-%d %H:%M:%S'),  # Format as needed
+        }
 
-            # You can customize this logic based on your needs
-            # For example, you might want to send a notification or update the UI
-
-            # Return HttpResponse to stay on the same page
-            return redirect('chatroom')
+        return JsonResponse({'success': True, 'message': message_data})
     else:
         form = MessageForm()
-
     return render(request, 'main/chatroom.html', {'form': form})
+
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@login_required(login_url="/login")
+def fetch_messages(request):
+    messages = Message.objects.all()
+    messages_data = [{'sender': message.sender.username, 'content': message.content, 'created': message.created.strftime('%Y-%m-%d %H:%M:%S')} for message in messages]
+
+    return JsonResponse({'success': True, 'messages': messages_data})
