@@ -14,7 +14,7 @@ from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resou
 from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm, MessageForm
 from django.contrib.auth.models import Group
 from django.utils import timezone
-
+import json
 
 def is_farmer_or_field_agent(user):
     return user.groups.filter(name__in=['farmer', 'field_agent']).exists()
@@ -641,7 +641,10 @@ def send_message(request):
 def send_message_view(request, message_id=None):
     if request.method == 'POST':
         sender = request.user
-        content = request.POST.get('content', '')
+        
+        # Read JSON data from the request body
+        data = json.loads(request.body.decode('utf-8'))
+        content = data.get('content', '')
 
         if message_id is None:
             # This is a new message
@@ -675,11 +678,13 @@ def send_message_view(request, message_id=None):
             Reply.objects.create(message=original_message, sender=sender, content=content)
 
             # Return a JsonResponse with the reply data
+
             reply_data = {
                 'sender': sender.username,
                 'content': content,
                 'created': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
             }
+           
             return JsonResponse({'success': True, 'reply': reply_data})
 
     else:

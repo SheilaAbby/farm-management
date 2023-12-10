@@ -202,13 +202,14 @@ function updateChatContainer(message) {
 }
 
 function sendReply(sender, messageId) {
+  
     var replyField = document.getElementById('replyField-' + sender);
-
+   
     if (replyField) {
         var replyContent = replyField.value.trim();
 
         if (replyContent) {
-           
+    
             // AJAX request to save the reply
             fetch('/windwood/chatroom/' + messageId + '/', {
                 method: 'POST',
