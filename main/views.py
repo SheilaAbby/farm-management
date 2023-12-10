@@ -690,6 +690,6 @@ def send_message_view(request, message_id=None):
 @login_required(login_url="/login")
 def fetch_messages(request):
     messages = Message.objects.all()
-    messages_data = [{'sender': message.sender.username, 'content': message.content, 'created': message.created.strftime('%Y-%m-%d %H:%M:%S')} for message in messages]
+    messages_data = [{'sender': message.sender.username, 'content': message.content, 'created': message.created.strftime('%Y-%m-%d %H:%M:%S'), 'id': message.id} for message in messages]
 
     return JsonResponse({'success': True, 'messages': messages_data})

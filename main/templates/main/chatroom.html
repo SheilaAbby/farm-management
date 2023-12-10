@@ -57,17 +57,94 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>
-// Dictionary to store the latest message for each user
 var latestMessages = {};
+
+// Dictionary to track the visibility state of reply fields and send buttons
+
+var replyFieldsState = {};
+
+// Dictionary to store the "Send" button for each user
+var sendButtons = {};
+
+// Function to toggle the visibility of the reply field and send button for a specific user
+function toggleReplyField(sender, messageId) {
+    var replyField = document.getElementById('replyField-' + sender);
+
+    // Toggle the visibility state
+    replyFieldsState[sender] = !replyFieldsState[sender];
+
+    // Toggle the visibility of the reply field
+    if (replyField) {
+        replyField.classList.toggle('d-none', !replyFieldsState[sender]);
+
+        // Create or get the "Send" button for the specific sender
+        if (!sendButtons[sender]) {
+            sendButtons[sender] = createSendButton(sender, messageId);
+        }
+
+        // Toggle the visibility of the "Send" button
+        sendButtons[sender].classList.toggle('d-none', !replyFieldsState[sender]);
+    }
+}
+
+// Create a "Send" button for a specific user
+function createSendButton(sender, messageId) {
+    var sendButton = document.createElement('button');
+    sendButton.textContent = 'Send';
+    sendButton.className = 'btn btn-primary mt-2 d-none';  // Initially hide the button
+    sendButton.id = 'sendButton-' + sender;
+
+    // Use an anonymous function to capture the current values of sender and messageId
+    sendButton.onclick = function () {
+        sendReply(sender, messageId);
+    };
+
+    // Append the "Send" button to the message element
+    latestMessages[sender].appendChild(sendButton);
+
+    return sendButton;
+}
+
+
+function sendMessage() {
+    // Get the message content from the input field
+    var messageContent = document.getElementById('messageContent').value;
+
+    if (!messageContent.trim()) {
+        // If content is empty or contains only whitespace, don't send the message
+        return;
+    }
+
+    // Send the message via AJAX
+    fetch('/windwood/chatroom/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: 'content=' + encodeURIComponent(messageContent),
+    })
+    .then(response => response.json())
+    .then(data => {
+      
+        // Update the chat container with the latest message and messageId
+        updateChatContainer(data.message, data.messageId);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 function updateChatContainer(message) {
     // Get the username, content, and created timestamp from the message
     var sender = message.sender;
     var content = message.content;
     var created = message.created;
-
+    var messageId = message.id;  // Assuming the message object has an 'id' property
+    
     // Check if the user already has a message in the chat container
     if (sender in latestMessages) {
+        
         // Update the existing message
         latestMessages[sender].innerHTML = '<span style="font-weight: bold;">' + sender + ':</span> <span style="color: green;">' + content + '</span> - sent on ' + created;
 
@@ -76,7 +153,7 @@ function updateChatContainer(message) {
         replyButton.textContent = 'Reply';
         replyButton.className = 'btn btn-sm btn-outline-primary ms-2';
         replyButton.onclick = function () {
-            toggleReplyField(sender);
+            toggleReplyField(sender, messageId);
         };
 
         // Append the reply button to the message element
@@ -101,7 +178,7 @@ function updateChatContainer(message) {
         replyButton.textContent = 'Reply';
         replyButton.className = 'btn btn-sm btn-outline-primary ms-2';
         replyButton.onclick = function () {
-            toggleReplyField(sender);
+            toggleReplyField(sender, messageId);
         };
 
         // Append the reply button to the message element
@@ -124,93 +201,41 @@ function updateChatContainer(message) {
     }
 }
 
-// Function to toggle the visibility of the reply field for a specific user
-function toggleReplyField(sender) {
-    var replyField = document.getElementById('replyField-' + sender);
-    replyField.classList.toggle('d-none');
-
-     // If the reply field is now visible, focus on it
-    if (!replyField.classList.contains('d-none')) {
-        replyField.focus();
-    }
-}
-
-// Function to send a reply via AJAX
 function sendReply(sender, messageId) {
     var replyField = document.getElementById('replyField-' + sender);
-    var replyContent = replyField.value.trim();
 
-    if (replyContent) {
-        // AJAX request to save the reply
-        fetch('/windwood/chatroom/' + messageId + '/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'),
-            },
-            body: JSON.stringify({ content: replyContent }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Handle the response if needed
-            console.log(data);
+    if (replyField) {
+        var replyContent = replyField.value.trim();
 
-            // Optionally, clear the reply field after a successful reply
-            replyField.value = '';
+        if (replyContent) {
+           
+            // AJAX request to save the reply
+            fetch('/windwood/chatroom/' + messageId + '/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({ content: replyContent }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              
+                // Optionally, clear the reply field after a successful reply
+                replyField.value = '';
 
-            // Hide the reply field
-            toggleReplyField(sender);
-
-            // After saving the reply, you may want to update the UI to reflect the changes
-            // You can call a function to update the chat container or perform any other actions
-            updateChatContainer(data.reply);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+                // Hide the reply field and the "Send" button
+                toggleReplyField(sender, messageId);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        } else {
+            console.error('Reply content is empty for sender:', sender);
+        }
+    } else {
+        console.error('Reply field not found for sender:', sender);
     }
-}
-
-function sendMessage() {
-    // Get the message content from the input field
-    var messageContent = document.getElementById('messageContent').value;
-
-    if (!messageContent.trim()) {
-        // If content is empty or contains only whitespace, don't send the message
-        return;
-    }
-
-    // Create a new message element
-    var messageElement = document.createElement('div');
-    messageElement.className = 'message';
-    messageElement.textContent = 'You: ' + messageContent;
-
-    // Append the message to the chat container
-    document.getElementById('chat-container').appendChild(messageElement);
-
-    // Clear the input field
-    document.getElementById('messageContent').value = '';
-
-    // Send the message via AJAX
-    fetch('/windwood/chatroom/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': getCookie('csrftoken'),
-        },
-        body: 'content=' + encodeURIComponent(messageContent),
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Handle the response if needed
-        console.log(data);
-
-        // Update the chat container with the latest message
-        updateChatContainer(data.message);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
 }
 
 // Function to get CSRF token from cookies
