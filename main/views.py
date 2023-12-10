@@ -625,6 +625,7 @@ def send_message(request):
         # Assuming your message model has a 'created' field
         new_message = Message.objects.filter(sender=sender, content=content).latest('created')
         message_data = {
+            'messageId': new_message.id,
             'sender': new_message.sender.username,
             'content': new_message.content,
             'created': new_message.created.strftime('%Y-%m-%d %H:%M:%S'),  # Format as needed
@@ -663,11 +664,14 @@ def send_message_view(request, message_id=None):
             # Return a JsonResponse with the message data
             new_message = Message.objects.filter(sender=sender, content=content).latest('created')
             message_data = {
+                'messageId': new_message.id,
                 'sender': new_message.sender.username,
                 'content': new_message.content,
                 'created': new_message.created.strftime('%Y-%m-%d %H:%M:%S'),  # Format as needed
             }
-            return JsonResponse({'success': True, 'message': message_data})
+            # return JsonResponse({'success': True, 'message': message_data})
+            response_data = {'success': True, 'message': message_data, 'status_message': 'Message Posted!'}
+            return JsonResponse(response_data)
 
         else:
             # This is a reply to an existing message
@@ -680,12 +684,15 @@ def send_message_view(request, message_id=None):
             # Return a JsonResponse with the reply data
 
             reply_data = {
+                'messageId': original_message.id,
                 'sender': sender.username,
                 'content': content,
                 'created': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
             }
            
-            return JsonResponse({'success': True, 'reply': reply_data})
+            # return JsonResponse({'success': True, 'reply': reply_data})
+            response_data = {'success': True, 'reply': reply_data, 'status_message': 'Reply Posted'}
+            return JsonResponse(response_data)
 
     else:
         form = MessageForm()
@@ -694,7 +701,38 @@ def send_message_view(request, message_id=None):
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def fetch_messages(request):
-    messages = Message.objects.all()
-    messages_data = [{'sender': message.sender.username, 'content': message.content, 'created': message.created.strftime('%Y-%m-%d %H:%M:%S'), 'id': message.id} for message in messages]
+    # Fetch messages and related replies
+    messages = Message.objects.prefetch_related('replies').all()
 
-    return JsonResponse({'success': True, 'messages': messages_data})
+    # Serialize the messages, including the related replies
+    serialized_messages = []
+    for message in messages:
+        serialized_message = {
+            'sender': message.sender.username,
+            'content': message.content,
+            'created': message.created.strftime('%Y-%m-%d %H:%M:%S'),
+            'id': message.id,
+            'replies': [{'sender': reply.sender.username, 'content': reply.content} for reply in message.replies.all()]
+        }
+        serialized_messages.append(serialized_message)
+
+    return JsonResponse({'success': True, 'messages': serialized_messages})
+
+
+def fetch_message_with_replies(request, message_id):
+    # Fetch the message by ID along with its related replies
+    message = get_object_or_404(Message.objects.prefetch_related('replies'), id=message_id)
+
+    # Serialize the message and replies
+    message_data = {
+        'messageId': message.id,
+        'sender': message.sender.username,
+        'content': message.content,
+        'created': message.created.strftime('%Y-%m-%d %H:%M:%S'),
+        'replies': [
+            {'sender': reply.sender.username, 'content': reply.content, 'created': reply.created.strftime('%Y-%m-%d %H:%M:%S')}
+            for reply in message.replies.all()
+        ]
+    }
+
+    return JsonResponse({'success': True, 'message': message_data})
