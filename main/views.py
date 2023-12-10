@@ -10,8 +10,8 @@ from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic.edit import FormView
-from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest, Message, Reply
-from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm, MessageForm
+from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest, Message, Reply, FarmVisitReport
+from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm, MessageForm, FarmVisitReportForm
 from django.contrib.auth.models import Group
 from django.utils import timezone
 import json
@@ -736,3 +736,18 @@ def fetch_message_with_replies(request, message_id):
     }
 
     return JsonResponse({'success': True, 'message': message_data})
+
+def create_farm_visit_report(request, farm_visit_request_id):
+    farm_visit_request = get_object_or_404(FarmVisitRequest, id=farm_visit_request_id)
+
+    if request.method == 'POST':
+        form = FarmVisitReportForm(request.POST)
+        if form.is_valid():
+            farm_visit_report = form.save(commit=False)
+            farm_visit_report.farm_visit_request = farm_visit_request
+            farm_visit_report.save()
+            # Redirect or perform other actions after saving the report
+    else:
+        form = FarmVisitReportForm()
+
+    return render(request, 'main/farm_visit_report.html', {'form': form, 'farm_visit_request': farm_visit_request})

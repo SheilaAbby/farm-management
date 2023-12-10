@@ -183,11 +183,23 @@ class FarmVisitRequest(models.Model):
     requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name='farm_visits')
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='farm_visits')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    created = models.DateTimeField( default='2023-11-14')
+    created = models.DateTimeField(default=timezone.now)
 
 
     def __str__(self):
-        return f"Visit to {self.farm} on {self.visit_date}"
+        return f"Visit to {self.farm} on {self.visit_date} | Submitted On {self.created.strftime('%Y-%m-%d')}"
+
+class FarmVisitReport(models.Model):
+    farm_visit_request = models.OneToOneField(
+        'FarmVisitRequest',
+        on_delete=models.CASCADE,
+        related_name='farm_visit_report'
+    )
+    report = models.TextField()
+    created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Report for Farm Visit Request {self.farm_visit_request.id} ({self.created.strftime('%Y-%m-%d')})"
 
 class FarmPhoto(models.Model):
     farm = models.ForeignKey('Farm', on_delete=models.CASCADE, related_name='farm_photos')

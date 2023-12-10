@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce, FarmVisitRequest, FarmPhoto
+from main.models import CustomUser, Farm, Crop, Resource, Person, FarmingDates, FarmingCosts, FarmProduce, FarmVisitRequest, FarmPhoto, FarmVisitReport
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.forms import ModelMultipleChoiceField
@@ -462,4 +462,27 @@ class SearchForm(forms.Form):
 class MessageForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=True)
 
+class FarmVisitReportForm(forms.ModelForm):
+    class Meta:
+        model = FarmVisitReport
+        fields = ['report']
+        widgets = {
+            'report': forms.Textarea(attrs={'cols': 80, 'rows': 5, 'class': 'form-control'}),
+        }
+        labels = {
+            'report': 'Visit Report',
+        }
+        help_texts = {
+            'report': 'Provide a detailed report of the farm visit.',
+        }
+        error_messages = {
+            'report': {
+                'required': 'The visit report field is required.',
+                'max_length': 'The visit report must be at most 1000 characters.',
+            },
+        }
 
+    def clean_report(self):
+        report = self.cleaned_data.get('report')
+        # Add custom validation for the report field if needed
+        return report

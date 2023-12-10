@@ -73,15 +73,9 @@ function toggleReplyField(sender, messageId) {
      // Initialize to false if undefined
     replyFieldsState[messageId] = replyFieldsState[messageId] || false;
 
-    // Log the current state
-    console.log('Current State:', replyFieldsState[messageId]);
-
     // Toggle the visibility state
     replyFieldsState[messageId] = !replyFieldsState[messageId];  // Use messageId instead of sender
 
-       // Log the new state
-    console.log('New State:', replyFieldsState[messageId]);
-    
     // Toggle the visibility of the reply field
     if (replyField) {
         replyField.classList.toggle('d-none', !replyFieldsState[messageId]);
@@ -99,7 +93,7 @@ function toggleReplyField(sender, messageId) {
 
 // Create a "Send" button for a specific user
 function createSendButton(sender, messageId) {
-    console.log('BUTTON CALLED');
+
     var sendButton = document.createElement('button');
     sendButton.textContent = 'Send';
     sendButton.className = 'btn btn-primary mt-2 d-none';  // Initially hide the button
@@ -141,7 +135,6 @@ function sendMessage() {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('SERVER DATA', data);
         // Update the chat container with the latest message and messageId
         updateChatContainer(data.message, data.messageId);
     })
@@ -151,14 +144,13 @@ function sendMessage() {
 }
 
 function updateChatContainer(message) {
-   // console.log('MESSAGE OBJECT', message);
+   
     // Get the username, content, and created timestamp from the message
     var sender = message.sender;
     var content = message.content;
     var created = message.created;
     var messageId = message.id;  // Assuming the message object has an 'id' property
-    
-   // console.log('MESSAGE ID', messageId);
+
     // Check if the user already has a message in the chat container
     if (sender in latestMessages) {
         // Update the existing message
@@ -194,7 +186,6 @@ function updateChatContainer(message) {
 
         // Display existing replies
         if (message.replies && message.replies.length > 0) {
-            console.log('MESSAGE Replies PRESENT ', message.id);
             var repliesList = document.createElement('ul');
             repliesList.className = 'list-unstyled';
             message.replies.forEach(function(reply) {
@@ -261,8 +252,6 @@ function updateChatContainer(message) {
 }
 
 function sendReply(sender, messageId) {
-    console.log('Sending reply for messageId:', messageId);
-  
     var replyField = document.getElementById('replyField-' + messageId);
    
     if (replyField) {
@@ -302,13 +291,9 @@ function sendReply(sender, messageId) {
 }
 
 async function updateRepliesSection(messageId, reply) {
-    console.log('Message ID Here:', reply);
-    console.log('Updating replies section for messageId here:', reply);
     var repliesSection = document.getElementById('repliesSection-' + reply);
 
     if (repliesSection) {
-        console.log('REPLY SECTION EXISTS FOR THIS ID here:', reply);
-
         repliesSection.classList.remove('d-none');
 
         // Clear existing content in the replies section
@@ -318,11 +303,10 @@ async function updateRepliesSection(messageId, reply) {
         try {
             const response = await fetch('/fetch_message_with_replies/' + reply + '/');
             const originalMessage = await response.json();
-            //console.log('ORIGINAL MESSAGE here:', originalMessage.message.replies);
-
+           
             // Check if there are replies in the original message object
             if (originalMessage.message.replies && originalMessage.message.replies.length > 0) {
-                console.log('ORIGINAL MESSAGE HAS REPLIES');
+                
                 // Create an unordered list to contain the replies
                 var repliesList = document.createElement('ul');
                 repliesList.className = 'list-unstyled';
@@ -364,10 +348,7 @@ async function updateRepliesSection(messageId, reply) {
         } catch (error) {
             console.error('Error fetching original message:', error);
         }
-    } else {
-        console.error('Replies section not found for messageId here:', reply);
-        console.log('Existing replies sections:', document.querySelectorAll('.replies-section'));
-    }
+    } 
 }
 
 // Function to get CSRF token from cookies

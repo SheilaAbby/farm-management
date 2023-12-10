@@ -146,6 +146,9 @@
                                         <b>Status:</b>
                                         {% if request.status == 'approved' %}
                                             <span class="text-success">{{ request.status }}</span>
+                                            <a href="{% url 'create_farm_visit_report' farm_visit_request_id=request.id %}">
+                                                <button>Submit Field Visit Report</button>
+                                            </a>
                                         {% else %}
                                             <span class="text-danger">{{ request.status }}</span>
                                         {% endif %}
