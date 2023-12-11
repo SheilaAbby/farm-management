@@ -419,10 +419,15 @@ def view_more_farm_staff(request, farm_id):
 
     return render(request, 'main/view_more_farm_staff.html', context)
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@login_required(login_url="/login")
 def view_more_farm_labourers(request, farm_id):
     # Retrieve all farm staff for the given farm
     farm = get_object_or_404(Farm, id=farm_id)
     farm_labourers = farm.farm_labourers.all()
+
+    user = request.user
+    is_field_agent = user.groups.filter(name='field_agent').exists()
 
     # Exclude the first 2 staff
     additional_farm_labourers = farm_labourers[2:]
@@ -430,6 +435,7 @@ def view_more_farm_labourers(request, farm_id):
     context = {
         'additional_farm_labourers': additional_farm_labourers,
         'farm_id': farm_id,
+        'is_field_agent': is_field_agent
     }
 
     return render(request, 'main/view_more_farm_labourers.html', context)
@@ -465,6 +471,8 @@ def farm_resources(request, farm_id):
 def farm_workers(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id)
 
+    user = request.user
+    is_field_agent = user.groups.filter(name='field_agent').exists()
     # Check if workers exist for the farm
   
     farm_labourer_exist = farm.farm_labourers.exists()
@@ -479,7 +487,8 @@ def farm_workers(request, farm_id):
         'farm_labourer_exist': farm_labourer_exist,
         'farm_staff_exist': farm_staff_exist,
         'farm_labourer_queryset': farm_labourer_queryset,
-        'farm_staff_queryset': farm_staff_queryset
+        'farm_staff_queryset': farm_staff_queryset,
+        'is_field_agent': is_field_agent
     }
 
     return render(request, 'main/farm_workers.html', context)
