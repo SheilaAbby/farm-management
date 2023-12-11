@@ -409,12 +409,16 @@ def view_more_farm_staff(request, farm_id):
     farm = get_object_or_404(Farm, id=farm_id)
     staff_members = farm.staff_contacts.all()
 
+    user = request.user
+    is_field_agent = user.groups.filter(name='field_agent').exists()
+
     # Exclude the first 2 staff
     additional_farm_staff = staff_members[2:]
 
     context = {
         'additional_farm_staff': additional_farm_staff,
         'farm_id': farm_id,
+        'is_field_agent': is_field_agent
     }
 
     return render(request, 'main/view_more_farm_staff.html', context)

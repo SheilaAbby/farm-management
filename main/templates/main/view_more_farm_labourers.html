@@ -26,8 +26,9 @@
                         <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">account_circle</span><strong>Full Name:</strong> {{ person.name }}</p>
                         <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">phone_android</span><strong>Phone Number:</strong> {{ person.phone_number }}</p>
                         <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">badge</span><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
-                        <a href="{% url 'edit_person' farm_id=farm_id person_id=person.id  %}" class="btn btn-primary me-3"><i class="fas fa-edit"></i></a>
+                        
                         {% if not is_field_agent %}
+                        <a href="{% url 'edit_person' farm_id=farm_id person_id=person.id  %}" class="btn btn-primary me-3"><i class="fas fa-edit"></i></a>
                         <a href="#" class="btn btn-danger delete-person" data-person-id="{{ person.id }}"><i class="fas fa-trash"></i></a>
                         {% endif %}
                       </div>
