@@ -1,6 +1,6 @@
 {% extends 'main/base.html' %} 
 {% load static %}
-{% block title %}{{farm.name}} Peelers{% endblock %} 
+{% block title %}{{farm.name}}Casual Workers{% endblock %} 
 {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
@@ -10,11 +10,11 @@
           <img src="{% static 'images/cassava_farm.jpeg' %}" class="card-img-top" alt="Cassava Harvest Image">
           <div class="card-header">
                 <p class="text-center text-success h1 fw-bold mt-4">
-                 View More Farm Peelers
+                 View More Farm Casual Workers
                 </p>
           </div>
           <div class="card-body d-flex flex-column">
-                 {% for person in additional_farm_peelers %}
+                 {% for person in additional_farm_labourers %}
                     <div class='card-body'>
                     {% if person.photo %}
                         <img src="{{ person.photo.url }}" alt="{{ person.name }} Photo" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">

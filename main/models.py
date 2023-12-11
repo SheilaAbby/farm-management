@@ -88,7 +88,7 @@ class Farm(models.Model):
     land_size = models.DecimalField(max_digits=10, decimal_places=2)
     resources_supplied = models.ManyToManyField('Resource', related_name='farms', blank=True)
     
-    crop_peelers = models.ManyToManyField('Person', related_name='farms_peeling', blank=True)
+    farm_labourers = models.ManyToManyField('Person', related_name='farms_labourer', blank=True)
     staff_contacts = models.ManyToManyField('Person', related_name='farms_staff', blank=True)
     other_crops = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -116,7 +116,7 @@ class Person(models.Model):
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     date_of_employment = models.DateField(null=True, blank=True)
-    is_peeler = models.BooleanField(default=False) 
+    casual_labourer = models.BooleanField(default=False) 
     is_staff = models.BooleanField(default=False) 
     photo = models.ImageField(upload_to='workers_photos/', blank=True, null=True)
     created = models.DateTimeField(default=timezone.now)

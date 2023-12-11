@@ -141,9 +141,9 @@ def add_person(request, farm_id):
             person = form.save(commit=False)
             person.save()
 
-            # Add the person to the appropriate relation based on the context (peeling or staff)
-            if form.cleaned_data.get('is_peeler'):
-                farm.crop_peelers.add(person)
+            # Add the person to the appropriate relation based on the context (casual workers or staff)
+            if form.cleaned_data.get('casual_labourer'):
+                farm.farm_labourers.add(person)
             if form.cleaned_data.get('is_staff'):
                 farm.staff_contacts.add(person)
 
@@ -419,20 +419,20 @@ def view_more_farm_staff(request, farm_id):
 
     return render(request, 'main/view_more_farm_staff.html', context)
 
-def view_more_farm_peelers(request, farm_id):
+def view_more_farm_labourers(request, farm_id):
     # Retrieve all farm staff for the given farm
     farm = get_object_or_404(Farm, id=farm_id)
-    peelers = farm.crop_peelers.all()
+    farm_labourers = farm.farm_labourers.all()
 
     # Exclude the first 2 staff
-    additional_farm_peelers = peelers[2:]
+    additional_farm_labourers = farm_labourers[2:]
 
     context = {
-        'additional_farm_peelers': additional_farm_peelers,
+        'additional_farm_labourers': additional_farm_labourers,
         'farm_id': farm_id,
     }
 
-    return render(request, 'main/view_more_farm_peelers.html', context)
+    return render(request, 'main/view_more_farm_labourers.html', context)
 
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
@@ -463,22 +463,22 @@ def farm_resources(request, farm_id):
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def farm_workers(request, farm_id):
-    farm = get_object_or_404(Farm, id=farm_id, user=request.user)
+    farm = get_object_or_404(Farm, id=farm_id)
 
     # Check if workers exist for the farm
   
-    farm_peelers_exist = farm.crop_peelers.exists()
+    farm_labourer_exist = farm.farm_labourers.exists()
     farm_staff_exist = farm.staff_contacts.exists()
    
-    farm_peelers_queryset = farm.crop_peelers.order_by('-created')
+    farm_labourer_queryset = farm.farm_labourers.order_by('-created')
     farm_staff_queryset = farm.staff_contacts.order_by('-created')
 
     context = {
         'farm': farm,
         'farm_id': farm_id,
-        'farm_peelers_exist': farm_peelers_exist,
+        'farm_labourer_exist': farm_labourer_exist,
         'farm_staff_exist': farm_staff_exist,
-        'farm_peelers_queryset': farm_peelers_queryset,
+        'farm_labourer_queryset': farm_labourer_queryset,
         'farm_staff_queryset': farm_staff_queryset
     }
 
@@ -600,9 +600,6 @@ def delete_farm(request, farm_id):
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})
-
-# def chatroom(request):
-#     return render(request, 'main/chatroom.html')
 
 # handles creation of new messages
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())

@@ -381,19 +381,19 @@ class PersonForm(forms.ModelForm):
 
     class Meta:
         model = Person
-        fields = ['photo', 'name', 'phone_number', 'date_of_employment', 'is_peeler', 'is_staff']
+        fields = ['photo', 'name', 'phone_number', 'date_of_employment', 'casual_labourer', 'is_staff']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'date_of_employment': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'is_peeler': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'casual_labourer': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         
     def __init__(self, *args, **kwargs):
         super(PersonForm, self).__init__(*args, **kwargs)
-        self.fields['is_peeler'].label = 'Is A Peeler'
-        self.fields['is_staff'].label = 'Is A Staff'
+        self.fields['casual_labourer'].label = 'A Casual Labourer'
+        self.fields['is_staff'].label = 'A Staff'
 
 class ResourceForm(forms.ModelForm):
     class Meta:
@@ -486,3 +486,5 @@ class FarmVisitReportForm(forms.ModelForm):
         report = self.cleaned_data.get('report')
         # Add custom validation for the report field if needed
         return report
+    
+    

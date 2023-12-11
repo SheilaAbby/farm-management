@@ -40,7 +40,8 @@
 
                 <div class="card-body d-flex flex-column">
                     <!-- Farm Workers Section -->
-                    {% if not farm.staff_contacts.all and not farm.crop_peelers.all %}
+                    <a href="{% url 'add_person' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto mb-3"><i class="fas fa-plus"></i></a>
+                    {% if not farm.staff_contacts.all and not farm.farm_labourers.all %}
                         <div class="card-header mt-3" style="background-color: #B9B1AF;">
                             {% if farm.name %}
                                 <p class="text-center text-success">
@@ -49,7 +50,6 @@
                             {% endif %}
                         </div>
                         <p class="alert alert-danger small mt-3">No farm workers added.</p>
-                        <a href="{% url 'add_person' farm.id %}" class="btn btn-primary d-flex justify-content-center mx-auto mb-3"><i class="fas fa-plus"></i></a>
                     {% endif %}
 
                     <div class="card-body">
@@ -59,7 +59,7 @@
                                    Staff
                                   </p>
                             </div>
-                           <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-1"><i class="fas fa-plus"></i></a>
+
                           {% for person in farm_staff_queryset|slice:":2"  %}
                           <div class="d-flex justify-content-start align-items-center">
                               {% if person.photo %}
@@ -84,6 +84,37 @@
                             {% endif %}
                           {% endif %}
                         
+                          {% if farm_labourer_exist %}
+            
+                          <div class="card-header mt-2" style="background-color: #B9B1AF;">
+                              <p class="text-success fw-bold mt-2">
+                               Casual Labourers
+                              </p>
+                          </div>
+                          
+                          {% for person in farm_labourer_queryset|slice:":2"  %}
+                            <div class="d-flex justify-content-start align-items-center">
+                                {% if person.photo %}
+                                    <img src="{{ person.photo.url }}" alt="{{ person.name }} Photo" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                                {% else %}
+                                    <!-- Default avatar image -->
+                                    <img src="{% static 'images/avatar.jpeg' %}" alt="Default Avatar" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
+                                {% endif %}
+
+                                <div class="mt-3 mb-3">
+                                    <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">account_circle</span><strong>Full Name:</strong> {{ person.name }}</p>
+                                   <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">phone_android</span><strong>Phone Number:</strong> {{ person.phone_number }}</p>
+                                   <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">badge</span><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
+                                    <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary me-3"><i class="fas fa-edit"></i></a>
+                                    <a href="#" class="btn btn-danger delete-person" data-person-id="{{ person.id }}"><i class="fas fa-trash"></i></a>
+                                </div>
+                           </div>
+                      {% endfor %}
+                       {% if farm_labourer_queryset|length > 2 %}
+                              <a href="{% url 'view_more_farm_labourers' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More Casual Workers</a>
+                            {% endif %}
+              
+                       {% endif %}
                     </div>
             
                     <!-- Hidden Confirmation Modal -->
@@ -105,60 +136,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    
-        <!-- Farm Activities Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 d-flex flex-column">
-                <!-- Farm Activities Header -->
-                <div class="card-header" style="background-color: #5B362D;">
-                    {% if farm.name %}
-                        <p class="text-center text-success h1 fw-bold mt-4">
-                            Peelers
-                        </p>
-                    {% endif %}
-                </div>
-
-                    <div class="d-flex flex-row mb-2">
-                        <div class="card-header">
-                            <strong> {{ farm.name }} Peelers</strong>
-                        </div>
-                    </div>
-                   
-                    <div class="card-body">
-                         {% if farm_peelers_exist %}
-                          <div class="card-header mt-2" style="background-color: #B9B1AF;">
-                              <p class="text-success fw-bold mt-2">
-                               Peelers
-                              </p>
-                          </div>
-                          
-                         <a href="{% url 'add_person' farm.id %}" class="btn btn-success mt-1"><i class="fas fa-plus"></i></a>
-
-                          {% for person in farm_peelers_queryset|slice:":2"  %}
-                            <div class="d-flex justify-content-start align-items-center">
-                                {% if person.photo %}
-                                    <img src="{{ person.photo.url }}" alt="{{ person.name }} Photo" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
-                                {% else %}
-                                    <!-- Default avatar image -->
-                                    <img src="{% static 'images/avatar.jpeg' %}" alt="Default Avatar" class="img-fluid rounded-circle me-3" style="max-width: 30px; max-height: 30px;">
-                                {% endif %}
-
-                                <div class="mt-3 mb-3">
-                                    <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">account_circle</span><strong>Full Name:</strong> {{ person.name }}</p>
-                                   <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">phone_android</span><strong>Phone Number:</strong> {{ person.phone_number }}</p>
-                                   <p class='mb-1' style="display: inline-flex; align-items: center;"><span class="material-icons" style="margin-right: 8px;">badge</span><strong>Date Employed:</strong> {{ person.date_of_employment }}</p>
-                                    <a href="{% url 'edit_person' farm.id person.id %}" class="btn btn-primary me-3"><i class="fas fa-edit"></i></a>
-                                    <a href="#" class="btn btn-danger delete-person" data-person-id="{{ person.id }}"><i class="fas fa-trash"></i></a>
-                                </div>
-                           </div>
-                      {% endfor %}
-                       {% if farm_peelers_queryset|length > 2 %}
-                              <a href="{% url 'view_more_farm_peelers' farm_id=farm_id %}" class="btn btn-secondary mt-3">View More Peelers</a>
-                            {% endif %}
-                      {% endif %}
-                    </div>
             </div>
         </div>
     </div>
@@ -211,5 +188,5 @@
         });
     });
 </script>
- {% endblock %}
+{% endblock %}
 
