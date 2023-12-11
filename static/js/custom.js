@@ -1,5 +1,6 @@
+
 document.addEventListener("DOMContentLoaded", function () {
- 
+  
   // Define the data attribute that your elements share
   var dataAttribute = "data-bs-toggle";
 
@@ -21,20 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return new bootstrap.Popover(popoverTriggerEl);
   });
   
-    // Add the loadChatroom function
-    function loadChatroom() {
-      $.ajax({
-        type: 'GET',
-        url: '{% url "chatroom" %}',
-        success: function(data) {
-          // Update the content of a specific container with the loaded content
-          $('#content-container').html(data);
-        },
-        error: function() {
-          // Handle error if needed
-        }
-      });
-    }
   // Event listener for when a popover is shown
   document.body.addEventListener("shown.bs.popover", function (e) {
     var shownPopover = e.target;

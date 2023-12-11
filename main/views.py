@@ -587,7 +587,7 @@ def search_view(request):
         # Perform the search query based on your model and fields
         results = Farm.objects.filter(user=user)
 
-    return render(request, 'main/base.html', {'search_form': search_form, 'results': results})
+    return render(request, 'main/farmer_home.html', {'search_form': search_form, 'results': results})
 
 @user_passes_test(lambda u: u.groups.filter(name__in=['field_agent']).exists())
 @login_required(login_url="/login")

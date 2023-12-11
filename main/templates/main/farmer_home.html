@@ -38,6 +38,34 @@
         </div>
         <div class="card-body d-flex flex-column">
          <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
+         <a href="{% url 'search_view' %}" id="search-link" style="text-decoration: none; display: flex; align-items: center;" ><i class="fas fa-search text-success me-2"></i>Search</a>
+
+                  <!-- Centered Search section -->
+              <div class="container d-flex justify-content-center align-items-center">
+                <div id="search-section" style="display: none;">
+                    <form id="search-form" method="get" action="{% url 'search_view' %}">
+                         {{ search_form.as_ul }}
+                        <button type="submit" class="btn btn-success d-flex align-items-center mt-2">
+                            search
+                        </button>
+                    </form>
+                    <div id="search-results">
+                        {% if results %}
+                            {% for farm in results %}
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
+                                        <span class="material-icons card-text mb-0 me-2">photo_camera_back</span>
+                                        <span class="card-text mb-0"><b>{{ farm.name }} - {{ farm.location }}</b></span>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No results found..</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
          <hr class="mt-2">
          <a href="{% url 'add_farm' %}" class="btn btn-success mt-2 mb-3"><i class="fas fa-plus me-3"></i>Register</a>
    
@@ -167,7 +195,20 @@
                 modal.show();
             });
         });
+
+        var searchLink = document.getElementById('search-link');
+        var searchSection = document.getElementById('search-section');
+
+        if (searchLink) {
+            searchLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                console.log('Search link clicked!');
+                searchSection.style.display = (searchSection.style.display === 'none') ? 'block' : 'none';
+            });
+        }
+   
     });
 </script>
 {% endblock %}
+
 
