@@ -15,6 +15,7 @@ from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,Far
 from django.contrib.auth.models import Group
 from django.utils import timezone
 import json
+from django.db import IntegrityError
 
 def is_farmer_or_field_agent(user):
     return user.groups.filter(name__in=['farmer', 'field_agent']).exists()
@@ -739,15 +740,24 @@ def fetch_message_with_replies(request, message_id):
 
 def create_farm_visit_report(request, farm_visit_request_id):
     farm_visit_request = get_object_or_404(FarmVisitRequest, id=farm_visit_request_id)
+    existing_report = FarmVisitReport.objects.filter(farm_visit_request=farm_visit_request).first()
 
     if request.method == 'POST':
-        form = FarmVisitReportForm(request.POST)
-        if form.is_valid():
-            farm_visit_report = form.save(commit=False)
-            farm_visit_report.farm_visit_request = farm_visit_request
-            farm_visit_report.save()
-            # Redirect or perform other actions after saving the report
+        form = FarmVisitReportForm(request.POST, instance=existing_report)
+        try:
+            if form.is_valid():
+                farm_visit_report = form.save(commit=False)
+                farm_visit_report.farm_visit_request = farm_visit_request
+                farm_visit_report.save()
+                messages.success(request, 'Farm Report submitted successfully!')
+                
+                return redirect('farm_details', farm_id=farm_visit_request.farm.id)
+        except IntegrityError:
+            # Handle the case where the report already exists
+            messages.warning(request, 'Farm Report already submitted!')
+            return redirect('farm_details', farm_id=farm_visit_request.farm.id)
     else:
-        form = FarmVisitReportForm()
+        # If there's an existing report, populate the form with its data
+        form = FarmVisitReportForm(instance=existing_report)
 
     return render(request, 'main/farm_visit_report.html', {'form': form, 'farm_visit_request': farm_visit_request})

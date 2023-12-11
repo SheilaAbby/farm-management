@@ -467,7 +467,7 @@ class FarmVisitReportForm(forms.ModelForm):
         model = FarmVisitReport
         fields = ['report']
         widgets = {
-            'report': forms.Textarea(attrs={'cols': 80, 'rows': 5, 'class': 'form-control'}),
+            'report': forms.Textarea(attrs={'cols': 80, 'rows': 20, 'class': 'form-control'}),
         }
         labels = {
             'report': 'Visit Report',
