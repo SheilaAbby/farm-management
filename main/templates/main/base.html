@@ -41,17 +41,20 @@
                 <ul class="navbar-nav">
                     <!-- Add your authenticated user dropdown menu here -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% if user.photo %}
-                                <div class="rounded-circle overflow-hidden me-2" style="width: 60px; height: 60px;">
-                                    <img src="{{ user.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
-                                </div>
-                            {% else %}
-                                <span class="material-icons" style="font-size: 1.8em;">person_pin</span>
-                            {% endif %}
-                            <strong>{{ user.username }}</strong>
+                       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="d-flex align-items-center"> <!-- Use a flex container -->
+                                {% if user.photo %}
+                                    <div class="rounded-circle overflow-hidden me-2" style="width: 60px; height: 60px;">
+                                        <img src="{{ user.photo.url }}" alt="User Photo" class="img-fluid w-100 h-100">
+                                    </div>
+                                {% else %}
+                                    <span class="material-icons me-2" style="font-size: 1.8em;">person_pin</span> <!-- Moved the material icon here -->
+                                {% endif %}
+                                <strong>{{ user.username }}</strong>
+                            </div>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                        <ul class="dropdown-menu">
                             <li><a class="dropdown-item fw-bold" href="{% url 'profile' %}" ><i class="fas fa-user"></i> My Profile</a></li>
                             <hr class="dropdown-divider">
                             <li><a class="dropdown-item fw-bold" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
