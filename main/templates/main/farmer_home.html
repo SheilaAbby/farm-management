@@ -38,35 +38,37 @@
         </div>
         <div class="card-body d-flex flex-column">
          <p class="card-text">Implementing effective cassava farm management involves optimizing soil health, implementing pest control measures, and employing efficient harvesting techniques.</p>
-         <a href="{% url 'search_view' %}" id="search-link" style="text-decoration: none; display: flex; align-items: center;" ><i class="fas fa-search text-success me-2"></i>Search</a>
-
+    
                   <!-- Centered Search section -->
               <div class="container d-flex justify-content-center align-items-center">
-                <div id="search-section" style="display: none;">
-                    <form id="search-form" method="get" action="{% url 'search_view' %}">
-                         {{ search_form.as_ul }}
-                        <button type="submit" class="btn btn-success d-flex align-items-center mt-2">
-                            search
+                <div id="search-section">
+                  <form id="search-form" method="get" action="{% url 'search_view' %}">
+                        <div class="mb-2">
+                            <div class="input-group">
+                                {{ search_form.query }}
+                                <label for="{{ search_form.query.id_for_label }}" class="visually-hidden">Search here</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-search"></i> Search
                         </button>
                     </form>
-                    <div id="search-results">
+
+                    <div id="search-results" class="mt-5">
                         {% if results %}
                             {% for farm in results %}
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <a href="{% url 'farm_details' farm.id %}" style="text-decoration: none; display: flex; align-items: center;" class="text-success">
                                         <span class="material-icons card-text mb-0 me-2">photo_camera_back</span>
-                                        <span class="card-text mb-0"><b>{{ farm.name }} - {{ farm.location }}</b></span>
+                                        <span class="card-text mb-0"><b>{{ farm.name }} - {{ farm.district }}</b></span>
                                     </a>
                                 </div>
                             {% endfor %}
-                        {% else %}
-                            <p>No results found..</p>
                         {% endif %}
                     </div>
                 </div>
             </div>
-
-         <hr class="mt-2">
+         <hr class="mt-1">
          <a href="{% url 'add_farm' %}" class="btn btn-success mt-2 mb-3"><i class="fas fa-plus me-3"></i>Register</a>
    
          {% if not is_field_agent %}

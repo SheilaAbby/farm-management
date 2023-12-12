@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <!-- Logo section -->
             <div>
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand me-10" href="/">
                     <img src="{% static 'images/logo-5.jpeg' %}" alt="Windwood Farm Management Logo">
                 </a>
             </div>
@@ -30,13 +30,14 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
+                <ul class="navbar-nav ms-auto">
                     <!-- Add your authenticated user navigation links here -->
-                    <li><a class="nav-link btn text-success" href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li>
-                    <li class="nav-item btn text-success" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!"><i class="fas fa-chalkboard"></i> Training</li>
-                    <li class="nav-item btn text-success"><a href="{% url 'send_message' %}" class="text-success text-decoration-none"><i class="fas fa-comments"></i>ChatRoom</a></li>
-                    <li class="nav-item btn text-success" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2012, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG"><i class="fas fa-info-circle"></i> About</li>
-                    <li class="nav-item btn text-success" data-bs-toggle="popover2" title="Contact Us" data-bs-content="Jonathan Otim (CEO) - +256785039195 jonathanotim@gmail.com oscarbrianojok@gmail.com"><i class="fas fa-phone me-2"></i>Contact</li>
+                    {% comment %} <li><a class="nav-link btn text-success ms-auto" href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li> {% endcomment %}
+                    <li class="nav-item btn text-success ms-auto "><a href="{% url 'index' %}" class="text-success text-decoration-none"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item btn text-success ms-auto" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!"><i class="fas fa-chalkboard"></i> Training</li>
+                    <li class="nav-item btn text-success ms-auto "><a href="{% url 'send_message' %}" class="text-success text-decoration-none"><i class="fas fa-comments"></i> ChatRoom</a></li>
+                    <li class="nav-item btn text-success ms-auto" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2009, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG"><i class="fas fa-info-circle"></i> About</li>
+                    <li class="nav-item btn text-success ms-auto" data-bs-toggle="popover2" title="Contact Us" data-bs-content="Jonathan Otim (CEO) - +256785039195 jonathanotim@gmail.com oscarbrianojok@gmail.com"><i class="fas fa-phone me-2"></i>Contact</li>
                 </ul>
                 <ul class="navbar-nav">
                     <!-- Add your authenticated user dropdown menu here -->
@@ -54,7 +55,7 @@
                             </div>
                         </a>
 
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item fw-bold" href="{% url 'profile' %}" ><i class="fas fa-user"></i> My Profile</a></li>
                             <hr class="dropdown-divider">
                             <li><a class="dropdown-item fw-bold" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
