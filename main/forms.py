@@ -456,7 +456,7 @@ class FarmPhotoForm(forms.ModelForm):
 class SearchForm(forms.Form):
     query = forms.CharField(
         label='Search...',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search your registered farms...', 'style': 'width: 300px;'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search...', 'style': 'width: 200px;'})
     )
 
 class MessageForm(forms.Form):

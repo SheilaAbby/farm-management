@@ -594,11 +594,19 @@ def search_view(request):
     search_form = SearchForm(request.GET)
     results = []
     user = request.user
-
+   
     if search_form.is_valid():
         query = search_form.cleaned_data['query']
-        # Perform the search query based on your model and fields
-        results = Farm.objects.filter(user=user)
+        
+        if user.groups.filter(name='field_agent').exists():
+            # If the user is only in the field_agent group, search in farms in their district
+            results = Farm.objects.filter(Q(district=user.district), name__icontains=query)
+        elif user.groups.filter(name='farmer').exists():
+            # If the user is only in the farmer group, search only in their farms
+            results = Farm.objects.filter(user=user, name__icontains=query)
+        elif user.groups.filter(name__in=['farmer', 'field_agent']).exists():
+            # If the user is in both groups, prioritize the field_agent filter
+            results = Farm.objects.filter(Q(district=user.district), name__icontains=query)
 
     return render(request, 'main/farmer_home.html', {'search_form': search_form, 'results': results})
 
