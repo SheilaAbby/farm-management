@@ -737,7 +737,7 @@ def fetch_messages(request):
 
     return JsonResponse({'success': True, 'messages': serialized_messages})
 
-
+@login_required(login_url="/login")
 def fetch_message_with_replies(request, message_id):
     # Fetch the message by ID along with its related replies
     message = get_object_or_404(Message.objects.prefetch_related('replies'), id=message_id)
@@ -756,6 +756,7 @@ def fetch_message_with_replies(request, message_id):
 
     return JsonResponse({'success': True, 'message': message_data})
 
+@login_required(login_url="/login")
 def create_farm_visit_report(request, farm_visit_request_id):
     farm_visit_request = get_object_or_404(FarmVisitRequest, id=farm_visit_request_id)
     existing_report = FarmVisitReport.objects.filter(farm_visit_request=farm_visit_request).first()
@@ -779,3 +780,16 @@ def create_farm_visit_report(request, farm_visit_request_id):
         form = FarmVisitReportForm(instance=existing_report)
 
     return render(request, 'main/farm_visit_report.html', {'form': form, 'farm_visit_request': farm_visit_request})
+
+# @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@login_required(login_url="/login")
+def delete_message(request, message_id):
+    # Get the message object
+    message = get_object_or_404(Message, id=message_id)
+
+    # Check if the user has permission to delete the message
+    if request.user == message.sender:
+        message.delete()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False, 'error': 'Permission denied'}, status=403)

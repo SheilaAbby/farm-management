@@ -42,6 +42,7 @@ urlpatterns = [
     path('farm/<int:farm_id>/delete_farm/', views.delete_farm, name='delete_farm'),
     path('fetch_messages/', views.fetch_messages, name='fetch_messages'),
     path('fetch_message_with_replies/<int:message_id>/', views.fetch_message_with_replies, name='fetch_message_with_replies'),
+    path('windwood/chatroom/delete/<int:message_id>/', views.delete_message, name='delete_message'),
     
     # handles creation of new messages + replies
     path('windwood/chatroom/<int:message_id>/', views.send_message_view, name='send_message_view'),

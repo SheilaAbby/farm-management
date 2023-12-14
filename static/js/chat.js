@@ -76,52 +76,90 @@ function sendMessage() {
     .then(data => {
         // Update the chat container with the latest message and messageId
         updateChatContainer(data.message, data.messageId);
+        //clear the message field
+        document.getElementById('messageContent').value = '';
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
 
+function deleteMessage(sender, messageId) {
+    // Check if messageId is valid
+    if (!messageId) {
+        console.error('Invalid messageId:', messageId);
+        return;
+    }
+
+    // AJAX request to delete the message
+    fetch('/windwood/chatroom/delete/' + messageId + '/', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            // If the response is OK, remove the message from the UI
+            removeMessage(sender, messageId);
+        } else {
+            console.error('Error deleting message. Status:', response.status);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Function to remove a message from the UI
+function removeMessage(sender, messageId) {
+    // Get the message element by ID and remove it
+    var messageElement = document.getElementById('message-' + messageId);
+    if (messageElement) {
+        messageElement.remove();
+        // Remove the message from latestMessages dictionary
+        delete latestMessages[sender];
+    } else {
+        console.error('Message element not found for messageId:', messageId);
+    }
+}
+
 function updateChatContainer(message) {
-   
     // Get the username, content, and created timestamp from the message
     var sender = message.sender;
     var content = message.content;
     var created = message.created;
-    var messageId = message.id;  // Assuming the message object has an 'id' property
+    var messageId = message.id;
 
     // Check if the user already has a message in the chat container
     if (sender in latestMessages) {
         // Update the existing message
-        latestMessages[sender].innerHTML ='<i class="fas fa-comment text-success"></i> ' + '<span style="font-weight: bold;">' + sender + ':</span> <span style="color: green;">' + content + '</span> - sent on ' + created;
+        latestMessages[sender].innerHTML = `
+            <div id="message-${messageId}">
+                <i class="fas fa-comment text-success"></i>
+                <span style="font-weight: bold;">${sender}:</span>
+                <span style="color: green;">${content}</span>
+                - sent on ${created}
+                <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})">Delete</button>
+            </div>
+            <div class="replies-section mt-2 d-none" id="repliesSection-${messageId}"></div>
+        `;
 
-        // Add a reply button
-        var replyButton = document.createElement('button');
-        replyButton.textContent = 'Reply';
-        replyButton.className = 'btn btn-sm btn-outline-primary ms-2 mb-3 mt-2';
-        replyButton.onclick = function () {
-            toggleReplyField(sender, messageId);
-        };
+        // Now, append the reply field and send button separately
+        var repliesSection = document.getElementById(`repliesSection-${messageId}`);
+        if (repliesSection) {
+            var replyField = document.createElement('textarea');
+            replyField.className = 'form-control mt-2';
+            replyField.placeholder = 'Reply to ' + sender + '...';
+            replyField.id = 'replyField-' + messageId;
 
-        // Append the reply button to the message element
-        latestMessages[sender].appendChild(replyButton);
 
-        // Add a hidden text field for replying
-        var replyField = document.createElement('textarea');
-        replyField.className = 'form-control mt-2 d-none';
-        replyField.placeholder = 'Reply to ' + sender + '...';
-        replyField.id = 'replyField-' + messageId;
-
-        // Append the reply field to the chat container
-        latestMessages[sender].appendChild(replyField);
-
-        // Add a hidden section for displaying replies
-        var repliesSection = document.createElement('div');
-        repliesSection.className = 'replies-section mt-2 d-none';
-        repliesSection.id = 'repliesSection-' + messageId;
-
-        // Append the replies section to the message element
-        latestMessages[sender].appendChild(repliesSection);
+            // Append the reply field and send button to the replies section
+            repliesSection.appendChild(replyField);
+            // repliesSection.appendChild(sendButton);
+        }
 
         // Display existing replies
         if (message.replies && message.replies.length > 0) {
@@ -140,34 +178,37 @@ function updateChatContainer(message) {
         // Create a new message element
         var messageElement = document.createElement('div');
         messageElement.className = 'message';
-        messageElement.innerHTML = '<span style="font-weight: bold;">' + sender + ':</span> <span style="color: green;">' + content + '</span> - sent on ' + created;
+        messageElement.id = 'message-' + messageId;
+        messageElement.innerHTML = `
+            <i class="fas fa-comment text-success"></i>
+            <span style="font-weight: bold;">${sender}:</span>
+            <span style="color: green;">${content}</span>
+            - sent on ${created}
+            <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
+            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})">Delete</button>
+        `;
 
-        // Add a reply button
+        // Append the message to the chat container
+        document.getElementById('chat-container').appendChild(messageElement);
+
+        // Append the reply button, reply field, and replies section separately
         var replyButton = document.createElement('button');
         replyButton.textContent = 'Reply';
         replyButton.className = 'btn btn-sm btn-outline-primary ms-2';
         replyButton.onclick = function () {
             toggleReplyField(sender, messageId);
         };
-
-        // Append the reply button to the message element
         messageElement.appendChild(replyButton);
 
-        // Add a hidden text field for replying
         var replyField = document.createElement('textarea');
         replyField.className = 'form-control mt-2 d-none';
         replyField.placeholder = 'Reply to ' + sender + '...';
         replyField.id = 'replyField-' + messageId;
-
-        // Append the reply field to the chat container
         messageElement.appendChild(replyField);
 
-        // Add a hidden section for displaying replies
         var repliesSection = document.createElement('div');
         repliesSection.className = 'replies-section mt-2 d-none';
         repliesSection.id = 'repliesSection-' + messageId;
-
-        // Append the replies section to the message element
         messageElement.appendChild(repliesSection);
 
         // Display existing replies
@@ -181,9 +222,6 @@ function updateChatContainer(message) {
             });
             repliesSection.appendChild(repliesList);
         }
-
-        // Append the message to the chat container
-        document.getElementById('chat-container').appendChild(messageElement);
 
         // Store the latest message for the user
         latestMessages[sender] = messageElement;
@@ -283,7 +321,7 @@ async function updateRepliesSection(messageId, reply) {
 
             // Append the reply field and send button to the replies section
             repliesSection.appendChild(replyField);
-            repliesSection.appendChild(sendButton);
+            //repliesSection.appendChild(sendButton);
         } catch (error) {
             console.error('Error fetching original message:', error);
         }
@@ -297,7 +335,6 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
-// Load messages on page load
 // Load messages on page load
 $(document).ready(function() {
     // Make an AJAX request to fetch and display existing messages
