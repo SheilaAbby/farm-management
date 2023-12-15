@@ -731,7 +731,10 @@ def fetch_messages(request):
             'content': message.content,
             'created': message.created.strftime('%Y-%m-%d %H:%M:%S'),
             'id': message.id,
-            'replies': [{'sender': reply.sender.username, 'content': reply.content} for reply in message.replies.all()]
+            'replies': [{'sender': reply.sender.username, 'content': reply.content} for reply in message.replies.all()],
+            'deleted_by_sender': message.deleted_by_sender,
+            'deleted_for_recipients': message.deleted_for_recipients,
+            'deleted_by_field_agent': message.deleted_by_field_agent,
         }
         serialized_messages.append(serialized_message)
 
@@ -781,15 +784,43 @@ def create_farm_visit_report(request, farm_visit_request_id):
 
     return render(request, 'main/farm_visit_report.html', {'form': form, 'farm_visit_request': farm_visit_request})
 
-# @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def delete_message(request, message_id):
     # Get the message object
     message = get_object_or_404(Message, id=message_id)
 
     # Check if the user has permission to delete the message
-    if request.user == message.sender:
-        message.delete()
+    if request.user == message.sender or request.user.groups.filter(name='field_agent').exists():
+        # Mark the message as deleted by the sender and for recipients
+        if request.user == message.sender:
+            message.deleted_by_sender = True
+            print('DELETED BY THE SENDER', message.deleted_by_sender)
+        message.deleted_for_recipients = True
+        message.deleted_by_field_agent = True if request.user.groups.filter(name='field_agent').exists() else False
+        message.save()
+
+        # Find all messages with the same content (excluding the original message)
+        similar_messages = Message.objects.filter(content=message.content).exclude(id=message.id)
+
+        # Iterate through similar messages and update them with the flags
+        for similar_message in similar_messages:
+            similar_message.deleted_for_recipients = True
+            similar_message.deleted_by_field_agent = True if request.user.groups.filter(name='field_agent').exists() else False
+            similar_message.save()
+
+        print('DELETION DONE')
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False, 'error': 'Permission denied'}, status=403)
+
+@login_required(login_url="/login")
+def get_current_user(request):
+    user = {
+        'id': request.user.id,
+        'username': request.user.username,
+        'email': request.user.email,
+        'groups': list(request.user.groups.values_list('name', flat=True)),
+       
+    }
+    return JsonResponse({'user': user})

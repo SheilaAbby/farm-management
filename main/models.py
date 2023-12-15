@@ -213,6 +213,9 @@ class Message(models.Model):
     recipient = models.ForeignKey(CustomUser, related_name='received_messages', on_delete=models.CASCADE)
     content = models.TextField()
     created = models.DateTimeField(default=timezone.now)
+    deleted_for_recipients = models.BooleanField(default=False)
+    deleted_by_sender = models.BooleanField(default=False)
+    deleted_by_field_agent = models.BooleanField(default=False)
 
 class Reply(models.Model):
     message = models.ForeignKey(Message, related_name='replies', on_delete=models.SET_NULL, null=True)

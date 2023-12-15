@@ -102,6 +102,7 @@ function deleteMessage(sender, messageId) {
     .then(response => {
         if (response.ok) {
             // If the response is OK, remove the message from the UI
+            console.log('DELETE DONE');
             removeMessage(sender, messageId);
         } else {
             console.error('Error deleting message. Status:', response.status);
@@ -114,23 +115,39 @@ function deleteMessage(sender, messageId) {
 
 // Function to remove a message from the UI
 function removeMessage(sender, messageId) {
-    // Get the message element by ID and remove it
+    // Get the message element by ID and log values for debugging
     var messageElement = document.getElementById('message-' + messageId);
+    console.log('Removing message:', sender, messageId);
+
     if (messageElement) {
+        // Log a confirmation message when the element is found
+        console.log('Message element found:', messageElement);
         messageElement.remove();
         // Remove the message from latestMessages dictionary
         delete latestMessages[sender];
+        console.log('Message removed successfully.');
     } else {
         console.error('Message element not found for messageId:', messageId);
     }
 }
 
 function updateChatContainer(message) {
+    console.log('MESSAGE OBJECT:',message);
     // Get the username, content, and created timestamp from the message
     var sender = message.sender;
     var content = message.content;
     var created = message.created;
     var messageId = message.id;
+
+    // Check if any deletion flag is true
+    if (
+        message.deleted_by_sender ||
+        message.deleted_for_recipients ||
+        message.deleted_by_field_agent
+    ) {
+        console.log('Skipping deleted message:', sender, messageId);
+        return;
+    }
 
     // Check if the user already has a message in the chat container
     if (sender in latestMessages) {
@@ -155,17 +172,15 @@ function updateChatContainer(message) {
             replyField.placeholder = 'Reply to ' + sender + '...';
             replyField.id = 'replyField-' + messageId;
 
-
-            // Append the reply field and send button to the replies section
+            // Append the reply field to the replies section
             repliesSection.appendChild(replyField);
-            // repliesSection.appendChild(sendButton);
         }
 
         // Display existing replies
         if (message.replies && message.replies.length > 0) {
             var repliesList = document.createElement('ul');
             repliesList.className = 'list-unstyled';
-            message.replies.forEach(function(reply) {
+            message.replies.forEach(function (reply) {
                 var replyItem = document.createElement('li');
                 repliesSection.className = 'me-3';
                 replyItem.innerHTML = '<span style="margin-left: 30px;"><i class="fas fa-comments text-success"></i> ' + '<span style="font-weight: bold;">' + reply.sender + '</span> Replied: <span style="color: green;">' + reply.content + '</span></span>';
@@ -173,7 +188,6 @@ function updateChatContainer(message) {
             });
             repliesSection.appendChild(repliesList);
         }
-      
     } else {
         // Create a new message element
         var messageElement = document.createElement('div');
@@ -215,7 +229,7 @@ function updateChatContainer(message) {
         if (message.replies && message.replies.length > 0) {
             var repliesList = document.createElement('ul');
             repliesList.className = 'list-unstyled';
-            message.replies.forEach(function(reply) {
+            message.replies.forEach(function (reply) {
                 var replyItem = document.createElement('li');
                 replyItem.innerHTML = '<span style="font-weight: bold;">' + reply.sender + ':</span> ' + reply.content;
                 repliesList.appendChild(replyItem);
@@ -357,3 +371,73 @@ $(document).ready(function() {
         }
     });
 });
+
+// Function to get the current user
+function getCurrentUser() {
+    // Fetch the CSRF token
+    var csrftoken = getCookie('csrftoken');
+
+    // Make an AJAX request to get the current user
+    return fetch('/get_current_user/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        credentials: 'include',  // Include credentials (cookies) in the request
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => data.user)  // Assuming the user object is in the 'user' property of the response
+    .catch(error => {
+        console.error('Error fetching current user:', error);
+        return null;
+    });
+}
+
+// Function to get the user role
+function getUserRole() {
+    // Assuming the user information is available globally, replace this with your actual implementation
+    var user = getCurrentUser(); // Implement this function to get the current user
+
+    if (user) {
+        // Check if the user belongs to the 'farmer' group
+        if (user.groups.some(group => group.name === 'farmer')) {
+            return 'farmer';
+        }
+
+        // Check if the user belongs to the 'field_agent' group
+        if (user.groups.some(group => group.name === 'field_agent')) {
+            return 'field_agent';
+        }
+    }
+
+    return 'unknown'; // Default to 'unknown' if the role is not defined
+}
+
+// Function to toggle the visibility of the delete button for a specific user
+// function toggleDeleteButton(sender, messageId) {
+//     console.log('TOGGLED DELETE');
+//     var deleteButton = document.getElementById('deleteButton-' + messageId);
+
+//     if (deleteButton) {
+//         // Use the getUserRole function to determine the user's role
+//         var userRole = getUserRole();
+
+//         // Check if the user is a farmer and the sender matches the logged-in user
+//         if (userRole === 'farmer' && sender === getCurrentUser().username) {
+//             console.log('FARMER TOGGLED DELETE');
+//             deleteButton.classList.toggle('d-none', false);
+//         } else if (userRole === 'field_agent') {
+//             // If the user is a field_agent, show the delete button for all messages
+//             deleteButton.classList.toggle('d-none', false);
+//         } else {
+//             // Hide the delete button for other cases
+//             deleteButton.classList.toggle('d-none', true);
+//         }
+//     }
+// }
