@@ -7,25 +7,47 @@ var replyFieldsState = {};
 var sendButtons = {};
 
 // Function to toggle the visibility of the reply field and send button for a specific user
+// Function to toggle the visibility of the reply field and send button for a specific user
 function toggleReplyField(sender, messageId) {
-    var replyField = document.getElementById('replyField-' + messageId);  // Use messageId instead of sender
+    console.log('Toggling Reply Field for Sender', sender, 'Message ID', messageId);
 
-     // Initialize to false if undefined
+    var replyField = document.getElementById('replyField-' + messageId);
+    var repliesSection = document.getElementById('repliesSection-' + messageId);
+
+    console.log('Reply field:', replyField);
+
+    // Initialize to false if undefined
     replyFieldsState[messageId] = replyFieldsState[messageId] || false;
 
     // Toggle the visibility state
-    replyFieldsState[messageId] = !replyFieldsState[messageId];  // Use messageId instead of sender
+    replyFieldsState[messageId] = !replyFieldsState[messageId];
 
     // Toggle the visibility of the reply field
     if (replyField) {
+        // Toggle the 'd-none' class based on the visibility state
         replyField.classList.toggle('d-none', !replyFieldsState[messageId]);
+    }
 
-        // Create or get the "Send" button for the specific messageId
-        if (!sendButtons[messageId]) {
-            sendButtons[messageId] = createSendButton(sender, messageId);
+    // Toggle the visibility of the replies section
+    if (repliesSection) {
+        repliesSection.classList.toggle('d-none', !replyFieldsState[messageId]);
+
+        // If the replies section is visible, focus on the reply field
+        if (!repliesSection.classList.contains('d-none')) {
+            replyField.focus();
         }
+    }
 
-        // Toggle the visibility of the "Send" button
+    // Create or get the "Send" button for the specific messageId
+    if (!sendButtons[messageId]) {
+        console.log('Creating Send Button for ID', messageId);
+        sendButtons[messageId] = createSendButton(sender, messageId);
+    } else {
+        console.log('Send Button already available for ID', messageId);
+    }
+
+    // Toggle the visibility of the "Send" button
+    if (sendButtons[messageId]) {
         sendButtons[messageId].classList.toggle('d-none', !replyFieldsState[messageId]);
     }
 }
@@ -327,7 +349,7 @@ async function updateRepliesSection(messageId, reply) {
 
             // Append the reply field and send button to the replies section
             repliesSection.appendChild(replyField);
-            //repliesSection.appendChild(sendButton);
+            repliesSection.appendChild(sendButton);
         } catch (error) {
             console.error('Error fetching original message:', error);
         }
