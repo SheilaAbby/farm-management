@@ -217,8 +217,14 @@ class Message(models.Model):
     deleted_by_sender = models.BooleanField(default=False)
     deleted_by_field_agent = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"Message from {self.sender} Sent on ({self.created.strftime('%Y-%m-%d')})"
+
 class Reply(models.Model):
     message = models.ForeignKey(Message, related_name='replies', on_delete=models.SET_NULL, null=True)
     sender = models.ForeignKey(User, related_name='sent_replies', on_delete=models.CASCADE)
     content = models.TextField()
     created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Reply Message from {self.sender}, to {self.message}"

@@ -32,24 +32,15 @@ function toggleReplyField(sender, messageId) {
 
 // Create a "Send" button for a specific user
 function createSendButton(sender, messageId) {
-
-    var sendButton = document.createElement('button');
+    const sendButton = document.createElement('button');
     sendButton.textContent = 'Send';
-    sendButton.className = 'btn btn-primary mt-2 d-none';  // Initially hide the button
+    sendButton.className = 'btn btn-primary mt-2 d-none';
     sendButton.id = 'sendButton-' + messageId;
 
-    // Use an anonymous function to capture the current values of sender and messageId
-    sendButton.onclick = function () {
-        sendReply(sender, messageId);
-    };
+    sendButton.addEventListener('click', () => sendReply(sender, messageId));
 
-    // Append the "Send" button directly to the latestMessages[sender] element
-    var messageElement = latestMessages[sender];
-    if (messageElement) {
-        messageElement.appendChild(sendButton);
-    } else {
-        console.error('Message element not found for sender:', sender);
-    }
+    const messageElement = latestMessages[sender];
+    messageElement && messageElement.appendChild(sendButton);
 
     return sendButton;
 }
@@ -102,7 +93,6 @@ function deleteMessage(sender, messageId) {
     .then(response => {
         if (response.ok) {
             // If the response is OK, remove the message from the UI
-            console.log('DELETE DONE');
             removeMessage(sender, messageId);
         } else {
             console.error('Error deleting message. Status:', response.status);
@@ -117,11 +107,9 @@ function deleteMessage(sender, messageId) {
 function removeMessage(sender, messageId) {
     // Get the message element by ID and log values for debugging
     var messageElement = document.getElementById('message-' + messageId);
-    console.log('Removing message:', sender, messageId);
-
+  
     if (messageElement) {
         // Log a confirmation message when the element is found
-        console.log('Message element found:', messageElement);
         messageElement.remove();
         // Remove the message from latestMessages dictionary
         delete latestMessages[sender];
@@ -132,8 +120,8 @@ function removeMessage(sender, messageId) {
 }
 
 function updateChatContainer(message) {
-    console.log('MESSAGE OBJECT:',message);
-    // Get the username, content, and created timestamp from the message
+
+    // Get the username, content,messageId, and created timestamp from the message
     var sender = message.sender;
     var content = message.content;
     var created = message.created;
@@ -145,7 +133,6 @@ function updateChatContainer(message) {
         message.deleted_for_recipients ||
         message.deleted_by_field_agent
     ) {
-        console.log('Skipping deleted message:', sender, messageId);
         return;
     }
 
@@ -159,7 +146,7 @@ function updateChatContainer(message) {
                 <span style="color: green;">${content}</span>
                 - sent on ${created}
                 <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
-                <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})">Delete</button>
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}">Delete</button>
             </div>
             <div class="replies-section mt-2 d-none" id="repliesSection-${messageId}"></div>
         `;
@@ -175,6 +162,8 @@ function updateChatContainer(message) {
             // Append the reply field to the replies section
             repliesSection.appendChild(replyField);
         }
+
+        toggleDeleteButton(sender, messageId);
 
         // Display existing replies
         if (message.replies && message.replies.length > 0) {
@@ -199,11 +188,14 @@ function updateChatContainer(message) {
             <span style="color: green;">${content}</span>
             - sent on ${created}
             <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
-            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})">Delete</button>
+            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}">Delete</button>
         `;
 
         // Append the message to the chat container
         document.getElementById('chat-container').appendChild(messageElement);
+
+         // Call the toggleDeleteButton function to handle the visibility of the delete button
+        toggleDeleteButton(sender, messageId);
 
         // Append the reply button, reply field, and replies section separately
         var replyButton = document.createElement('button');
@@ -372,72 +364,122 @@ $(document).ready(function() {
     });
 });
 
-// Function to get the current user
-function getCurrentUser() {
-    // Fetch the CSRF token
-    var csrftoken = getCookie('csrftoken');
 
-    // Make an AJAX request to get the current user
-    return fetch('/get_current_user/', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken,
-        },
-        credentials: 'include',  // Include credentials (cookies) in the request
-    })
-    .then(response => {
+// Function to get the current user
+let currentUserCache = null;
+
+async function fetchCurrentUser() {
+    try {
+        // Check if user data is already in the cache
+        if (currentUserCache) {
+            return currentUserCache.user;
+        }
+
+        // Fetch the CSRF token
+        var csrftoken = getCookie('csrftoken');
+
+        // Make an AJAX request to get the current user
+        const response = await fetch('/get_current_user/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            credentials: 'include',  // Include credentials (cookies) in the request
+        });
+
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
-    })
-    .then(data => data.user)  // Assuming the user object is in the 'user' property of the response
-    .catch(error => {
+
+        const data = await response.json();
+   
+        // Cache the current user data
+        currentUserCache = data;
+        
+        // Reset the cache after a certain period (e.g., 30 minutes)
+        setTimeout(() => {
+            currentUserCache = null;
+        }, 30 * 60 * 1000); 
+
+        return data.user;
+    } catch (error) {
         console.error('Error fetching current user:', error);
+        console.error('Error details:', error.message, error.stack);
         return null;
-    });
+    }
+}
+
+let isFetching = false;
+
+async function getCurrentUser() {
+    try {
+        if (isFetching) {
+            // If a request is already in progress, return immediately
+            return null;
+        }
+
+        // Set isFetching to true to prevent subsequent requests
+        isFetching = true;
+
+        const data = await fetchCurrentUser();
+        return data.user;
+    } catch (error) {
+        console.error('Error fetching current user:', error);
+        console.error('Error details:', error.message, error.stack);
+        return null;
+    } finally {
+        // Reset isFetching after a delay to allow subsequent requests
+        setTimeout(() => {
+            isFetching = false;
+        }, 1000); // Adjust the delay as needed
+    }
 }
 
 // Function to get the user role
-function getUserRole() {
-    // Assuming the user information is available globally, replace this with your actual implementation
-    var user = getCurrentUser(); // Implement this function to get the current user
+async function getUserRole() {
+    try {
+        // Ensure that getCurrentUser has resolved before proceeding
+        var user = await getCurrentUser();
 
-    if (user) {
-        // Check if the user belongs to the 'farmer' group
-        if (user.groups.some(group => group.name === 'farmer')) {
-            return 'farmer';
+        if (user && user.groups && Array.isArray(user.groups)) {
+       
+            // Check if the user belongs to the 'farmer' group
+            if (user.groups.includes('farmer')) {
+                return 'farmer';
+            }
+
+            // Check if the user belongs to the 'field_agent' group
+            if (user.groups.includes('field_agent')) {
+                return 'field_agent';
+            }
         }
 
-        // Check if the user belongs to the 'field_agent' group
-        if (user.groups.some(group => group.name === 'field_agent')) {
-            return 'field_agent';
-        }
+        return 'unknown'; // Default to 'unknown' if the role is not defined
+    } catch (error) {
+        console.error('Error fetching user role:', error);
+        return 'unknown';
     }
-
-    return 'unknown'; // Default to 'unknown' if the role is not defined
 }
 
 // Function to toggle the visibility of the delete button for a specific user
-// function toggleDeleteButton(sender, messageId) {
-//     console.log('TOGGLED DELETE');
-//     var deleteButton = document.getElementById('deleteButton-' + messageId);
+async function toggleDeleteButton(sender, messageId) {
+    var deleteButton = document.getElementById('deleteButton-' + messageId);
 
-//     if (deleteButton) {
-//         // Use the getUserRole function to determine the user's role
-//         var userRole = getUserRole();
+    if (deleteButton) {
+        try {
+            const userRole = await getUserRole();
 
-//         // Check if the user is a farmer and the sender matches the logged-in user
-//         if (userRole === 'farmer' && sender === getCurrentUser().username) {
-//             console.log('FARMER TOGGLED DELETE');
-//             deleteButton.classList.toggle('d-none', false);
-//         } else if (userRole === 'field_agent') {
-//             // If the user is a field_agent, show the delete button for all messages
-//             deleteButton.classList.toggle('d-none', false);
-//         } else {
-//             // Hide the delete button for other cases
-//             deleteButton.classList.toggle('d-none', true);
-//         }
-//     }
-// }
+            if (userRole === 'farmer' && sender === (await getCurrentUser()).username) {
+                deleteButton.classList.toggle('d-none', false);
+            } else if (userRole === 'field_agent') {
+                deleteButton.classList.toggle('d-none', false);
+            } else {
+                deleteButton.classList.toggle('d-none', true);
+            }
+        } catch (error) {
+            console.error('Error toggling delete button:', error);
+        }
+    }
+}
+

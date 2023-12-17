@@ -814,7 +814,7 @@ def delete_message(request, message_id):
     else:
         return JsonResponse({'success': False, 'error': 'Permission denied'}, status=403)
 
-@login_required(login_url="/login")
+# @login_required(login_url="/login")
 def get_current_user(request):
     user = {
         'id': request.user.id,

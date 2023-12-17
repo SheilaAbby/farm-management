@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Person, Farm, Crop, Resource, FarmingDates,FarmingCosts, FarmProduce, FarmVisitRequest, Message, FarmVisitReport
+from .models import CustomUser, Person, Farm, Crop, Resource, FarmingDates,FarmingCosts, FarmProduce, FarmVisitRequest, Message, FarmVisitReport, Reply
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
 from datetime import date
@@ -17,6 +17,7 @@ admin.site.register(Resource)
 admin.site.register(FarmVisitRequest)
 admin.site.register(Message)
 admin.site.register(FarmVisitReport)
+admin.site.register(Reply)
 
 # Customize Admin App
 
