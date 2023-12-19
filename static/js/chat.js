@@ -197,7 +197,7 @@ async function updateRepliesSection(messageId, reply) {
 
             // Display the reply text field and send button
             var replyField = document.createElement('textarea');
-            replyField.className = 'form-control mt-2';
+            replyField.className = 'form-control mt-3';
             replyField.placeholder = 'Reply to ' + originalMessage.message.sender + '...';
             replyField.id = 'replyField-' + reply;
 
@@ -340,6 +340,18 @@ function removeMessage(sender, messageId) {
     }
 }
 
+// If Message gas Replies Remove replies from the UI
+function removeReply(message_id) {
+    // Implement the logic to remove the reply section from the UI
+    var repliesSection = document.getElementById('repliesSection-' + message_id);
+
+    if (repliesSection) {
+        repliesSection.remove();
+    } else {
+        console.error('Replies section not found:', 'repliesSection-' + message_id);
+    }
+}
+
 function deleteMessage(sender, messageId) {
     // Check if messageId is valid
     if (!messageId) {
@@ -357,10 +369,27 @@ function deleteMessage(sender, messageId) {
     })
     .then(response => {
         if (response.ok) {
-            // If the response is OK, remove the message from the UI
-            removeMessage(sender, messageId);
+            // If the response is OK, parse JSON response
+            return response.json();
         } else {
             console.error('Error deleting message. Status:', response.status);
+            throw new Error('Error deleting message.');
+        }
+    })
+    .then(data => {
+        console.log('Server Response:', data); // Log the entire data response
+
+        if (data.success) {
+            // Remove the deleted message and its replies from the UI
+            removeMessage(sender, messageId);
+
+            console.log('Replies:', data.replies);
+           
+            if (data.message_id) {
+                removeReply(data.message_id);
+            }
+        } else {
+            console.error('Error deleting message:', data.error);
         }
     })
     .catch(error => {

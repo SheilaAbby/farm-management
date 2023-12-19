@@ -795,22 +795,24 @@ def delete_message(request, message_id):
         # Mark the message as deleted by the sender and for recipients
         if request.user == message.sender:
             message.deleted_by_sender = True
-            print('DELETED BY THE SENDER', message.deleted_by_sender)
+       
         message.deleted_for_recipients = True
-        message.deleted_by_field_agent = True if request.user.groups.filter(name='field_agent').exists() else False
+        message.deleted_by_field_agent = request.user.groups.filter(name='field_agent').exists()
         message.save()
 
         # Find all messages with the same content (excluding the original message)
         similar_messages = Message.objects.filter(content=message.content).exclude(id=message.id)
 
+        # Get IDs of reply messages associated with the deleted message
+        reply_message_ids = list(message.replies.values_list('id', flat=True))
+
         # Iterate through similar messages and update them with the flags
         for similar_message in similar_messages:
             similar_message.deleted_for_recipients = True
-            similar_message.deleted_by_field_agent = True if request.user.groups.filter(name='field_agent').exists() else False
+            similar_message.deleted_by_field_agent = request.user.groups.filter(name='field_agent').exists()
             similar_message.save()
 
-        print('DELETION DONE')
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'replies': reply_message_ids, 'message_id': message_id})
     else:
         return JsonResponse({'success': False, 'error': 'Permission denied'}, status=403)
 
