@@ -13,7 +13,6 @@ async function fetchCurrentUser() {
     try {
         // Check if user data is already in the cache
         if (currentUserCache) {
-            console.log('User data found in cache:', currentUserCache.user);
             return currentUserCache.user;
         }
 
@@ -38,9 +37,7 @@ async function fetchCurrentUser() {
 
         // Cache the current user data
         currentUserCache = data;
-
-        console.log('FETCH CURRENT USER CALLED', data);
-
+        
         // Reset the cache after a certain period (e.g., 30 minutes)
         setTimeout(() => {
             currentUserCache = null;
@@ -62,16 +59,12 @@ async function getCurrentUser() {
         // Set isFetching to true to prevent subsequent requests
         isFetching = true;
 
-        console.log('IS FETHCING', isFetching);
-
         const startTimestamp = Date.now();
         const data = await fetchCurrentUser(); //here data is the actual user object
         const endTimestamp = Date.now();
 
         // Calculate the time taken by the asynchronous call
         const timeTaken = endTimestamp - startTimestamp;
-
-        console.log('FETCH USER CALLED', data);
 
         // Adjust the delay based on the time taken, with a minimum delay
         const delay = Math.max(0, 10000 - timeTaken);
@@ -81,11 +74,9 @@ async function getCurrentUser() {
             isFetching = false;
         }, delay);
 
-        console.log('RESET COMPLETED');
-
         return data;
     } catch (error) {
-        console.log('ERROR HENCE NULL');
+
         console.error('Error fetching current user:', error);
         console.error('Error details:', error.message, error.stack);
 
@@ -101,9 +92,6 @@ async function getUserRole() {
     try {
         // Ensure that getCurrentUser has resolved before proceeding
         var user = await getCurrentUser();
-
-        // Log the entire user object for debugging
-        console.log('GET USER ROLE CALLED', user);
 
         if (user && user.groups && Array.isArray(user.groups)) {
             // Check if the user belongs to the 'field_agent' group
@@ -128,28 +116,19 @@ async function getUserRole() {
 async function toggleDeleteButton(sender, messageId) {
     var deleteButton = document.getElementById('deleteButton-' + messageId);
 
-    console.log('DELETE BUTTON HERE', deleteButton);
-
     if (deleteButton) {
-        console.log('DELETE BUTTON AVAILABLE', deleteButton);
+
         try {
             const currentUserData = await getCurrentUser();
-            console.log('GET CURRENT USER', currentUserData);
-
-            console.log('SENDER IS', sender);
-
+     
             const userRole = await getUserRole();
-            console.log('USER ROLE....', userRole);
-
+          
             // Check if the condition is met and log accordingly
             if (userRole === 'farmer' && sender === currentUserData.username) {
-                console.log('WE HERE oo....', userRole);
                 deleteButton.classList.toggle('d-none', false);
             } else if (userRole === 'field_agent') {
-                console.log('WE HERE AS FIELD AGENT', userRole);
                 deleteButton.classList.toggle('d-none', false);
             } else {
-                console.log('WE HERE ELSE', userRole);
                 deleteButton.classList.toggle('d-none', true);
             }
         } catch (error) {
@@ -281,12 +260,9 @@ var sendButtons = {};
 
 // Function to toggle the visibility of the reply field and send button for a specific user
 function toggleReplyField(sender, messageId) {
-    console.log('Toggling Reply Field for Sender', sender, 'Message ID', messageId);
 
     var replyField = document.getElementById('replyField-' + messageId);
     var repliesSection = document.getElementById('repliesSection-' + messageId);
-
-    console.log('Reply field:', replyField);
 
     // Initialize to false if undefined
     replyFieldsState[messageId] = replyFieldsState[messageId] || false;
@@ -312,12 +288,9 @@ function toggleReplyField(sender, messageId) {
 
     // Create or get the "Send" button for the specific messageId
     if (!sendButtons[messageId]) {
-        console.log('Creating Send Button for ID', messageId);
         sendButtons[messageId] = createSendButton(sender, messageId);
-    } else {
-        console.log('Send Button already available for ID', messageId);
-    }
-
+    } 
+    
     // Toggle the visibility of the "Send" button
     if (sendButtons[messageId]) {
         sendButtons[messageId].classList.toggle('d-none', !replyFieldsState[messageId]);
@@ -383,8 +356,6 @@ function deleteMessage(sender, messageId) {
             // Remove the deleted message and its replies from the UI
             removeMessage(sender, messageId);
 
-            console.log('Replies:', data.replies);
-           
             if (data.message_id) {
                 removeReply(data.message_id);
             }
@@ -444,7 +415,6 @@ function updateChatContainer(message) {
             repliesSection.appendChild(replyField);
         }
 
-        console.log('Calling toggleDeleteButton with sender:', sender);
         toggleDeleteButton(sender, messageId);
 
         // Display existing replies
@@ -477,7 +447,6 @@ function updateChatContainer(message) {
         document.getElementById('chat-container').appendChild(messageElement);
 
          // Call the toggleDeleteButton function to handle the visibility of the delete button
-         console.log('Calling toggleDeleteButton with sender:', sender);
         toggleDeleteButton(sender, messageId);
 
         // Append the reply button, reply field, and replies section separately
@@ -585,7 +554,6 @@ async function initializeChat() {
         // Fetch the current user data first
         const currentUserData = await getCurrentUser();
 
-        console.log('CURRENT USER DATA AT INIT', currentUserData);
         // If the current user data is available
         if (currentUserData) {
             // Fetch and display existing messages
