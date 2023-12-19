@@ -290,7 +290,7 @@ function toggleReplyField(sender, messageId) {
     if (!sendButtons[messageId]) {
         sendButtons[messageId] = createSendButton(sender, messageId);
     } 
-    
+
     // Toggle the visibility of the "Send" button
     if (sendButtons[messageId]) {
         sendButtons[messageId].classList.toggle('d-none', !replyFieldsState[messageId]);
@@ -379,6 +379,10 @@ function updateChatContainer(message) {
     var created = message.created;
     var messageId = message.id;
 
+    const created_date = new Date(created);
+
+    const formattedDate = `${created_date.toDateString()} ${created_date.toLocaleTimeString()} (EAT)`;
+  
     // Check if any deletion flag is true
     if (
         message.deleted_by_sender ||
@@ -393,13 +397,13 @@ function updateChatContainer(message) {
         // Update the existing message
         latestMessages[sender].innerHTML = `
             <div id="message-${messageId}">
-                <i class="fas fa-comment text-success"></i>
                 <span style="font-weight: bold;">${sender}:</span>
-                <span style="color: green;">${content}</span>
-                - sent on ${created}
+                <span style="color: green; margin-left: 0.5rem;">${content}</span>
+                - sent on ${formattedDate}
                 <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
                 <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}">Delete</button>
             </div>
+            <hr>
             <div class="replies-section mt-2 d-none" id="repliesSection-${messageId}"></div>
         `;
 
@@ -419,12 +423,18 @@ function updateChatContainer(message) {
 
         // Display existing replies
         if (message.replies && message.replies.length > 0) {
+
             var repliesList = document.createElement('ul');
             repliesList.className = 'list-unstyled';
             message.replies.forEach(function (reply) {
+
+                const created_date = new Date(reply.created);
+
+                const formattedDate = `${created_date.toDateString()} ${created_date.toLocaleTimeString()} (EAT)`;
+
                 var replyItem = document.createElement('li');
                 repliesSection.className = 'me-3';
-                replyItem.innerHTML = '<span style="margin-left: 30px;"><i class="fas fa-comments text-success"></i> ' + '<span style="font-weight: bold;">' + reply.sender + '</span> Replied: <span style="color: green;">' + reply.content + '</span></span>';
+                replyItem.innerHTML = '<span style="margin-left: 30px;"><i class="fas fa-comments text-success"></i> ' + '<span style="font-weight: bold;">' + reply.sender + '</span> Replied: <span style="color: green;">' + reply.content + '</span></span>' + '</span> - sent on ' + formattedDate + '</span></span>';
                 repliesList.appendChild(replyItem);
             });
             repliesSection.appendChild(repliesList);
@@ -437,8 +447,8 @@ function updateChatContainer(message) {
         messageElement.innerHTML = `
             <i class="fas fa-comment text-success"></i>
             <span style="font-weight: bold;">${sender}:</span>
-            <span style="color: green;">${content}</span>
-            - sent on ${created}
+            <span style="color: green; margin-left: 0.5rem;">${content}</span>
+            - sent on ${formattedDate}
             <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
             <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}">Delete</button>
         `;
@@ -452,7 +462,7 @@ function updateChatContainer(message) {
         // Append the reply button, reply field, and replies section separately
         var replyButton = document.createElement('button');
         replyButton.textContent = 'Reply';
-        replyButton.className = 'btn btn-sm btn-outline-primary ms-2';
+        replyButton.className = 'btn btn-sm btn-outline-primary ms-2 mt-2';
         replyButton.onclick = function () {
             toggleReplyField(sender, messageId);
         };
@@ -475,7 +485,7 @@ function updateChatContainer(message) {
             repliesList.className = 'list-unstyled';
             message.replies.forEach(function (reply) {
                 var replyItem = document.createElement('li');
-                replyItem.innerHTML = '<span style="font-weight: bold;">' + reply.sender + ':</span> ' + reply.content;
+                replyItem.innerHTML = '<span style="font-weight: bold;">' + reply.sender + ':</span> ' + reply.content + reply.created + '</span></span>';
                 repliesList.appendChild(replyItem);
             });
             repliesSection.appendChild(repliesList);

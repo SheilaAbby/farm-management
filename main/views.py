@@ -639,15 +639,21 @@ def send_message(request):
         all_recipients = list(recipients_farmer) + list(recipients_field_agent)
 
         for recipient in all_recipients:
-            Message.objects.create(sender=sender, recipient=recipient, content=content)
+            # Set the created field to the user's local time
+            new_message = Message.objects.create(sender=sender, recipient=recipient, content=content)
+            new_message.created = timezone.now()  # Set the created field to the current server time
+            new_message.save()
 
         # Assuming your message model has a 'created' field
         new_message = Message.objects.filter(sender=sender, content=content).latest('created')
+        # Format the created field as needed for display
+        created_time = new_message.created.astimezone(timezone.get_current_timezone())
+
         message_data = {
             'messageId': new_message.id,
             'sender': new_message.sender.username,
             'content': new_message.content,
-            'created': new_message.created.strftime('%Y-%m-%d %H:%M:%S'),  # Format as needed
+            'created': created_time,
         }
 
         return JsonResponse({'success': True, 'message': message_data})
@@ -709,6 +715,7 @@ def send_message_view(request, message_id=None):
                 'created': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
             }
            
+            print('REPLY DATA', reply_data)
             # return JsonResponse({'success': True, 'reply': reply_data})
             response_data = {'success': True, 'reply': reply_data, 'status_message': 'Reply Posted'}
             return JsonResponse(response_data)
@@ -731,7 +738,7 @@ def fetch_messages(request):
             'content': message.content,
             'created': message.created.strftime('%Y-%m-%d %H:%M:%S'),
             'id': message.id,
-            'replies': [{'sender': reply.sender.username, 'content': reply.content} for reply in message.replies.all()],
+            'replies': [{'sender': reply.sender.username, 'content': reply.content, 'created': reply.created} for reply in message.replies.all()],
             'deleted_by_sender': message.deleted_by_sender,
             'deleted_for_recipients': message.deleted_for_recipients,
             'deleted_by_field_agent': message.deleted_by_field_agent,
