@@ -200,12 +200,11 @@ async function updateRepliesSection(messageId, reply) {
 
 function sendReply(sender, messageId) {
     var replyField = document.getElementById('replyField-' + messageId);
-   
+
     if (replyField) {
         var replyContent = replyField.value.trim();
 
         if (replyContent) {
-    
             // AJAX request to save the reply
             fetch('/windwood/chatroom/' + messageId + '/', {
                 method: 'POST',
@@ -215,22 +214,32 @@ function sendReply(sender, messageId) {
                 },
                 body: JSON.stringify({ content: replyContent }),
             })
-            .then(response => response.json())
-            .then(data => {
-              
-                // Optionally, clear the reply field after a successful reply
-                replyField.value = '';
+                .then(response => response.json())
+                .then(data => {
+                    // Optionally, clear the reply field after a successful reply
+                    replyField.value = '';
 
-                // Hide the reply field and the "Send" button
-                toggleReplyField(sender, messageId);
-                 // Update the replies section with the new reply
-                updateRepliesSection(sender, messageId, data.reply);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                    // Hide the reply field and the "Send" button
+                    toggleReplyField(sender, messageId);
+                    // Update the replies section with the new reply
+                    updateRepliesSection(sender, messageId, data.reply);
+
+                    // Show the success message
+                    var successMessage = document.getElementById('successReply');
+                    successMessage.classList.remove('d-none');
+
+                    // Automatically remove the success message and reload the page after 3000 milliseconds (3 seconds)
+                    setTimeout(function () {
+                        successMessage.style.display = 'none';
+                        location.reload();
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         } else {
             console.error('Reply content is empty for sender:', sender);
+            alert('Please write a Reply');
         }
     } else {
         console.error('Reply field not found for sender:', sender);
@@ -400,13 +409,14 @@ function updateChatContainer(message) {
                 <div class="d-flex align-items-center">
                 <i class="material-icons small user-icon mr-2">person_pin</i>
                 <span style="font-weight: bold;">${sender}:</span>
+                <span style="color: #975344; margin-left: 0.5rem;">shared...</span>
                 </div>
                 <span style="color: green; margin-left: 0.5rem;">${content}</span>
                 - sent on ${formattedDate}
-                <button class="btn btn-sm ms-2" onclick="toggleReplyField('${sender}', ${messageId})" style="color: blue;">
+                <button class="btn btn-sm ms-2" onclick="toggleReplyField('${sender}', ${messageId})" style="color: green;">
                     <i class="material-icons small">reply</i>
                 </button>
-                <button class="btn btn-sm ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}" style="color: red;">
+                <button class="btn btn-sm ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}" style="color: #975344;">
                     <i class="material-icons small">delete</i>
                 </button>
             </div>
@@ -441,7 +451,15 @@ function updateChatContainer(message) {
 
                 var replyItem = document.createElement('li');
                 repliesSection.className = 'me-3';
-                replyItem.innerHTML = '<span style="margin-left: 30px;"><i class="fas fa-comments text-success"></i> ' + '<span style="font-weight: bold;">' + reply.sender + '</span> Replied: <span style="color: green;">' + reply.content + '</span></span>' + '</span> - sent on ' + formattedDate + '</span></span>';
+                replyItem.innerHTML = `
+                    <span style="margin-left: 30px;">
+                        <i class="fas fa-comments text-success"></i>
+                        <span style="font-weight: bold; margin-left: 0.5rem;">${reply.sender}: </span>
+                        <span style="color: #975344; margin-left: 0.5rem;">replied...</span>
+                        <span style="color: green;">${reply.content}</span>
+                        - sent on ${formattedDate}
+                    </span>
+                `;
                 repliesList.appendChild(replyItem);
             });
             repliesSection.appendChild(repliesList);
@@ -454,10 +472,15 @@ function updateChatContainer(message) {
         messageElement.innerHTML = `
             <i class="fas fa-comment text-success"></i>
             <span style="font-weight: bold;">${sender}:</span>
+            <span style="color: #975344; margin-left: 0.5rem;">shared...</span>
             <span style="color: green; margin-left: 0.5rem;">${content}</span>
             - sent on ${formattedDate}
-            <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
-            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}">Delete</button>
+            <button class="btn btn-sm ms-2" onclick="toggleReplyField('${sender}', ${messageId})" style="color: green;">
+                <i class="material-icons small">reply</i>
+            </button>
+            <button class="btn btn-sm ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}" style="color: #975344;">
+                <i class="material-icons small">delete</i>
+            </button>
         `;
 
         // Append the message to the chat container

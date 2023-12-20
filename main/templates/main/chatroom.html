@@ -5,24 +5,10 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center mb-3">
-        <div class="col-md-4 mb-4">
-            {% if messages %}
-                <div class="alert alert-success" role="alert">
-                    <ul class="messages">
-                        {% for message in messages %}
-                            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
-                                {{ message }}
-                                {% if message.tags == 'success' %}
-                                    <i class="fas fa-check fa-lg ml-2"></i>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        </div>
         <div class="row justify-content-center">
-            <div class="col-md-8 col-sm-12 mb-4"> <!-- Increased width to col-md-8 -->
+            <div class="col-md-8 col-sm-12 mb-4"> 
+            
+             <!-- Increased width to col-md-8 -->
                 <div class="card h-100 d-flex flex-column"> 
                     <!-- Farm Header -->
                    <div class="card-header" style="background-color: #5B362D;">
@@ -30,13 +16,22 @@
                             <i class="fas fa-comments fa-2x me-2 text-success"></i>
                             <b class="mb-0 text-success">Chat Room | Engage with Fellow Farmers</b>
                             <i class="fa-solid fa-people-group fa-2x mt-2 text-success"></i>
-                            {% comment %} <i class="fa-solid fa-people-group"></i> {% endcomment %}
                         </div>
                      </div>
 
                     <!-- Farm Activities Content -->
                     <div class="card-body d-flex flex-column" style="width: 100%;"> <!-- Set width to 100% -->
-                       
+                         <!-- Display success message here -->
+                        {% if success_message %}
+                           <div class="alert alert-success d-none" role="alert" id="successMessage">
+                                {{ success_message }}
+                            </div>      
+                        {% endif %}
+                         {% if success_message %}
+                           <div class="alert alert-success d-none" role="alert" id="successReply">
+                                Reply Posted!
+                            </div>      
+                        {% endif %}
                         <hr>
                         <div id="chat-container" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: #f0f0f0;" class="d-flex flex-column">
                             <b class="text-success">New Messages showing below !</b>
@@ -46,7 +41,7 @@
                         <label for="messageContent" class="form-label mt-3">Compose Message</label>
                         <textarea class="form-control" id="messageContent" name="content" rows="3" required></textarea>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="sendMessage()">Send Message</button>  
+                    <button type="button" id='sendMessage' class="btn btn-primary" onclick="sendMessage()">Send Message</button>  
                     </div>
                 </div>
             </div>
@@ -62,5 +57,36 @@
 
 <script>
    var fetchMessagesUrl = "{% url 'fetch_messages' %}";
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var sendButton = document.getElementById('sendMessage');
+
+    if (sendButton) {
+        sendButton.addEventListener('click', function () {
+            var messageContent = document.getElementById('messageContent').value.trim();
+
+            if (messageContent) {
+                // Disable the button to prevent multiple clicks
+                sendButton.disabled = true;
+
+                // Show the success message
+                successMessage.classList.remove('d-none');
+
+                // Automatically remove the success message and enable the button after 3000 milliseconds (3 seconds)
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                    sendButton.disabled = false;
+                    location.reload(); // Reload the page
+                }, 3000);
+            } else {
+                // Show an error message for empty message content
+                alert('Please write a message');
+            }
+        });
+    }
+});
+
 </script>
 {% endblock %}

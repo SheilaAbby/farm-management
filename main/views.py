@@ -715,9 +715,7 @@ def send_message_view(request, message_id=None):
                 'created': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
             }
            
-            print('REPLY DATA', reply_data)
-            # return JsonResponse({'success': True, 'reply': reply_data})
-            response_data = {'success': True, 'reply': reply_data, 'status_message': 'Reply Posted'}
+            response_data = {'success': True, 'reply': reply_data, 'reply_message': 'Reply Posted'}
             return JsonResponse(response_data)
 
     else:
