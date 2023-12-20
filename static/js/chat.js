@@ -397,11 +397,18 @@ function updateChatContainer(message) {
         // Update the existing message
         latestMessages[sender].innerHTML = `
             <div id="message-${messageId}">
+                <div class="d-flex align-items-center">
+                <i class="material-icons small user-icon mr-2">person_pin</i>
                 <span style="font-weight: bold;">${sender}:</span>
+                </div>
                 <span style="color: green; margin-left: 0.5rem;">${content}</span>
                 - sent on ${formattedDate}
-                <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleReplyField('${sender}', ${messageId})">Reply</button>
-                <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}">Delete</button>
+                <button class="btn btn-sm ms-2" onclick="toggleReplyField('${sender}', ${messageId})" style="color: blue;">
+                    <i class="material-icons small">reply</i>
+                </button>
+                <button class="btn btn-sm ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}" style="color: red;">
+                    <i class="material-icons small">delete</i>
+                </button>
             </div>
             <hr>
             <div class="replies-section mt-2 d-none" id="repliesSection-${messageId}"></div>

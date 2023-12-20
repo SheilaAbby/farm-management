@@ -25,17 +25,20 @@
             <div class="col-md-8 col-sm-12 mb-4"> <!-- Increased width to col-md-8 -->
                 <div class="card h-100 d-flex flex-column"> 
                     <!-- Farm Header -->
-                    <div class="card-header" style="background-color: #5B362D;">
-                        <div class="d-flex align-items-center">
+                   <div class="card-header" style="background-color: #5B362D;">
+                        <div class="align-items-center">
                             <i class="fas fa-comments fa-2x me-2 text-success"></i>
-                            <b class="mb-0 text-success">Chat Room | Share a Message to Everyone !</b>
+                            <b class="mb-0 text-success">Chat Room | Engage with Fellow Farmers</b>
+                            <i class="fa-solid fa-people-group fa-2x mt-2 text-success"></i>
+                            {% comment %} <i class="fa-solid fa-people-group"></i> {% endcomment %}
                         </div>
-                    </div>
+                     </div>
+
                     <!-- Farm Activities Content -->
                     <div class="card-body d-flex flex-column" style="width: 100%;"> <!-- Set width to 100% -->
                        
                         <hr>
-                        <div id="chat-container" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;" class="d-flex flex-column">
+                        <div id="chat-container" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: #f0f0f0;" class="d-flex flex-column">
                             <b class="text-success">New Messages showing below !</b>
                             <hr>
                         </div>
