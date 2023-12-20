@@ -659,7 +659,7 @@ def send_message(request):
         return JsonResponse({'success': True, 'message': message_data})
     else:
         form = MessageForm()
-    return render(request, 'main/chatroom.html', {'form': form})
+    return render(request, 'main/chatroom.html', {'form': form, 'success_message': 'Message Posted!'})
 
 # handles creation of new messages + replies
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
