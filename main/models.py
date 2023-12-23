@@ -210,7 +210,7 @@ class FarmPhoto(models.Model):
 
 class Message(models.Model):
     sender = models.ForeignKey(CustomUser, related_name='sent_messages', on_delete=models.CASCADE)
-    recipient = models.ForeignKey(CustomUser, related_name='received_messages', on_delete=models.CASCADE)
+    recipients = models.ManyToManyField(CustomUser, related_name='received_messages')
     content = models.TextField()
     created = models.DateTimeField(default=timezone.now)
     deleted_for_recipients = models.BooleanField(default=False)
@@ -219,6 +219,7 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender} Sent on ({self.created.strftime('%Y-%m-%d')})"
+
 
 class Reply(models.Model):
     message = models.ForeignKey(Message, related_name='replies', on_delete=models.SET_NULL, null=True)

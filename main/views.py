@@ -16,6 +16,12 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 import json
 from django.db import IntegrityError
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+import logging
+logger = logging.getLogger(__name__)
+from django.db import transaction
+
 
 def is_farmer_or_field_agent(user):
     return user.groups.filter(name__in=['farmer', 'field_agent']).exists()
@@ -625,6 +631,7 @@ def delete_farm(request, farm_id):
 # handles creation of new messages
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
+@transaction.atomic
 def send_message(request):
     if request.method == 'POST':
         sender = request.user
@@ -636,17 +643,17 @@ def send_message(request):
         recipients_farmer = recipient_group_farmer.user_set.all()
         recipients_field_agent = recipient_group_field_agent.user_set.all()
 
-        all_recipients = list(recipients_farmer) + list(recipients_field_agent)
+        # Create a single message instance
+        new_message = Message.objects.create(sender=sender, content=content)
 
-        for recipient in all_recipients:
-            # Set the created field to the user's local time
-            new_message = Message.objects.create(sender=sender, recipient=recipient, content=content)
-            new_message.created = timezone.now()  # Set the created field to the current server time
-            new_message.save()
+        # Associate the message with multiple recipients
+        new_message.recipients.set(list(recipients_farmer) + list(recipients_field_agent))
+
+        # Set the created field to the user's local time
+        new_message.created = timezone.now()
+        new_message.save()
 
         # Assuming your message model has a 'created' field
-        new_message = Message.objects.filter(sender=sender, content=content).latest('created')
-        # Format the created field as needed for display
         created_time = new_message.created.astimezone(timezone.get_current_timezone())
 
         message_data = {
@@ -655,6 +662,21 @@ def send_message(request):
             'content': new_message.content,
             'created': created_time,
         }
+
+        channel_layer = get_channel_layer()
+        group_name = "chat_group"  # Define a group name for the chat
+        message = {
+            'type': 'chat.notification',
+            'messageId': new_message.id,
+            'sender': sender.username,
+            'content': 'New message: {}'.format(content),
+            'created': created_time,
+        }
+
+        async_to_sync(channel_layer.group_send)(group_name, message)
+
+        # Log the sent message
+        print('WebSocket message sent: %s' % message)
 
         return JsonResponse({'success': True, 'message': message_data})
     else:
@@ -681,10 +703,11 @@ def send_message_view(request, message_id=None):
             recipients_farmer = recipient_group_farmer.user_set.all()
             recipients_field_agent = recipient_group_field_agent.user_set.all()
 
-            all_recipients = list(recipients_farmer) + list(recipients_field_agent)
+            # Create a single message instance
+            new_message = Message.objects.create(sender=sender, content=content)
 
-            for recipient in all_recipients:
-                Message.objects.create(sender=sender, recipient=recipient, content=content)
+            # Associate the message with multiple recipients
+            new_message.recipients.set(list(recipients_farmer) + list(recipients_field_agent))
 
             # Return a JsonResponse with the message data
             new_message = Message.objects.filter(sender=sender, content=content).latest('created')
@@ -731,8 +754,10 @@ def fetch_messages(request):
     # Serialize the messages, including the related replies
     serialized_messages = []
     for message in messages:
+      
         serialized_message = {
             'sender': message.sender.username,
+            # 'recipients': [recipient.username for recipient in message.recipients.all()],
             'content': message.content,
             'created': message.created.strftime('%Y-%m-%d %H:%M:%S'),
             'id': message.id,

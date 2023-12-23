@@ -30,6 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['6451-105-161-211-228.ngrok-free.app', 'localhost']
 
+print(f"__file__: {__file__}")
+BASE_DIR = Path(__file__).resolve().parent.parent
+print(f"BASE_DIR: {BASE_DIR}")
 
 # Application definition
 
@@ -43,8 +46,20 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'crispy_forms',
     'crispy_bootstrap5',
-    'fontawesomefree'
+    'fontawesomefree',
+    'channels'
 ]
+
+ASGI_APPLICATION = "farm_management_web.routing.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 CRISPY_ALLOWED_TEMPLATE_PACK = 'bootstrap5'
 
@@ -58,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'channels.middleware.WebSocketMiddleware'
 ]
 
 ROOT_URLCONF = 'farm_management_web.urls'

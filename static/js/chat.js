@@ -359,8 +359,7 @@ function deleteMessage(sender, messageId) {
         }
     })
     .then(data => {
-        console.log('Server Response:', data); // Log the entire data response
-
+      
         if (data.success) {
             // Remove the deleted message and its replies from the UI
             removeMessage(sender, messageId);
@@ -375,6 +374,24 @@ function deleteMessage(sender, messageId) {
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+// Function to display a simple notification
+async function displayNotification(message) {
+    try {
+        const currentUserData = await getCurrentUser();
+ 
+        // Ensure currentUserData is resolved before proceeding
+        if (currentUserData && message.sender !== currentUserData.username) {
+            // Display the notification
+            alert(`New Message Posted By ${message.sender}\nMessage: ${message.content}\nCheck the Chat!`);
+        } else {
+            console.log('Skipping notification for own message:', message);
+        }
+    } catch (error) {
+        console.error('Error getting current user data:', error);
+        // Handle error if needed
+    }
 }
 
 //  Updates the Chat Container with Messages + Replies
@@ -471,6 +488,7 @@ function updateChatContainer(message) {
         messageElement.id = 'message-' + messageId;
         messageElement.innerHTML = `
             <i class="fas fa-comment text-success"></i>
+            <i class="material-icons small user-icon mr-2">person_pin</i>
             <span style="font-weight: bold;">${sender}:</span>
             <span style="color: #975344; margin-left: 0.5rem;">shared...</span>
             <span style="color: green; margin-left: 0.5rem;">${content}</span>
@@ -556,8 +574,10 @@ function sendMessage() {
     });
 }
 
-// Initialize the Chat Program
-async function fetchExistingMessages() {
+// Retrieve processedMessageIds from local storage or initialize an empty set
+const processedMessageIds = new Set(JSON.parse(localStorage.getItem('processedMessageIds')) || []);
+
+async function fetchExistingMessagesAndNotifyWebSocket(socket) {
     try {
         const response = await fetch(fetchMessagesUrl, {
             method: 'GET',
@@ -576,9 +596,22 @@ async function fetchExistingMessages() {
         if (data.success) {
             // Append each existing message to the chat container
             data.messages.forEach(function (message) {
-                // Update the chat container with the latest message
+
+                 // Update the chat container with the latest message
                 updateChatContainer(message);
+                // Check if the message ID has been processed
+                if (!processedMessageIds.has(message.id)) {
+              
+                     // Notify the WebSocket with the new message
+                    notifyWebSocket(message, socket);
+                  
+                     // Add the message ID to the processed set
+                    processedMessageIds.add(message.id);  
+                }
             });
+            // Save the updated processedMessageIds to local storage
+            localStorage.setItem('processedMessageIds', JSON.stringify(Array.from(processedMessageIds)));
+
         } else {
             // Handle failure if needed
             console.error('Failed to fetch existing messages:', data.error);
@@ -589,23 +622,77 @@ async function fetchExistingMessages() {
     }
 }
 
-async function initializeChat() {
-    try {
-        // Fetch the current user data first
-        const currentUserData = await getCurrentUser();
+function notifyWebSocket(message, socket) {
+    // Add the 'type' field to the message
+    message.type = 'chat.notification';
 
-        // If the current user data is available
-        if (currentUserData) {
-            // Fetch and display existing messages
-            await fetchExistingMessages();
-        } else {
-            console.error('Current user data not available.');
-            // Handle the case where current user data is not available
-        }
-    } catch (error) {
-        console.error('Error initializing chat:', error);
-        // Handle error if needed
+    // Notify the WebSocket with the new message
+    if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(message));
+    } else {
+        console.error("WebSocket connection not in OPEN state. Cannot notify WebSocket.");
     }
 }
 
-document.addEventListener('DOMContentLoaded', initializeChat);
+// WebSocket Connections
+document.addEventListener("DOMContentLoaded", function () {
+    var wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+    var wsPath = wsProtocol + "://" + window.location.host + "/ws/chat/";
+    var socket = new WebSocket(wsPath);
+
+    socket.onopen = function (event) {
+        console.log("WebSocket connection opened:", event);
+    
+        if (socket.readyState === WebSocket.OPEN) {
+            // Call the initializeChat function when the WebSocket connection is open
+            initializeChat();
+        } else {
+            console.error("WebSocket connection not in OPEN state.");
+        }
+    };
+
+    socket.onmessage = function (event) {
+        try {
+            var data = JSON.parse(event.data);
+            var message = data;
+
+            // Check the type of message and take appropriate action
+            if (message.type === 'chat.notification') {
+                // Display the notification in the chat UI
+                displayNotification(message);
+            } else {
+                // update the chat UI for regular messages
+                updateChatContainer(message);
+            }
+        } catch (error) {
+            console.error("Error handling WebSocket message:", error);
+        }
+    };
+
+    socket.onclose = function (event) {
+        console.log("WebSocket connection closed:", event);
+    };
+
+    // Function to initialize the chat
+    async function initializeChat() {
+        try {
+            // Fetch the current user data first
+            const currentUserData = await getCurrentUser();
+
+            // If the current user data is available
+            if (currentUserData) {
+                // Fetch and display existing messages
+                await fetchExistingMessagesAndNotifyWebSocket(socket);
+            } else {
+                console.error('Current user data not available.');
+                // Handle the case where current user data is not available
+            }
+        } catch (error) {
+            console.error('Error initializing chat:', error);
+            // Handle error if needed
+        }
+    }
+});
+
+// document.addEventListener('DOMContentLoaded', initializeChat);
+
