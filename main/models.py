@@ -33,6 +33,8 @@ class CustomUser(AbstractUser):
     phone_number_owner = models.CharField(max_length=255, blank=True, null=True)
     farmer_orgs = models.CharField(max_length=255, blank=True)
 
+    last_checked_message = models.DateTimeField(null=True, blank=True)
+
     def age(self):
         from datetime import date
         if self.birth_year:

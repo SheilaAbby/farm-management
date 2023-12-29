@@ -13,7 +13,7 @@ from django.views.generic.edit import FormView
 from .models import Farm, Person, FarmingDates, FarmingCosts, FarmProduce, Resource, FarmVisitRequest, Message, Reply, FarmVisitReport
 from .forms import FarmForm,  PersonForm, FarmingDatesForm, FarmingCostsForm,FarmProduceForm, ResourceForm, FarmVisitRequestForm, SearchForm, MessageForm, FarmVisitReportForm
 from django.contrib.auth.models import Group
-from django.utils import timezone
+from django.utils import timezone as time_zone
 import json
 from django.db import IntegrityError
 from channels.layers import get_channel_layer
@@ -21,7 +21,7 @@ from asgiref.sync import async_to_sync
 import logging
 logger = logging.getLogger(__name__)
 from django.db import transaction
-
+from datetime import datetime, timezone, timedelta
 
 def is_farmer_or_field_agent(user):
     return user.groups.filter(name__in=['farmer', 'field_agent']).exists()
@@ -633,16 +633,16 @@ def delete_farm(request, farm_id):
 @login_required(login_url="/login")
 @transaction.atomic
 def send_message(request):
+    sender = request.user
+    content = request.POST.get('content', '')
+
+    recipient_group_farmer = Group.objects.filter(name='farmer').first()
+    recipient_group_field_agent = Group.objects.filter(name='field_agent').first()
+
+    recipients_farmer = recipient_group_farmer.user_set.all()
+    recipients_field_agent = recipient_group_field_agent.user_set.all()
+
     if request.method == 'POST':
-        sender = request.user
-        content = request.POST.get('content', '')
-
-        recipient_group_farmer = Group.objects.filter(name='farmer').first()
-        recipient_group_field_agent = Group.objects.filter(name='field_agent').first()
-
-        recipients_farmer = recipient_group_farmer.user_set.all()
-        recipients_field_agent = recipient_group_field_agent.user_set.all()
-
         # Create a single message instance
         new_message = Message.objects.create(sender=sender, content=content)
 
@@ -650,11 +650,11 @@ def send_message(request):
         new_message.recipients.set(list(recipients_farmer) + list(recipients_field_agent))
 
         # Set the created field to the user's local time
-        new_message.created = timezone.now()
+        new_message.created = time_zone.now()
         new_message.save()
 
         # Assuming your message model has a 'created' field
-        created_time = new_message.created.astimezone(timezone.get_current_timezone())
+        created_time = new_message.created.astimezone(time_zone.get_current_timezone())
 
         message_data = {
             'messageId': new_message.id,
@@ -664,7 +664,7 @@ def send_message(request):
         }
 
         channel_layer = get_channel_layer()
-        group_name = "chat_group"  # Define a group name for the chat
+        group_name = "chat_group" 
         message = {
             'type': 'chat.notification',
             'messageId': new_message.id,
@@ -675,13 +675,18 @@ def send_message(request):
 
         async_to_sync(channel_layer.group_send)(group_name, message)
 
-        # Log the sent message
-        print('WebSocket message sent: %s' % message)
+        # Update the user's last_checked_message field
+        sender.last_checked_message = time_zone.now()
+        sender.save()
 
         return JsonResponse({'success': True, 'message': message_data})
     else:
+        # Update the user's last_checked_message field when accessing the chat view
+        sender.last_checked_message = time_zone.now()
+        sender.save()
+
         form = MessageForm()
-    return render(request, 'main/chatroom.html', {'form': form, 'success_message': 'Message Posted!'})
+        return render(request, 'main/chatroom.html', {'form': form, 'success_message': 'Message Posted!'})
 
 # handles creation of new messages + replies
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
@@ -735,7 +740,7 @@ def send_message_view(request, message_id=None):
                 'messageId': original_message.id,
                 'sender': sender.username,
                 'content': content,
-                'created': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'created': time_zone.now().strftime('%Y-%m-%d %H:%M:%S'),
             }
            
             response_data = {'success': True, 'reply': reply_data, 'reply_message': 'Reply Posted'}
@@ -856,3 +861,20 @@ def get_current_user(request):
        
     }
     return JsonResponse({'user': user})
+
+@login_required(login_url="/login")
+def check_new_message(request):
+    # Retrieve the user's last_checked_message property
+    last_checked_message_user_tz = request.user.last_checked_message
+
+    # Get the latest message timestamp from the database
+    latest_message = Message.objects.order_by('-created').first()
+
+    # Handle the case where latest_message is None
+    latest_message_timestamp_user_tz = latest_message.created if latest_message else None
+
+    # Compare timestamps to check for new messages
+    has_new_message = last_checked_message_user_tz is None or (latest_message_timestamp_user_tz and latest_message_timestamp_user_tz > last_checked_message_user_tz)
+
+    # Return a JSON response indicating whether there's a new message
+    return JsonResponse({'has_new_message': has_new_message})

@@ -34,11 +34,23 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  var indicator = document.getElementById("new-message-indicator");
+
+  // Send the user's time zone along with the timestamp to the server
+  $.ajax({
+      url: '/check_new_message/',
+      method: 'GET',
+      success: function(data) {
+          var hasNewMessage = data.has_new_message;
+          if (hasNewMessage) {
+              indicator.style.visibility = "visible";
+              indicator.setAttribute("data-content", "New Msg!");
+          }
+      },
+      error: function(error) {
+          console.error('Error checking new messages:', error);
+      }
+  });
+
  });
-
- 
-
-
-
-  
-  
