@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var indicator = document.getElementById("new-message-indicator");
 
-  // Send the user's time zone along with the timestamp to the server
+  // checks for new messages
   $.ajax({
       url: '/check_new_message/',
       method: 'GET',

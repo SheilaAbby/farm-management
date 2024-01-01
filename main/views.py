@@ -878,3 +878,8 @@ def check_new_message(request):
 
     # Return a JSON response indicating whether there's a new message
     return JsonResponse({'has_new_message': has_new_message})
+
+@login_required(login_url="/login")
+def training(request):
+
+    return render(request, 'main/training.html') 

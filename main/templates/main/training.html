@@ -1,0 +1,36 @@
+{% extends 'main/base.html' %} 
+{% load static %}
+
+{% block title %}Windwood App Training {% endblock %} 
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center mb-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-sm-12 mb-4"> 
+                <div class="card h-100 d-flex flex-column"> 
+                    <!-- Farm Header -->
+                    <div class="card-header" style="background-color: #5B362D;">
+                        <div class="align-items-center">
+                            <i class="fas fa-comments fa-2x me-2 text-success"></i>
+                            <b class="mb-0 text-success">Get Started | Using Windwood Farm Management App</b>
+                            <i class="fa-solid fa-people-group fa-2x mt-2 text-success"></i>
+                        </div>
+                     </div>
+
+                    <!-- Farm Activities Content -->
+                    <div class="card-body d-flex flex-column" style="width: 100%;">
+        
+                        <hr>
+                        <div id="training-content" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: #f0f0f0;" class="d-flex flex-column">
+                            <b class="text-success">Download User Manual</b>
+                            <p><a href="{% static 'learning-materials/farmer-manual.pdf' %}" download="farmer-manual.pdf" class="btn btn-success">Download Manual for Farmers</a></p>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

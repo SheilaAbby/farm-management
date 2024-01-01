@@ -34,7 +34,11 @@
                     <!-- Add your authenticated user navigation links here -->
                     {% comment %} <li><a class="nav-link btn text-success ms-auto" href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a></li> {% endcomment %}
                     <li class="nav-item btn text-success ms-auto "><a href="{% url 'index' %}" class="text-success text-decoration-none"><i class="fas fa-home"></i> Home</a></li>
-                    <li class="nav-item btn text-success ms-auto" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!"><i class="fas fa-chalkboard"></i> Training</li>
+                    <li class="nav-item btn text-success ms-auto" data-bs-toggle="popover2" title="Training" data-bs-content="Coming Soon!">
+                        <a href="{% url 'training' %}" class="text-success text-decoration-none">
+                            <i class="fas fa-chalkboard"></i> Training
+                        </a>
+                    </li>
                     <li id="chatroom-link" class="nav-item btn text-success ms-auto">
                         <a href="{% url 'send_message' %}" class="text-success text-decoration-none" style="position: relative;">
                             <span id="new-message-indicator" style="width: 5px; height: 5px; background-color: red; border-radius: 50%; display: inline-block; visibility: hidden;"></span>
