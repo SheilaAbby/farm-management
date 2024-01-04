@@ -487,10 +487,12 @@ function updateChatContainer(message) {
         messageElement.className = 'message';
         messageElement.id = 'message-' + messageId;
         messageElement.innerHTML = `
-            <i class="fas fa-comment text-success"></i>
+        <div id="message-${messageId}">
+         <div class="d-flex align-items-center">
             <i class="material-icons small user-icon mr-2">person_pin</i>
             <span style="font-weight: bold;">${sender}:</span>
             <span style="color: #975344; margin-left: 0.5rem;">shared...</span>
+           </div>
             <span style="color: green; margin-left: 0.5rem;">${content}</span>
             - sent on ${formattedDate}
             <button class="btn btn-sm ms-2" onclick="toggleReplyField('${sender}', ${messageId})" style="color: green;">
@@ -499,6 +501,8 @@ function updateChatContainer(message) {
             <button class="btn btn-sm ms-2" onclick="deleteMessage('${sender}', ${messageId})" id="deleteButton-${messageId}" style="color: #975344;">
                 <i class="material-icons small">delete</i>
             </button>
+        </div>
+        <hr>
         `;
 
         // Append the message to the chat container
@@ -506,15 +510,6 @@ function updateChatContainer(message) {
 
          // Call the toggleDeleteButton function to handle the visibility of the delete button
         toggleDeleteButton(sender, messageId);
-
-        // Append the reply button, reply field, and replies section separately
-        var replyButton = document.createElement('button');
-        replyButton.textContent = 'Reply';
-        replyButton.className = 'btn btn-sm btn-outline-primary ms-2 mt-2';
-        replyButton.onclick = function () {
-            toggleReplyField(sender, messageId);
-        };
-        messageElement.appendChild(replyButton);
 
         var replyField = document.createElement('textarea');
         replyField.className = 'form-control mt-2 d-none';
@@ -533,7 +528,16 @@ function updateChatContainer(message) {
             repliesList.className = 'list-unstyled';
             message.replies.forEach(function (reply) {
                 var replyItem = document.createElement('li');
-                replyItem.innerHTML = '<span style="font-weight: bold;">' + reply.sender + ':</span> ' + reply.content + reply.created + '</span></span>';
+                repliesSection.className = 'me-3';
+                replyItem.innerHTML = `
+                <span style="margin-left: 30px;">
+                    <i class="fas fa-comments text-success"></i>
+                    <span style="font-weight: bold; margin-left: 0.5rem;">${reply.sender}: </span>
+                    <span style="color: #975344; margin-left: 0.5rem;">replied...</span>
+                    <span style="color: green;">${reply.content}</span>
+                    - sent on ${formattedDate}
+                </span>
+            `;
                 repliesList.appendChild(replyItem);
             });
             repliesSection.appendChild(repliesList);
@@ -594,6 +598,9 @@ async function fetchExistingMessagesAndNotifyWebSocket(socket) {
         const data = await response.json();
 
         if (data.success) {
+             // Sort messages in reverse order (latest first)
+            //data.messages.sort((a, b) => new Date(b.created) - new Date(a.created));
+
             // Append each existing message to the chat container
             data.messages.forEach(function (message) {
 
