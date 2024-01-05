@@ -753,8 +753,10 @@ def send_message_view(request, message_id=None):
 @user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def fetch_messages(request):
+    user_district = request.user.district
+
     # Fetch messages and related replies
-    messages = Message.objects.prefetch_related('replies').all()
+    messages = Message.objects.filter(sender__district=user_district).prefetch_related('replies').all()
 
     # Serialize the messages, including the related replies
     serialized_messages = []
@@ -870,8 +872,11 @@ def check_new_message(request):
     # Retrieve the user's last_checked_message property
     last_checked_message_user_tz = request.user.last_checked_message
 
-    # Get the latest message timestamp from the database
-    latest_message = Message.objects.order_by('-created').first()
+    # Retrieve the user's district
+    user_district = request.user.district
+
+    # Get the latest message from users in the same district
+    latest_message = Message.objects.filter(sender__district=user_district).order_by('-created').first()
 
     # Handle the case where latest_message is None
     latest_message_timestamp_user_tz = latest_message.created if latest_message else None
