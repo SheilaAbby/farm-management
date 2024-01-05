@@ -760,6 +760,8 @@ def fetch_messages(request):
     serialized_messages = []
     for message in messages:
       
+        sender_photo_url = message.sender.photo.url if message.sender.photo else None
+
         serialized_message = {
             'sender': message.sender.username,
             # 'recipients': [recipient.username for recipient in message.recipients.all()],
@@ -770,6 +772,7 @@ def fetch_messages(request):
             'deleted_by_sender': message.deleted_by_sender,
             'deleted_for_recipients': message.deleted_for_recipients,
             'deleted_by_field_agent': message.deleted_by_field_agent,
+            'senderPhotoUrl': sender_photo_url
         }
         serialized_messages.append(serialized_message)
 

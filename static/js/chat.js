@@ -374,7 +374,7 @@ function deleteMessage(sender, messageId) {
 
                 // Display a success message to the user
                 alert('Message deleted successfully!');
-                
+
             } else {
                 console.error('Error deleting message:', data.error);
             }
@@ -414,6 +414,7 @@ function updateChatContainer(message) {
     var content = message.content;
     var created = message.created;
     var messageId = message.id;
+    var senderPhotoUrl = message.senderPhotoUrl;
 
     const created_date = new Date(created);
 
@@ -434,7 +435,7 @@ function updateChatContainer(message) {
         latestMessages[sender].innerHTML = `
             <div id="message-${messageId}" data-created="${created}">
                 <div class="d-flex align-items-center">
-                <i class="material-icons small user-icon mr-2">person_pin</i>
+                <img src="${senderPhotoUrl || '/media/profile_photos/blank-avatar.png'}" alt="Profile Photo" class="rounded-circle overflow-hidden me-2" style="width: 35px; height: 35px;" onerror="this.onerror=null; this.src='/media/profile_photos/avatar-user.svg';">
                 <span style="font-weight: bold;">${sender}:</span>
                 <span style="color: #975344; margin-left: 0.5rem;">shared...</span>
                 </div>
@@ -503,7 +504,7 @@ function updateChatContainer(message) {
         messageElement.innerHTML = `
         <div id="message-${messageId}" data-created="${created}">
          <div class="d-flex align-items-center">
-            <i class="material-icons small user-icon mr-2">person_pin</i>
+            <img src="${senderPhotoUrl || '/media/profile_photos/blank-avatar.png'}" alt="Profile Photo" class="rounded-circle overflow-hidden me-2" style="width: 35px; height: 35px;" onerror="this.onerror=null; this.src='/media/profile_photos/avatar-user.svg';">
             <span style="font-weight: bold;">${sender}:</span>
             <span style="color: #975344; margin-left: 0.5rem;">shared...</span>
            </div>
