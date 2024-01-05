@@ -1,4 +1,3 @@
-
 // Function to get CSRF token from cookies
 function getCookie(name) {
     var value = "; " + document.cookie;
@@ -422,7 +421,7 @@ function updateChatContainer(message) {
     if (sender in latestMessages) {
         // Update the existing message
         latestMessages[sender].innerHTML = `
-            <div id="message-${messageId}">
+            <div id="message-${messageId}" data-created="${created}">
                 <div class="d-flex align-items-center">
                 <i class="material-icons small user-icon mr-2">person_pin</i>
                 <span style="font-weight: bold;">${sender}:</span>
@@ -481,13 +480,17 @@ function updateChatContainer(message) {
             });
             repliesSection.appendChild(repliesList);
         }
+
+        // Sort the chat container based on created dates (latest first)
+        sortChatContainer();
+
     } else {
         // Create a new message element
         var messageElement = document.createElement('div');
         messageElement.className = 'message';
         messageElement.id = 'message-' + messageId;
         messageElement.innerHTML = `
-        <div id="message-${messageId}">
+        <div id="message-${messageId}" data-created="${created}">
          <div class="d-flex align-items-center">
             <i class="material-icons small user-icon mr-2">person_pin</i>
             <span style="font-weight: bold;">${sender}:</span>
@@ -505,8 +508,8 @@ function updateChatContainer(message) {
         <hr>
         `;
 
-        // Append the message to the chat container
-        document.getElementById('chat-container').appendChild(messageElement);
+        // Prepend the message to the chat container
+        document.getElementById('chat-container').prepend(messageElement);
 
          // Call the toggleDeleteButton function to handle the visibility of the delete button
         toggleDeleteButton(sender, messageId);
@@ -547,6 +550,33 @@ function updateChatContainer(message) {
         latestMessages[sender] = messageElement;
     }
 }
+
+// Function to sort the chat container based on created dates (latest first)
+function sortChatContainer() {
+    var chatContainer = document.getElementById('chat-container');
+    var messages = Array.from(chatContainer.getElementsByClassName('message'));
+
+    messages.sort(function (a, b) {
+        var dateA = a.querySelector('[data-created]') ? new Date(a.querySelector('[data-created]').getAttribute('data-created').replace(/-/g, '/')) : 0;
+        var dateB = b.querySelector('[data-created]') ? new Date(b.querySelector('[data-created]').getAttribute('data-created').replace(/-/g, '/')) : 0;
+
+        // If data-created attribute is not defined, skip the element in the sorting
+        if (dateA === 0 || dateB === 0) {
+            return 0;
+        }
+
+        return dateB - dateA;
+    });
+
+    // Clear the chat container
+    chatContainer.innerHTML = '';
+
+    // Append sorted messages to the chat container
+    messages.forEach(function (message) {
+        chatContainer.appendChild(message);
+    });
+}
+
 // handles sending of new messages
 function sendMessage() {
     // Get the message content from the input field
@@ -598,27 +628,26 @@ async function fetchExistingMessagesAndNotifyWebSocket(socket) {
         const data = await response.json();
 
         if (data.success) {
-             // Sort messages in reverse order (latest first)
-            //data.messages.sort((a, b) => new Date(b.created) - new Date(a.created));
+
+            // Sort messages in reverse order (latest first)
+           // data.messages.sort((a, b) => new Date(b.created) - new Date(a.created));
 
             // Append each existing message to the chat container
             data.messages.forEach(function (message) {
-
-                 // Update the chat container with the latest message
+                // Update the chat container with the latest message
                 updateChatContainer(message);
+
                 // Check if the message ID has been processed
                 if (!processedMessageIds.has(message.id)) {
-              
-                     // Notify the WebSocket with the new message
+                    // Notify the WebSocket with the new message
                     notifyWebSocket(message, socket);
-                  
-                     // Add the message ID to the processed set
-                    processedMessageIds.add(message.id);  
+
+                    // Add the message ID to the processed set
+                    processedMessageIds.add(message.id);
                 }
             });
             // Save the updated processedMessageIds to local storage
             localStorage.setItem('processedMessageIds', JSON.stringify(Array.from(processedMessageIds)));
-
         } else {
             // Handle failure if needed
             console.error('Failed to fetch existing messages:', data.error);
@@ -700,6 +729,4 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
-
-// document.addEventListener('DOMContentLoaded', initializeChat);
 
