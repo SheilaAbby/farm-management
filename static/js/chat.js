@@ -340,39 +340,50 @@ function deleteMessage(sender, messageId) {
         return;
     }
 
-    // AJAX request to delete the message
-    fetch('/windwood/chatroom/delete/' + messageId + '/', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken'),
-        },
-    })
-    .then(response => {
-        if (response.ok) {
-            // If the response is OK, parse JSON response
-            return response.json();
-        } else {
-            console.error('Error deleting message. Status:', response.status);
-            throw new Error('Error deleting message.');
-        }
-    })
-    .then(data => {
-      
-        if (data.success) {
-            // Remove the deleted message and its replies from the UI
-            removeMessage(sender, messageId);
+    // Show confirmation dialog
+    var confirmDelete = window.confirm('Are you sure you want to delete this message?');
 
-            if (data.message_id) {
-                removeReply(data.message_id);
+    if (confirmDelete) {
+        // User clicked OK in the confirmation dialog
+
+        // AJAX request to delete the message
+        fetch('/windwood/chatroom/delete/' + messageId + '/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                // If the response is OK, parse JSON response
+                return response.json();
+            } else {
+                console.error('Error deleting message. Status:', response.status);
+                throw new Error('Error deleting message.');
             }
-        } else {
-            console.error('Error deleting message:', data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+        })
+        .then(data => {
+            if (data.success) {
+                // Remove the deleted message and its replies from the UI
+                removeMessage(sender, messageId);
+
+                if (data.message_id) {
+                    removeReply(data.message_id);
+                }
+
+                // Display a success message to the user
+                alert('Message deleted successfully!');
+                
+            } else {
+                console.error('Error deleting message:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    // If the user clicked Cancel, do nothing
 }
 
 // Function to display a simple notification
