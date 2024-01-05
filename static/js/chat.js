@@ -641,9 +641,6 @@ async function fetchExistingMessagesAndNotifyWebSocket(socket) {
 
         if (data.success) {
 
-            // Sort messages in reverse order (latest first)
-           // data.messages.sort((a, b) => new Date(b.created) - new Date(a.created));
-
             // Append each existing message to the chat container
             data.messages.forEach(function (message) {
                 // Update the chat container with the latest message
