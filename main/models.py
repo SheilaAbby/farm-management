@@ -57,6 +57,12 @@ class CustomUser(AbstractUser):
                 self.district = self.other_location
 
        super().save(*args, **kwargs)
+
+    @property
+    def processed_messages(self):
+        # Retrieve or create ProcessedMessage instance for the user
+        processed_message, created = ProcessedMessage.objects.get_or_create(user=self)
+        return processed_message
     
 class Crop(models.Model):
     CROP_CHOICES = [
@@ -170,7 +176,7 @@ class Resource(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.quantity} units"
-    
+
 User = get_user_model()
 
 class FarmVisitRequest(models.Model):
@@ -231,3 +237,7 @@ class Reply(models.Model):
 
     def __str__(self):
         return f"Reply Message from {self.sender}, to {self.message}"
+
+class ProcessedMessage(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    processed_message_ids = models.JSONField(default=list)

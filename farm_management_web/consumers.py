@@ -30,6 +30,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message_content = message['message']['content']
         sender_name = message['message']['sender']
         created_date = message['message']['created']
+        id = message['message']['id']
 
         # Log the received message to the console
         print(f"Received notification from {sender_name} at {created_date}: {message_content}")
@@ -40,6 +41,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'sender': sender_name,
             'created': created_date,
             'content': message_content,
+            'id': id
         }))
 
 

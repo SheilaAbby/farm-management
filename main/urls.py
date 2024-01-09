@@ -57,6 +57,10 @@ urlpatterns = [
 
     path('windwood/training/', views.training, name='training'),
 
+     # Add the URL pattern for marking messages as processed
+    path('mark_message_as_processed/', views.mark_message_as_processed, name='mark_message_as_processed'),
+    path('check-if-message-processed/', views.check_if_message_processed, name='check_if_message_processed'),
+
     # Password Reset urls
     path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
     path('reset_password_sent', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),

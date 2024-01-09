@@ -22,6 +22,9 @@ import logging
 logger = logging.getLogger(__name__)
 from django.db import transaction
 from datetime import datetime, timezone, timedelta
+from django.views.decorators.http import require_POST
+from .models import ProcessedMessage
+
 
 def is_farmer_or_field_agent(user):
     return user.groups.filter(name__in=['farmer', 'field_agent']).exists()
@@ -891,3 +894,35 @@ def check_new_message(request):
 def training(request):
 
     return render(request, 'main/training.html') 
+
+@require_POST
+def mark_message_as_processed(request):
+    try:
+        data = json.loads(request.body)
+        message_id = data.get('messageId')
+
+        # Assuming you have a logged-in user
+        user = request.user
+
+        # Update the ProcessedMessage model
+        processed_message, created = ProcessedMessage.objects.get_or_create(user=user)
+        processed_message.processed_message_ids.append(message_id)
+        processed_message.save()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+def check_if_message_processed(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            message_id = data.get('messageId')
+            user = request.user
+            is_processed = ProcessedMessage.objects.filter(user=user, processed_message_ids__contains=[message_id]).exists()
+
+            return JsonResponse({'isProcessed': is_processed})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

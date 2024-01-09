@@ -387,14 +387,19 @@ function deleteMessage(sender, messageId) {
 }
 
 // Function to display a simple notification
-async function displayNotification(message) {
+async function displayNotification(message, interactionCallback) {
+
     try {
         const currentUserData = await getCurrentUser();
  
         // Ensure currentUserData is resolved before proceeding
         if (currentUserData && message.sender !== currentUserData.username) {
+     
             // Display the notification
-            alert(`New Message Posted By ${message.sender}\nMessage: ${message.content}\nCheck the Chat!`);
+            const userClickedOK = confirm(`New Message Posted By ${message.sender}\nMessage: ${message.content}\nCheck the Chat!`);
+
+            // Call the interaction callback with the user's choice
+            interactionCallback(userClickedOK);
         } else {
             console.log('Skipping notification for own message:', message);
         }
@@ -620,9 +625,7 @@ function sendMessage() {
     });
 }
 
-// Retrieve processedMessageIds from local storage or initialize an empty set
-const processedMessageIds = new Set(JSON.parse(localStorage.getItem('processedMessageIds')) || []);
-
+//fetches existing messages and notifies the webscoket
 async function fetchExistingMessagesAndNotifyWebSocket(socket) {
     try {
         const response = await fetch(fetchMessagesUrl, {
@@ -640,29 +643,79 @@ async function fetchExistingMessagesAndNotifyWebSocket(socket) {
         const data = await response.json();
 
         if (data.success) {
-
-            // Append each existing message to the chat container
-            data.messages.forEach(function (message) {
+            // Use a for...of loop to ensure asynchronous processing in order
+            for (const message of data.messages) {
                 // Update the chat container with the latest message
                 updateChatContainer(message);
 
-                // Check if the message ID has been processed
-                if (!processedMessageIds.has(message.id)) {
+                // Check if the message ID has been processed on the server side
+                const isProcessedOnServer = await checkIfMessageIsProcessedOnServer(message.id);
+
+                // Check if the message ID has been processed locally
+                if (!isProcessedOnServer) {
+                    console.log('Received WebSocket message:', message);
+
                     // Notify the WebSocket with the new message
                     notifyWebSocket(message, socket);
 
-                    // Add the message ID to the processed set
-                    processedMessageIds.add(message.id);
+                    // // Mark the message as processed on the server
+                    // await markMessageAsProcessedOnServer(message.id);
                 }
-            });
-            // Save the updated processedMessageIds to local storage
-            localStorage.setItem('processedMessageIds', JSON.stringify(Array.from(processedMessageIds)));
+            }
         } else {
             // Handle failure if needed
             console.error('Failed to fetch existing messages:', data.error);
         }
     } catch (error) {
         console.error('Error fetching existing messages:', error);
+        // Handle error if needed
+    }
+}
+
+// Function to check if a message is processed on the server
+async function checkIfMessageIsProcessedOnServer(messageId) {
+
+    try {
+        const response = await fetch(checkIfMessageProcessedUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({ messageId }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data.isProcessed || false;
+    } catch (error) {
+        console.error('Error checking if message is processed on the server:', error);
+        return false;
+    }
+}
+
+// Function to mark a message as processed on the server
+async function markMessageAsProcessedOnServer(messageId) {
+
+    try {
+        const response = await fetch(markMessageAsProcessedUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({ messageId }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+    } catch (error) {
+        console.error('Error marking message as processed on the server:', error);
         // Handle error if needed
     }
 }
@@ -697,6 +750,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     socket.onmessage = function (event) {
+
         try {
             var data = JSON.parse(event.data);
             var message = data;
@@ -704,7 +758,17 @@ document.addEventListener("DOMContentLoaded", function () {
             // Check the type of message and take appropriate action
             if (message.type === 'chat.notification') {
                 // Display the notification in the chat UI
-                displayNotification(message);
+                // displayNotification(message);
+                // Call displayNotification with a callback
+                displayNotification(message, (userClickedOK) => {
+                    if (userClickedOK) {
+                        // mark the message as processed on the server
+                        markMessageAsProcessedOnServer(message.id);
+                    } else {
+                        console.log('User canceled or did not confirm');
+                        // Handle the case where the user canceled or did not confirm viewing the notification
+                    }
+                })
             } else {
                 // update the chat UI for regular messages
                 updateChatContainer(message);
