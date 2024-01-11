@@ -44,7 +44,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print(f"Received notification from {sender_name}: {message['content']}")
 
         # Check if it's time to send a consolidated notification
-        if len(self.accumulated_messages[sender_name]) > 1: 
+        if len(self.accumulated_messages[sender_name]) >= 5: 
             await self.send_consolidated_notification(sender_name)
 
     async def send_consolidated_notification(self, sender_name):

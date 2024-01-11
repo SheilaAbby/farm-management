@@ -653,7 +653,7 @@ function sendMessage() {
 }
 
 //fetches existing messages and notifies the webscoket
-async function fetchExistingMessagesAndNotifyWebSocket(socket) {
+async function fetchLatestMessagesAndNotifyWebSocket(socket) {
     try {
         const response = await fetch(fetchMessagesUrl, {
             method: 'GET',
@@ -670,8 +670,11 @@ async function fetchExistingMessagesAndNotifyWebSocket(socket) {
         const data = await response.json();
 
         if (data.success) {
+
+            const messages = data.messages;
+
             // Use a for...of loop to ensure asynchronous processing in order
-            for (const message of data.messages) {
+            for (const message of messages) {
                 // Update the chat container with the latest message
                 updateChatContainer(message);
 
@@ -685,10 +688,12 @@ async function fetchExistingMessagesAndNotifyWebSocket(socket) {
                     // Notify the WebSocket with the new message
                     notifyWebSocket(message, socket);
 
-                    // // Mark the message as processed on the server
-                    // await markMessageAsProcessedOnServer(message.id);
                 }
             }
+
+            // Store the latest messages in local storage
+            localStorage.setItem('latestMessages', JSON.stringify(messages));
+
         } else {
             // Handle failure if needed
             console.error('Failed to fetch existing messages:', data.error);
@@ -787,7 +792,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
             // Push the received message into the messages array
             messages.push(data);
-    
+
             // Check the type of message and take appropriate action
             if (data.type === 'chat.notification') {
                 // Display the notification in the chat UI
@@ -820,22 +825,26 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Function to initialize the chat
+   
     async function initializeChat() {
         try {
-            // Fetch the current user data first
             const currentUserData = await getCurrentUser();
 
-            // If the current user data is available
             if (currentUserData) {
-                // Fetch and display existing messages
-                await fetchExistingMessagesAndNotifyWebSocket(socket);
+                // Load messages from local storage if available
+                const storedMessages = localStorage.getItem('latestMessages');
+                if (storedMessages) {
+                    messages = JSON.parse(storedMessages);
+                    // Update the chat UI with stored messages
+                    messages.forEach(message => updateChatContainer(message));
+                }
+
+                await fetchLatestMessagesAndNotifyWebSocket(socket);
             } else {
-                console.error('Current user data not available.');
-                // Handle the case where current user data is not available
+                throw new Error('Current user data not available.');
             }
         } catch (error) {
             console.error('Error initializing chat:', error);
-            // Handle error if needed
         }
     }
 });

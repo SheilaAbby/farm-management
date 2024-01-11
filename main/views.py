@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.http import HttpResponse, JsonResponse
 import os
 from django.shortcuts import render, redirect, get_object_or_404
@@ -24,7 +24,6 @@ from django.db import transaction
 from datetime import datetime, timezone, timedelta
 from django.views.decorators.http import require_POST
 from .models import ProcessedMessage
-
 
 def is_farmer_or_field_agent(user):
     return user.groups.filter(name__in=['farmer', 'field_agent']).exists()
@@ -758,25 +757,32 @@ def send_message_view(request, message_id=None):
 def fetch_messages(request):
     user_district = request.user.district
 
-    # Fetch messages and related replies
-    messages = Message.objects.filter(sender__district=user_district).prefetch_related('replies').all()
+    # Fetch the latest message from each sender and related replies
+    latest_messages = Message.objects.filter(
+        sender__district=user_district
+    ).values(
+        'sender__username', 'sender__photo', 'sender__id'
+    ).annotate(
+        latest_message_id=Max('id')
+    ).prefetch_related(
+        'replies'
+    )
 
-    # Serialize the messages, including the related replies
+    # Serialize the latest messages, including the related replies
     serialized_messages = []
-    for message in messages:
-      
-        sender_photo_url = message.sender.photo.url if message.sender.photo else None
+    for message_data in latest_messages:
+        latest_message = Message.objects.get(id=message_data['latest_message_id'])
+        sender_photo_url = latest_message.sender.photo.url if latest_message.sender.photo else None
 
         serialized_message = {
-            'sender': message.sender.username,
-            # 'recipients': [recipient.username for recipient in message.recipients.all()],
-            'content': message.content,
-            'created': message.created.strftime('%Y-%m-%d %H:%M:%S'),
-            'id': message.id,
-            'replies': [{'sender': reply.sender.username, 'content': reply.content, 'created': reply.created} for reply in message.replies.all()],
-            'deleted_by_sender': message.deleted_by_sender,
-            'deleted_for_recipients': message.deleted_for_recipients,
-            'deleted_by_field_agent': message.deleted_by_field_agent,
+            'sender': latest_message.sender.username,
+            'content': latest_message.content,
+            'created': latest_message.created.strftime('%Y-%m-%d %H:%M:%S'),
+            'id': latest_message.id,
+            'replies': [{'sender': reply.sender.username, 'content': reply.content, 'created': reply.created} for reply in latest_message.replies.all()],
+            'deleted_by_sender': latest_message.deleted_by_sender,
+            'deleted_for_recipients': latest_message.deleted_for_recipients,
+            'deleted_by_field_agent': latest_message.deleted_by_field_agent,
             'senderPhotoUrl': sender_photo_url
         }
         serialized_messages.append(serialized_message)
