@@ -386,22 +386,49 @@ function deleteMessage(sender, messageId) {
     // If the user clicked Cancel, do nothing
 }
 
-// Function to display a simple notification
-async function displayNotification(message, interactionCallback) {
+// Function to handle user interaction with notifications
+async function handleNotificationInteraction(userClickedOK, messageIds) {
+    if (userClickedOK && messageIds && messageIds.flat().length > 0) {
 
+        // Mark the messages as processed on the server
+        for (const messageId of messageIds.flat()) {
+            await markMessageAsProcessedOnServer(messageId);
+        }
+    } else {
+        console.log('User canceled or did not confirm');
+        // Handle the case where the user canceled or did not confirm viewing the notification
+    }
+
+    // Clear the messages array after displaying notifications
+    messages = [];
+}
+
+async function displayNotification(messages, interactionCallback) {
     try {
         const currentUserData = await getCurrentUser();
- 
-        // Ensure currentUserData is resolved before proceeding
-        if (currentUserData && message.sender !== currentUserData.username) {
-     
-            // Display the notification
-            const userClickedOK = confirm(`New Message Posted By ${message.sender}\nMessage: ${message.content}\nCheck the Chat!`);
 
-            // Call the interaction callback with the user's choice
-            interactionCallback(userClickedOK);
-        } else {
-            console.log('Skipping notification for own message:', message);
+        // Ensure currentUserData is resolved before proceeding
+        if (currentUserData) {
+      
+            // Filter messages where the sender is not the current user
+            const filteredMessages = messages.filter(message => message.sender !== currentUserData.username);
+            
+            // Ensure uniqueness of message IDs
+            const uniqueMessageIds = [...new Set(filteredMessages.map(message => message.id))];
+           
+            const numberOfMessages = uniqueMessageIds.flat().length;
+
+            // Display a bulk notification only once
+            if (numberOfMessages > 0) {
+                const userClickedOK = confirm(`You have ${numberOfMessages} new messages. Check the chat!`);
+                // Call the interaction callback with unique message IDs
+                interactionCallback(userClickedOK, uniqueMessageIds); // Passing unique message IDs for marking as processed if user clicks OK
+
+                // Remove the notified messages from the messages array
+                if (userClickedOK) {
+                    messages = messages.filter(message => !uniqueMessageIds.includes(message.id));
+                }
+            }
         }
     } catch (error) {
         console.error('Error getting current user data:', error);
@@ -653,7 +680,7 @@ async function fetchExistingMessagesAndNotifyWebSocket(socket) {
 
                 // Check if the message ID has been processed locally
                 if (!isProcessedOnServer) {
-                    console.log('Received WebSocket message:', message);
+                    console.log('Received WebSocket message..:', message);
 
                     // Notify the WebSocket with the new message
                     notifyWebSocket(message, socket);
@@ -721,6 +748,7 @@ async function markMessageAsProcessedOnServer(messageId) {
 }
 
 function notifyWebSocket(message, socket) {
+   
     // Add the 'type' field to the message
     message.type = 'chat.notification';
 
@@ -738,6 +766,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var wsPath = wsProtocol + "://" + window.location.host + "/ws/chat/";
     var socket = new WebSocket(wsPath);
 
+    // Variable to store accumulated messages
+    let messages = [];
+
     socket.onopen = function (event) {
         console.log("WebSocket connection opened:", event);
     
@@ -749,34 +780,40 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    socket.onmessage = function (event) {
-
+    
+    socket.onmessage = async function (event) {
         try {
             var data = JSON.parse(event.data);
-            var message = data;
-
+    
+            // Push the received message into the messages array
+            messages.push(data);
+    
             // Check the type of message and take appropriate action
-            if (message.type === 'chat.notification') {
+            if (data.type === 'chat.notification') {
                 // Display the notification in the chat UI
-                // displayNotification(message);
-                // Call displayNotification with a callback
-                displayNotification(message, (userClickedOK) => {
-                    if (userClickedOK) {
-                        // mark the message as processed on the server
-                        markMessageAsProcessedOnServer(message.id);
+    
+                // Call displayNotification with a callback and a copy of the messages array
+                displayNotification([...messages], async (userClickedOK, messageIds) => {
+                    if (userClickedOK && messageIds) {
+                        // Mark the messages as processed on the server
+                        await handleNotificationInteraction(userClickedOK, messageIds);
                     } else {
                         console.log('User canceled or did not confirm');
                         // Handle the case where the user canceled or did not confirm viewing the notification
                     }
-                })
+    
+                    // Clear the messages array after displaying notifications
+                    messages = [];
+                });
             } else {
                 // update the chat UI for regular messages
-                updateChatContainer(message);
+                updateChatContainer(data);
             }
         } catch (error) {
             console.error("Error handling WebSocket message:", error);
         }
     };
+    
 
     socket.onclose = function (event) {
         console.log("WebSocket connection closed:", event);
