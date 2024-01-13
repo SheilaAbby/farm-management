@@ -779,7 +779,7 @@ def fetch_messages(request):
             'content': latest_message.content,
             'created': latest_message.created.strftime('%Y-%m-%d %H:%M:%S'),
             'id': latest_message.id,
-            'replies': [{'sender': reply.sender.username, 'content': reply.content, 'created': reply.created} for reply in latest_message.replies.all()],
+            'replies': [{'id': reply.id, 'sender': reply.sender.username, 'content': reply.content, 'created': reply.created} for reply in latest_message.replies.all()],
             'deleted_by_sender': latest_message.deleted_by_sender,
             'deleted_for_recipients': latest_message.deleted_for_recipients,
             'deleted_by_field_agent': latest_message.deleted_by_field_agent,
@@ -902,6 +902,7 @@ def training(request):
     return render(request, 'main/training.html') 
 
 @require_POST
+@login_required(login_url="/login")
 def mark_message_as_processed(request):
     try:
         data = json.loads(request.body)
@@ -919,6 +920,7 @@ def mark_message_as_processed(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
 
+@login_required(login_url="/login")
 def check_if_message_processed(request):
     if request.method == 'POST':
         try:
@@ -932,3 +934,20 @@ def check_if_message_processed(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@login_required(login_url="/login")
+def delete_reply(request, message_id, reply_id):
+    # Check if the request method is DELETE
+    if request.method == 'DELETE':
+        # Fetch the message and reply objects from the database
+        message = get_object_or_404(Message, id=message_id)
+        reply = get_object_or_404(Reply, id=reply_id, message=message)
+
+        # Perform your deletion logic here
+        reply.delete()
+
+        # Return a JSON response indicating success
+        return JsonResponse({'success': True})
+
+    # If the request method is not DELETE, return a 405 Method Not Allowed response
+    return JsonResponse({'error': 'Method Not Allowed'}, status=405)

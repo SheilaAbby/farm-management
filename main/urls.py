@@ -61,6 +61,8 @@ urlpatterns = [
     path('mark_message_as_processed/', views.mark_message_as_processed, name='mark_message_as_processed'),
     path('check-if-message-processed/', views.check_if_message_processed, name='check_if_message_processed'),
 
+    path('windwood/chatroom/delete/<int:message_id>/reply/<int:reply_id>/', views.delete_reply, name='delete_reply'),
+    
     # Password Reset urls
     path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
     path('reset_password_sent', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),

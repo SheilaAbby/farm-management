@@ -136,6 +136,40 @@ async function toggleDeleteButton(sender, messageId) {
     }
 }
 
+// Function to toggle the visibility of the reply delete button
+async function toggleDeleteReplyButton(sender, messageId, replyId) {
+    console.log('Toggle delete called with replyID ', replyId);
+    console.log('Toggle delete called with sender', sender);
+
+    try {
+        const currentUserData = await getCurrentUser();
+        const userRole = await getUserRole();
+
+        // Generate the ID of the delete reply button dynamically
+        var deleteReplyButtonId = `deleteReplyButton-${messageId}-${replyId}`;
+        var deleteReplyButton = document.getElementById(deleteReplyButtonId);
+
+        console.log('Reply button found here', deleteReplyButton);
+
+        if (deleteReplyButton) {
+            console.log('Reply button found', deleteReplyButton);
+            // Check if the condition is met and toggle the button accordingly
+            if (userRole === 'farmer' && sender === currentUserData.username) {
+                console.log('Reply belongs to the user', sender);
+                deleteReplyButton.classList.toggle('d-none', false);
+            } else if (userRole === 'field_agent') {
+                deleteReplyButton.classList.toggle('d-none', false);
+            } else {
+                deleteReplyButton.classList.toggle('d-none', true);
+            }
+        } else {
+            console.error(`Reply button not found for messageId: ${messageId}, replyId: ${replyId}`);
+        }
+    } catch (error) {
+        console.error('Error toggling delete reply button:', error);
+    }
+}
+
 async function updateRepliesSection(messageId, reply) {
     var repliesSection = document.getElementById('repliesSection-' + reply);
 
@@ -160,7 +194,29 @@ async function updateRepliesSection(messageId, reply) {
                 // Iterate through each reply and append it to the list
                 originalMessage.message.replies.forEach(function (replyItem) {
                     var replyItemElement = document.createElement('li');
-                    replyItemElement.innerHTML = '<span style="font-weight: bold;">' + replyItem.sender + ':</span> ' + replyItem.content;
+
+                    var created = replyItem.created;
+
+                    const created_date = new Date(created);
+
+                    const formattedDate = `${created_date.toDateString()} ${created_date.toLocaleTimeString()} (EAT)`;
+
+                   // replyItemElement.innerHTML = '<span style="font-weight: bold;">' + replyItem.sender + ':</span> ' + replyItem.content;
+
+                    replyItemElement.innerHTML = `
+                    <div id="reply-${replyItem.id}" data-created="${replyItem.created}">
+                        <span style="margin-left: 30px;">
+                            <i class="fas fa-comments text-success"></i>
+                            <span style="font-weight: bold; margin-left: 0.5rem;">${replyItem.sender}: </span>
+                            <span style="color: #975344; margin-left: 0.5rem;">replied...</span>
+                            <span style="color: green;">${replyItem.content}</span>
+                            - sent on ${formattedDate}
+                            <button class="btn btn-sm ms-2" onclick="deleteReply(${messageId}, ${reply.id})" id="deleteReplyButton-${messageId}-${reply.id}" style="color: #975344;">
+                            <i class="material-icons small">delete</i>
+                            </button>
+                        </span>
+                    </div>
+                    `;
                     repliesList.appendChild(replyItemElement);
                 });
 
@@ -315,21 +371,37 @@ function removeMessage(sender, messageId) {
         messageElement.remove();
         // Remove the message from latestMessages dictionary
         delete latestMessages[sender];
-        console.log('Message removed successfully.');
     } else {
         console.error('Message element not found for messageId:', messageId);
     }
 }
 
-// If Message gas Replies Remove replies from the UI
-function removeReply(message_id) {
-    // Implement the logic to remove the reply section from the UI
-    var repliesSection = document.getElementById('repliesSection-' + message_id);
+// Remove a reply or entire replies section from the UI
+function removeReply(messageId, replyId) {
+    try {
+        // Get the replies section associated with the main message
+        var repliesSection = document.getElementById(`repliesSection-${messageId}`);
 
-    if (repliesSection) {
-        repliesSection.remove();
-    } else {
-        console.error('Replies section not found:', 'repliesSection-' + message_id);
+        if (repliesSection) {
+            if (replyId) {
+                // If replyId is provided, find the reply element by its ID and remove it
+                var replyElement = document.getElementById(`reply-${replyId}`);
+
+                if (replyElement) {
+                    replyElement.remove();
+                } else {
+                    console.error(`Reply element not found for reply ID ${replyId}`);
+                }
+            } else {
+                // If replyId is not provided, remove the entire replies section
+                repliesSection.remove();
+                
+            }
+        } else {
+            console.error(`Replies section not found for message ID ${messageId}`);
+        }
+    } catch (error) {
+        console.error('Error removing reply:', error);
     }
 }
 
@@ -365,18 +437,67 @@ function deleteMessage(sender, messageId) {
         })
         .then(data => {
             if (data.success) {
-                // Remove the deleted message and its replies from the UI
-                removeMessage(sender, messageId);
-
+               
                 if (data.message_id) {
                     removeReply(data.message_id);
                 }
+
+                 // Remove the deleted message and its replies from the UI
+                 removeMessage(sender, messageId);
 
                 // Display a success message to the user
                 alert('Message deleted successfully!');
 
             } else {
                 console.error('Error deleting message:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    // If the user clicked Cancel, do nothing
+}
+
+function deleteReply(messageId, replyId) {
+    // Check if messageId and replyId are valid
+    if (!messageId || !replyId) {
+        console.error('Invalid messageId or replyId:', messageId, replyId);
+        return;
+    }
+
+    // Show confirmation dialog
+    var confirmDelete = window.confirm('Are you sure you want to delete this reply?');
+
+    if (confirmDelete) {
+        // User clicked OK in the confirmation dialog
+
+        // AJAX request to delete the reply
+        fetch(`/windwood/chatroom/delete/${messageId}/reply/${replyId}/`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                // If the response is OK, parse JSON response
+                return response.json();
+            } else {
+                console.error('Error deleting reply. Status:', response.status);
+                throw new Error('Error deleting reply.');
+            }
+        })
+        .then(data => {
+            if (data.success) {
+                // Remove the deleted reply from the UI
+                removeReply(messageId, replyId);
+
+                // Display a success message to the user
+                alert('Reply deleted successfully!');
+            } else {
+                console.error('Error deleting reply:', data.error);
             }
         })
         .catch(error => {
@@ -504,7 +625,7 @@ function updateChatContainer(message) {
             var repliesList = document.createElement('ul');
             repliesList.className = 'list-unstyled';
             message.replies.forEach(function (reply) {
-
+                console.log('Reply', reply);
                 const created_date = new Date(reply.created);
 
                 const formattedDate = `${created_date.toDateString()} ${created_date.toLocaleTimeString()} (EAT)`;
@@ -512,15 +633,23 @@ function updateChatContainer(message) {
                 var replyItem = document.createElement('li');
                 repliesSection.className = 'me-3';
                 replyItem.innerHTML = `
+                <div id="reply-${reply.id}" data-created="${created}">
                     <span style="margin-left: 30px;">
                         <i class="fas fa-comments text-success"></i>
                         <span style="font-weight: bold; margin-left: 0.5rem;">${reply.sender}: </span>
                         <span style="color: #975344; margin-left: 0.5rem;">replied...</span>
                         <span style="color: green;">${reply.content}</span>
                         - sent on ${formattedDate}
+                        <button class="btn btn-sm ms-2"  onclick="deleteReply(${messageId}, ${reply.id})" id="deleteReplyButton-${messageId}-${reply.id}" style="color: #975344;">
+                        <i class="material-icons small">delete</i>
+                        </button>
                     </span>
+                </div>
                 `;
+
                 repliesList.appendChild(replyItem);
+                // Call toggleDeleteReplyButton to handle button visibility
+                toggleDeleteReplyButton(reply.sender, messageId, reply.id);
             });
             repliesSection.appendChild(repliesList);
         }
