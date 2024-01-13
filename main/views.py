@@ -893,8 +893,15 @@ def check_new_message(request):
     # Compare timestamps to check for new messages
     has_new_message = last_checked_message_user_tz is None or (latest_message_timestamp_user_tz and latest_message_timestamp_user_tz > last_checked_message_user_tz)
 
-    # Return a JSON response indicating whether there's a new message
-    return JsonResponse({'has_new_message': has_new_message})
+    # Count the number of new messages
+    new_messages_count = Message.objects.filter(sender__district=user_district, created__gt=last_checked_message_user_tz).count()
+
+    # Return a JSON response indicating whether there's a new message and the number of new messages
+    return JsonResponse({
+        'has_new_message': has_new_message,
+        'new_messages_count': new_messages_count,
+        'latest_message_timestamp': latest_message_timestamp_user_tz.isoformat() if latest_message_timestamp_user_tz else None
+    })
 
 @login_required(login_url="/login")
 def training(request):

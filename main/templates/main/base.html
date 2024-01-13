@@ -41,24 +41,9 @@
                     </li>
                     <li id="chatroom-link" class="nav-item btn text-success ms-auto">
                         <a href="{% url 'send_message' %}" class="text-success text-decoration-none" style="position: relative;">
-                            <span id="new-message-indicator" style="width: 5px; height: 5px; background-color: red; border-radius: 50%; display: inline-block; visibility: hidden;"></span>
+                            <span id="new-message-indicator" style="display: inline-block; visibility: hidden;"></span>
                             <i class="fas fa-comments"></i> ChatRoom
                         </a>
-
-                        <style>
-                          #new-message-indicator::after {
-                            content: attr(data-content);
-                            position: absolute;
-                            top: -30px;
-                            left: 0;
-                            background-color: brown;
-                            color: white;
-                            padding: 3px;
-                            border-radius: 3px;
-                            white-space: nowrap;
-                            display: inline-block;
-                        }
-                        </style>
                     </li>
                     <li class="nav-item btn text-success ms-auto" data-bs-toggle="popover2" title="About Windwood Millers" data-bs-content="Founded in 2009, we are an agro-processing company that processes quality cassava and grain flour sourced from smallholder farmers across Eastern & Northern UG"><i class="fas fa-info-circle"></i> About</li>
                     <li class="nav-item btn text-success ms-auto" data-bs-toggle="popover2" title="Contact Us" data-bs-content="Jonathan Otim (CEO) - +256785039195 jonathanotim@gmail.com oscarbrianojok@gmail.com"><i class="fas fa-phone me-2"></i>Contact</li>

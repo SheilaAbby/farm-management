@@ -43,14 +43,22 @@ document.addEventListener("DOMContentLoaded", function () {
       method: 'GET',
       success: function(data) {
           var hasNewMessage = data.has_new_message;
+          var newMessagesCount = data.new_messages_count;
+  
           if (hasNewMessage) {
               indicator.style.visibility = "visible";
-              indicator.setAttribute("data-content", "New Msg!");
+              
+              // Set the envelope icon and the number of new messages
+              var iconText = `<i class="fas fa-envelope text-danger"></i>`;
+              var messageText = `${iconText} <span class="text-danger">(${newMessagesCount})</span>`;
+              
+              indicator.innerHTML = messageText;
           }
       },
       error: function(error) {
           console.error('Error checking new messages:', error);
       }
   });
+  
 
  });
