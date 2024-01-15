@@ -166,6 +166,10 @@ class FarmProduce(models.Model):
     market = models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"Farm Produce for {self.farm} | Submitted On {self.created.strftime('%Y-%m-%d')}"
+
+
 class Resource(models.Model):
     name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField(default=0)

@@ -3,21 +3,9 @@ from .models import CustomUser, Person, Farm, Crop, Resource, FarmingDates,Farmi
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
 from datetime import date
-
-
-# Register your models here. 
+from django.utils.translation import gettext_lazy as _
 
 admin.site.register(Crop)
-admin.site.register(Farm)
-admin.site.register(Person)
-admin.site.register(FarmingDates)
-admin.site.register(FarmingCosts)
-admin.site.register(FarmProduce)
-admin.site.register(Resource)
-admin.site.register(FarmVisitRequest)
-admin.site.register(Message)
-admin.site.register(FarmVisitReport)
-admin.site.register(Reply)
 
 # Customize Admin App
 
@@ -25,7 +13,35 @@ admin.site.site_header = 'Windwood Farm Management'
 admin.site.site_title = 'Windwood Farm Management'
 admin.site.index_title = 'Windwood Farm Management'
 
-class CustomUserAdmin(UserAdmin):
+
+class CreatedDateFilter(admin.SimpleListFilter):
+    title = _('Created Date')
+    parameter_name = 'created_date'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('today', _('Today')),
+            ('this_week', _('This week')),
+            ('this_month', _('This month')),
+            ('this_year', _('This year')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'today':
+            return queryset.filter(created__date=date.today())
+        elif self.value() == 'this_week':
+            return queryset.filter(created__week=date.today().isocalendar()[1], created__year=date.today().year)
+        elif self.value() == 'this_month':
+            return queryset.filter(created__month=date.today().month, created__year=date.today().year)
+        elif self.value() == 'this_year':
+            return queryset.filter(created__year=date.today().year)
+
+
+class CreatedDateFilterAdminMixin(admin.ModelAdmin):
+    list_filter = (CreatedDateFilter,)
+
+
+class CustomUserAdmin(UserAdmin, CreatedDateFilterAdminMixin):
      
      list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
 
@@ -34,30 +50,42 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 
-# class CreatedDateFilter(admin.SimpleListFilter):
-#     title = 'Created Date'
-#     parameter_name = 'created_date'
+@admin.register(Farm)
+class FarmAdmin(CreatedDateFilterAdminMixin):
+    pass
 
-#     def lookups(self, request, model_admin):
-#         return (
-#             ('today', 'Today'),
-#             ('this_week', 'This week'),
-#             ('this_month', 'This month'),
-#             ('this_year', 'This year'),
-#         )
+@admin.register(Person)
+class PersonAdmin(CreatedDateFilterAdminMixin):
+    pass
 
-#     def queryset(self, request, queryset):
-#         if self.value() == 'today':
-#             return queryset.filter(created__date=date.today())
-#         elif self.value() == 'this_week':
-#             return queryset.filter(created__week=date.today().isocalendar()[1], created__year=date.today().year)
-#         elif self.value() == 'this_month':
-#             return queryset.filter(created__month=date.today().month, created__year=date.today().year)
-#         elif self.value() == 'this_year':
-#             return queryset.filter(created__year=date.today().year)
+@admin.register(FarmingDates)
+class FarmingDatesAdmin(CreatedDateFilterAdminMixin):
+    pass
 
-# class YourModelAdmin(admin.ModelAdmin):
-#     list_filter = (CreatedDateFilter,)
-#     # ... other configurations ...
+@admin.register(FarmingCosts)
+class FarmingCostsAdmin(CreatedDateFilterAdminMixin):
+    pass
 
-# admin.site.register(FarmVisitRequest, CustomUserAdmin)
+@admin.register(FarmProduce)
+class FarmProduceAdmin(CreatedDateFilterAdminMixin):
+    pass
+
+@admin.register(Resource)
+class ResourceAdmin(CreatedDateFilterAdminMixin):
+    pass
+
+@admin.register(FarmVisitRequest)
+class FarmVisitRequestAdmin(CreatedDateFilterAdminMixin):
+    pass
+
+@admin.register(Message)
+class MessageAdmin(CreatedDateFilterAdminMixin):
+    pass
+
+@admin.register(FarmVisitReport)
+class FarmVisitReportAdmin(CreatedDateFilterAdminMixin):
+    pass
+
+@admin.register(Reply)
+class ReplyAdmin(CreatedDateFilterAdminMixin):
+    pass
