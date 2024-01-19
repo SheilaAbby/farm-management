@@ -40,14 +40,41 @@ class CreatedDateFilter(admin.SimpleListFilter):
 class CreatedDateFilterAdminMixin(admin.ModelAdmin):
     list_filter = (CreatedDateFilter,)
 
+class CreatedDateAndGroupsFilter(admin.SimpleListFilter):
+    title = 'Date Joined and Groups'
+    parameter_name = 'created_date_and_groups'
 
-class CustomUserAdmin(UserAdmin, CreatedDateFilterAdminMixin):
-     
-     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
+    def lookups(self, request, model_admin):
+        return (
+            ('today', 'Today'),
+            ('this_week', 'This week'),
+            ('this_month', 'This month'),
+            ('this_year', 'This year'),
+        )
 
-    # Add groups to the list filter
-     list_filter = ('groups',)
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == 'today':
+            queryset = queryset.filter(date_joined__date=date.today())
+        elif value == 'this_week':
+            queryset = queryset.filter(date_joined__week=date.today().isocalendar()[1], date_joined__year=date.today().year)
+        elif value == 'this_month':
+            queryset = queryset.filter(date_joined__month=date.today().month, date_joined__year=date.today().year)
+        elif value == 'this_year':
+            queryset = queryset.filter(date_joined__year=date.today().year)
 
+        # Handle the groups filter
+        groups_value = request.GET.get('groups', None)
+        if groups_value:
+            queryset = queryset.filter(groups__id=groups_value)
+
+        return queryset
+
+class CustomUserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
+    list_filter = (CreatedDateAndGroupsFilter, 'groups')
+
+# Register your CustomUserAdmin
 admin.site.register(CustomUser, CustomUserAdmin)
 
 @admin.register(Farm)

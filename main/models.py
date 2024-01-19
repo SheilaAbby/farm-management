@@ -142,6 +142,11 @@ class FarmingDates(models.Model):
     models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"Farming Dates for {self.farm} | Submitted On {self.created.strftime('%Y-%m-%d')}"
+
+
+
 class FarmingCosts(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farming_costs')
     cost_fertilizer_application = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -153,6 +158,9 @@ class FarmingCosts(models.Model):
     other_costs = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Farming Costs for {self.farm} | Submitted On {self.created.strftime('%Y-%m-%d')}"
   
 class FarmProduce(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farm_produce')
