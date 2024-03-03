@@ -17,7 +17,6 @@ django-countries==7.5.1
 django-crispy-forms==1.13.0
 fontawesomefree==6.4.2
 gunicorn==21.2.0
-hiredis==2.0.0
 hyperlink==21.0.0
 idna==3.6
 importlib-metadata==4.8.3
