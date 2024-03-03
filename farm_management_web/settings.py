@@ -13,6 +13,8 @@ import dotenv
 dotenv.load_dotenv()
 from pathlib import Path
 import os
+import sys
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,10 +27,28 @@ LOGIN_URL = '/login/'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Controls the HTTP Strict Transport Security (HSTS) policy
+SECURE_HSTS_SECONDS = 31536000
 
-ALLOWED_HOSTS = ['6451-105-161-211-228.ngrok-free.app', 'localhost']
+# All HTTP requests are redirected to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Session cookies are only sent over HTTPS connections
+SESSION_COOKIE_SECURE = True
+
+# CSRF cookies are only sent over HTTPS connections,
+CSRF_COOKIE_SECURE = True
+
+# HTTP Strict Transport Security (HSTS) policy includes all subdomains of your site
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Site can be submitted to the browser preload list,
+SECURE_HSTS_PRELOAD = True
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+ALLOWED_HOSTS = ['windwoodfarmersnetwork.com', 'localhost']
 
 print(f"__file__: {__file__}")
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -99,16 +119,26 @@ WSGI_APPLICATION = 'farm_management_web.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+#  Postgres database connection
+DEVELOPMENT_MODE = os.getenv('DEVELOPMENT_MODE', 'False') == 'True'
+
+if DEVELOPMENT_MODE is True:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
+            }
+            }
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if os.getenv('DATABASE_URL', None) is None:
+        raise Exception('DATABASE_URL environment variable not defined')
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get("DATABASE_URL")),
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -173,3 +203,4 @@ EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = '2525'
+
