@@ -53,6 +53,7 @@ ALLOWED_HOSTS = ['157.245.103.7','windwoodfarmersnetwork.com', 'localhost']
 print(f"__file__: {__file__}")
 BASE_DIR = Path(__file__).resolve().parent.parent
 print(f"BASE_DIR: {BASE_DIR}")
+print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 
 # Application definition
 
