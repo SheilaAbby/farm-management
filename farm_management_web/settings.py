@@ -48,7 +48,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['157.245.103.7','www.windwoodfarmersnetwork.com']
+ALLOWED_HOSTS = ['157.245.103.7','www.windwoodfarmersnetwork.com', 'windwoodfarmersnetwork.com']
 
 print(f"__file__: {__file__}")
 BASE_DIR = Path(__file__).resolve().parent.parent
