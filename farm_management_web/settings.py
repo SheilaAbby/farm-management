@@ -34,7 +34,7 @@ SECURE_HSTS_SECONDS = 31536000
 SECURE_SSL_REDIRECT = True
 
 # Session cookies are only sent over HTTPS connections
-SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
 # CSRF cookies are only sent over HTTPS connections,
 CSRF_COOKIE_SECURE = True
