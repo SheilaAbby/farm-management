@@ -37,7 +37,7 @@ SECURE_SSL_REDIRECT = True
 # SESSION_COOKIE_SECURE = True
 
 # CSRF cookies are only sent over HTTPS connections,
-CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
 # HTTP Strict Transport Security (HSTS) policy includes all subdomains of your site
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
