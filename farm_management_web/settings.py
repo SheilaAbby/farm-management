@@ -48,7 +48,7 @@ SECURE_HSTS_PRELOAD = True
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['windwood-farm-management-app-s97uh.ondigitalocean.app', 'localhost']
+ALLOWED_HOSTS = ['windwoodfarmersnetwork.com', 'localhost']
 
 print(f"__file__: {__file__}")
 BASE_DIR = Path(__file__).resolve().parent.parent
