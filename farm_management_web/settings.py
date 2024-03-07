@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 SECURE_HSTS_SECONDS = 31536000
 
 # All HTTP requests are redirected to HTTPS
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
 
 # Session cookies are only sent over HTTPS connections
 # SESSION_COOKIE_SECURE = True
