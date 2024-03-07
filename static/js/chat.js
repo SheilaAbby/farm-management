@@ -899,7 +899,8 @@ document.addEventListener("DOMContentLoaded", function () {
     
     var wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     console.log('WEB-SOCKET-PROTOCOL', wsProtocol);
-    var wsPath = wsProtocol + "://" + window.location.host + "/ws/chat/";
+    // var wsPath = wsProtocol + "://" + window.location.host + "/ws/chat/"; 
+    var wsPath = wsProtocol + "://" + window.location.host + "/wss/chat/"; 
     console.log('WEB-SOCKET-URL', wsPath);
     var socket = new WebSocket(wsPath);
 
