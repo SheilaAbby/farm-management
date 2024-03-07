@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURE_HSTS_SECONDS = 31536000
 
 # All HTTP requests are redirected to HTTPS
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
 
 # Session cookies are only sent over HTTPS connections
 # SESSION_COOKIE_SECURE = True
@@ -46,9 +46,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURE_HSTS_PRELOAD = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# DEBUG = False
 
-# DEBUG = True
+DEBUG = True
 
 ALLOWED_HOSTS = ['windwoodfarmersnetwork.com', '127.0.0.1']
 
@@ -79,7 +79,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('windwoodfarmersnetwork.com', 6379)],
+            "hosts": [('157.245.103.7', 6379)],
         },
     },
 }
