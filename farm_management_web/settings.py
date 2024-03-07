@@ -58,6 +58,7 @@ print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,8 +68,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'crispy_forms',
     'crispy_bootstrap5',
-    'fontawesomefree',
-    'channels'
+    'fontawesomefree'
 ]
 
 ASGI_APPLICATION = "farm_management_web.routing.application"
