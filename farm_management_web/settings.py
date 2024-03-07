@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 SECURE_HSTS_SECONDS = 31536000
 
 # All HTTP requests are redirected to HTTPS
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
 
 # Session cookies are only sent over HTTPS connections
 # SESSION_COOKIE_SECURE = True
@@ -39,16 +39,14 @@ SECURE_SSL_REDIRECT = True
 # CSRF cookies are only sent over HTTPS connections,
 # CSRF_COOKIE_SECURE = True
 
-# # HTTP Strict Transport Security (HSTS) policy includes all subdomains of your site
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# HTTP Strict Transport Security (HSTS) policy includes all subdomains of your site
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-# # Site can be submitted to the browser preload list,
-# SECURE_HSTS_PRELOAD = True
+# Site can be submitted to the browser preload list,
+SECURE_HSTS_PRELOAD = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
-# DEBUG = True
 
 ALLOWED_HOSTS = ['windwoodfarmersnetwork.com', '127.0.0.1']
 
@@ -79,7 +77,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('windwoodfarmersnetwork.com', 6379)],
+            "hosts": [('127.0.0.1', 6379)],
         },
     },
 }
