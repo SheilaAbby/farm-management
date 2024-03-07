@@ -56,8 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
       },
       error: function(error) {
-          console.error('Error checking new messages!!!!:', error);
-          console.error('Error details:', error.message, error.stack);
+          console.error('Error checking new messages!:', error);
       }
   });
   
