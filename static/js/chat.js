@@ -899,8 +899,16 @@ document.addEventListener("DOMContentLoaded", function () {
     
     var wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     console.log('wsProtocol', wsProtocol);
-    var wsPath = wsProtocol + "://" + window.location.host + "/wss/chat/"; 
-    console.log('wsPath', wsPath);
+    // var wsPath = wsProtocol + "://" + window.location.host + "/wss/chat/"; 
+    // console.log('wsPath', wsPath);
+
+    // Set WebSocket port based on protocol
+    var wsPort = wsProtocol === "wss" ? 443 : 80;
+
+    // Construct WebSocket path using determined protocol, port, and host
+    var wsPath = wsProtocol + "://" + window.location.hostname + ":" + wsPort + "/ws/chat/";
+    console.log('wsPath!!!', wsPath);
+
     var socket = new WebSocket(wsPath);
 
     // Variable to store accumulated messages
