@@ -751,35 +751,35 @@ function sortChatContainer() {
 }
 
 // handles sending of new messages
-function sendMessage() {
-    // Get the message content from the input field
-    var messageContent = document.getElementById('messageContent').value;
+// function sendMessage() {
+//     // Get the message content from the input field
+//     var messageContent = document.getElementById('messageContent').value;
 
-    if (!messageContent.trim()) {
-        // If content is empty or contains only whitespace, don't send the message
-        return;
-    }
+//     if (!messageContent.trim()) {
+//         // If content is empty or contains only whitespace, don't send the message
+//         return;
+//     }
 
-    // Send the message via AJAX
-    fetch('/windwood/chatroom/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': getCookie('csrftoken'),
-        },
-        body: 'content=' + encodeURIComponent(messageContent),
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Update the chat container with the latest message and messageId
-        updateChatContainer(data.message, data.messageId);
-        //clear the message field
-        document.getElementById('messageContent').value = '';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
+//     // Send the message via AJAX
+//     fetch('/windwood/chatroom/', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//             'X-CSRFToken': getCookie('csrftoken'),
+//         },
+//         body: 'content=' + encodeURIComponent(messageContent),
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         // Update the chat container with the latest message and messageId
+//         updateChatContainer(data.message, data.messageId);
+//         //clear the message field
+//         document.getElementById('messageContent').value = '';
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//     });
+// }
 
 //fetches existing messages and notifies the webscoket
 async function fetchLatestMessagesAndNotifyWebSocket(socket) {
