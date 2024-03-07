@@ -17,7 +17,7 @@ from .routing import application as websocket_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'farm_management_web.settings')
 
 application = ProtocolTypeRouter({
-    "https": django_asgi_app,
+    "http": django_asgi_app,
     "websocket": AuthMiddlewareStack(
         URLRouter(
             websocket_application  
