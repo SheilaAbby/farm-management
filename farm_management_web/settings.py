@@ -46,9 +46,9 @@ SECURE_SSL_REDIRECT = True
 # SECURE_HSTS_PRELOAD = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = False
+DEBUG = False
 
-DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = ['windwoodfarmersnetwork.com', '127.0.0.1']
 
