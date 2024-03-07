@@ -28,7 +28,7 @@ LOGIN_URL = '/login/'
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Controls the HTTP Strict Transport Security (HSTS) policy
-# SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_SECONDS = 31536000
 
 # All HTTP requests are redirected to HTTPS
 SECURE_SSL_REDIRECT = True
