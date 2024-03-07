@@ -898,6 +898,7 @@ function notifyWebSocket(message, socket) {
 document.addEventListener("DOMContentLoaded", function () {
     var wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     var wsPath = wsProtocol + "://" + window.location.host + "/ws/chat/";
+    console.log('WEB-SOCKET-URL', wsPath);
     var socket = new WebSocket(wsPath);
 
     // Variable to store accumulated messages
