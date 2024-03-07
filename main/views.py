@@ -903,6 +903,7 @@ def check_new_message(request):
         'latest_message_timestamp': latest_message_timestamp_user_tz.isoformat() if latest_message_timestamp_user_tz else None
     })
 
+@user_passes_test(lambda u: u.groups.filter(name__in=['farmer', 'field_agent']).exists())
 @login_required(login_url="/login")
 def training(request):
 
