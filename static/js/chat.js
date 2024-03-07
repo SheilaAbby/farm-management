@@ -899,15 +899,15 @@ document.addEventListener("DOMContentLoaded", function () {
     
     var wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     console.log('wsProtocol', wsProtocol);
-    var wsPath = wsProtocol + "://" + window.location.host + "/ws/chat/"; 
+    // var wsPath = wsProtocol + "://" + window.location.host + "/ws/chat/"; 
     // console.log('wsPath', wsPath);
 
     // Set WebSocket port based on protocol
-    // var wsPort = wsProtocol === "wss" ? 443 : 80;
+    var wsPort = wsProtocol === "wss" ? 443 : 80;
 
     // Construct WebSocket path using determined protocol, port, and host
-    // var wsPath = wsProtocol + "://" + window.location.host + ":" + wsPort + "/ws/chat/";
-    console.log('wsPath', wsPath);
+    var wsPath = wsProtocol + "://" + window.location.host + ":" + wsPort + "/ws/chat/";
+    console.log('wsPath here!', wsPath);
 
     var socket = new WebSocket(wsPath);
 
