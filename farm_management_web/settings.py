@@ -28,7 +28,7 @@ LOGIN_URL = '/login/'
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Controls the HTTP Strict Transport Security (HSTS) policy
-SECURE_HSTS_SECONDS = 31536000
+# SECURE_HSTS_SECONDS = 31536000
 
 # All HTTP requests are redirected to HTTPS
 # SECURE_SSL_REDIRECT = True
@@ -39,11 +39,11 @@ SECURE_HSTS_SECONDS = 31536000
 # CSRF cookies are only sent over HTTPS connections,
 # CSRF_COOKIE_SECURE = True
 
-# HTTP Strict Transport Security (HSTS) policy includes all subdomains of your site
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# # HTTP Strict Transport Security (HSTS) policy includes all subdomains of your site
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-# Site can be submitted to the browser preload list,
-SECURE_HSTS_PRELOAD = True
+# # Site can be submitted to the browser preload list,
+# SECURE_HSTS_PRELOAD = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
