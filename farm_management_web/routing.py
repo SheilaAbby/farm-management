@@ -3,7 +3,7 @@ from django.urls import path
 
 from .consumers import ChatConsumer
 
-applicationn = ProtocolTypeRouter(
+application = ProtocolTypeRouter(
     {
         "websocket": URLRouter(
             [

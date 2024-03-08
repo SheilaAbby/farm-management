@@ -15,7 +15,7 @@ from channels.http import AsgiHandler
 print
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from .routing import applicationn as websocket_application
+from .routing import application as websocket_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'farm_management_web.settings')
 
