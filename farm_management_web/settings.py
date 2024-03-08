@@ -48,7 +48,7 @@ SECURE_HSTS_PRELOAD = True
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['windwoodfarmersnetwork.com', '157.245.103.7', '127.0.0.1']
+ALLOWED_HOSTS = ['windwoodfarmersnetwork.com', '157.245.103.7']
 
 print(f"__file__: {__file__}")
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,7 +79,7 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [('157.245.103.7', 6379)],
         },
-    },
+    }
 }
 
 CRISPY_ALLOWED_TEMPLATE_PACK = 'bootstrap5'
