@@ -11,7 +11,7 @@ import os
 # from django.core.asgi import get_asgi_application
 # django_asgi_app = get_asgi_application()
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'myproject.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'farm_management_web.settings'
 
 import django
 django.setup()
