@@ -23,7 +23,7 @@ django_asgi_app = get_asgi_application()
 from channels.http import AsgiHandler
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from .routing import application as websocket_application
+from .routing import websocket_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'farm_management_web.settings')
 

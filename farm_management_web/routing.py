@@ -4,7 +4,7 @@ from channels.auth import AuthMiddlewareStack
 
 from .consumers import ChatConsumer
 
-application = ProtocolTypeRouter(
+websocket_application = ProtocolTypeRouter(
     {
         "websocket": AuthMiddlewareStack(
         URLRouter([
