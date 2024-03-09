@@ -77,7 +77,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('windwoodfarmersnetwork.com', 6379)],
+            "hosts": [('157.245.103.7', 6379)],
         },
     }
 }
