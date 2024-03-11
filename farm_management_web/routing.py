@@ -29,6 +29,6 @@ from django.urls import path
 
 from . import consumers
 
-websocket_urlpatterns = [
+application = [
     path("ws/chat/", ChatConsumer.as_asgi()),
 ]
