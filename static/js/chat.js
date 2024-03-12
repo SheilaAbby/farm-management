@@ -906,7 +906,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var wsPort = wsProtocol === "wss" ? 443 : 80;
 
     // // Construct WebSocket path using determined protocol, port, and host
-    var wsPath = wsProtocol + "://" + window.location.host +  "/ws/chat/";
+    // var wsPath = wsProtocol + "://" + window.location.host +  "/ws/chat/";
+
+    var wsPath = wsProtocol + '://' + window.location.host + ":8001" + "/ws/chat/"; // PRODUCTION
+
     console.log('wsPath here!!!', wsPath);
 
     var socket = new WebSocket(wsPath);
