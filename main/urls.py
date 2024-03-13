@@ -64,9 +64,9 @@ urlpatterns = [
     path('windwood/chatroom/delete/<int:message_id>/reply/<int:reply_id>/', views.delete_reply, name='delete_reply'),
     
     # Password Reset urls
-    path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
-    path('reset_password_sent', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
-    path('reset_password_complete', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
+    path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_custom_form.html'), name='password_reset'),
+    path('reset_password_sent', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done_custom.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm_custom.html'), name='password_reset_confirm'),
+    path('reset_password_complete', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete_custom.html'), name='password_reset_complete'),
  # Include media URLs
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
