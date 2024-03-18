@@ -212,11 +212,12 @@ AUTH_USER_MODEL = 'main.CustomUser'
 # URL to redirect to after changing the password
 PASSWORD_RESET_COMPLETE = '/login'
 
+# Set up to send emails - Production
 email_password = os.getenv('EMAIL_HOST_PASSWORD')
 ascii_password = email_password.encode('ascii', 'ignore').decode('ascii')
 encoded_password = ascii_password.encode('utf-8')
 decoded_password = encoded_password.decode('utf-8')
-# Set up to send emails - Production
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'windwoodfarmernetwork@gmail.com'
