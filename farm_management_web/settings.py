@@ -212,20 +212,15 @@ AUTH_USER_MODEL = 'main.CustomUser'
 # URL to redirect to after changing the password
 PASSWORD_RESET_COMPLETE = '/login'
 
-# set up to send emails - Dev
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_USE_TLS = True    
-# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-# EMAIL_PORT = '2525'
-
-
+email_password = os.getenv('EMAIL_HOST_PASSWORD')
+ascii_password = email_password.encode('ascii', 'ignore').decode('ascii')
+encoded_password = ascii_password.encode('utf-8')
+decoded_password = encoded_password.decode('utf-8')
 # Set up to send emails - Production
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'windwoodfarmernetwork@gmail.com'
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = decoded_password
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Windwood Farmer Network Team <noreply@windwoodfarmernetwork.com>'
