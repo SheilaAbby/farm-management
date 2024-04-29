@@ -5,6 +5,9 @@ import secrets
 import django
 import numpy as np
 
+import sys
+sys.path.append('/var/www/farm-management')
+
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'farm_management_web.settings')
 django.setup()
