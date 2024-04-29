@@ -15,6 +15,14 @@ class CustomUser(AbstractUser):
         ('Teso', 'Teso'),
         ('Abim', 'Abim'),
         ('Nakaseke', 'Nakaseke'),
+        ('Apac', 'Apac'),
+        ('Dokolo', 'Dokolo'),
+        ('Kole', 'Kole'),
+        ('Kwania', 'Kwania'),
+        ('Lira', 'Lira'),
+        ('Otuke', 'Otuke'),
+        ('Oyam', 'Oyam'),
+        ('Dokolo', 'Dokolo'),
         ('Other', 'Other'),
     ]
 
@@ -101,8 +109,6 @@ class Farm(models.Model):
     other_crops = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
-    
-
     def __str__(self):
         return self.name
     
@@ -145,8 +151,6 @@ class FarmingDates(models.Model):
     def __str__(self):
         return f"Farming Dates for {self.farm} | Submitted On {self.created.strftime('%Y-%m-%d')}"
 
-
-
 class FarmingCosts(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='farming_costs')
     cost_fertilizer_application = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -176,7 +180,6 @@ class FarmProduce(models.Model):
 
     def __str__(self):
         return f"Farm Produce for {self.farm} | Submitted On {self.created.strftime('%Y-%m-%d')}"
-
 
 class Resource(models.Model):
     name = models.CharField(max_length=255)

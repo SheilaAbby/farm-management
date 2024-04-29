@@ -77,6 +77,14 @@ class CustomUserUpdateForm(UserChangeForm):
         ('Teso', 'Teso'),
         ('Abim', 'Abim'),
         ('Nakaseke', 'Nakaseke'),
+        ('Apac', 'Apac'),
+        ('Dokolo', 'Dokolo'),
+        ('Kole', 'Kole'),
+        ('Kwania', 'Kwania'),
+        ('Lira', 'Lira'),
+        ('Otuke', 'Otuke'),
+        ('Oyam', 'Oyam'),
+        ('Dokolo', 'Dokolo'),
         ('Other', 'Other'),
     ]
 
@@ -154,6 +162,14 @@ class FarmForm(forms.ModelForm):
         ('Teso', 'Teso'),
         ('Abim', 'Abim'),
         ('Nakaseke', 'Nakaseke'),
+        ('Apac', 'Apac'),
+        ('Dokolo', 'Dokolo'),
+        ('Kole', 'Kole'),
+        ('Kwania', 'Kwania'),
+        ('Lira', 'Lira'),
+        ('Otuke', 'Otuke'),
+        ('Oyam', 'Oyam'),
+        ('Dokolo', 'Dokolo'),
         ('Other', 'Other'),
     ]
 
