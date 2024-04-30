@@ -5,9 +5,6 @@ import secrets
 import django
 import numpy as np
 
-import sys
-sys.path.append('/var/www/farm-management')
-
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'farm_management_web.settings')
 django.setup()
@@ -48,7 +45,7 @@ def import_users():
         phone_number = row['phone_number']
         crops = row['crops']
         farmer_orgs = row['farmer_orgs']
-        land_size = row.get('land_size', 0)  # Default to 0 if "land_size" is missing or null
+        land_size = row.get('land_size', 0)
 
           # Check if full_name is NaN
         if pd.isna(full_name):
@@ -103,11 +100,12 @@ def import_users():
         user.national_id = national_id
         user.district = district
         user.farmer_orgs = farmer_orgs
-        
+       
         # Save the User object
         user.save()
         
         # Create a new Farm object associated with the user
+
         farm_name = f"{full_name} {crops} Farm"
         
         farm = Farm.objects.create(user=user, name=farm_name, crops=crops, district=district, land_size=land_size)
@@ -130,13 +128,8 @@ def import_users():
     # Convert the list of dictionaries to a DataFrame
     new_users_df = pd.DataFrame(new_users_data)
 
-    # Get the path to the Downloads folder
-    downloads_folder = os.path.expanduser("~/home/Downloads")
-
-    # Specify the full path to the new Excel file
-    new_excel_file = os.path.join(downloads_folder, 'windwood_farmer_data-new_users.xlsx')
-
-    # Write the DataFrame to the new Excel file
+    # Write the DataFrame to a new Excel file
+    new_excel_file = 'windwood_farmer_data-new_users.xlsx'
     new_users_df.to_excel(new_excel_file, index=False)
 
     print('OPERATION COMPLETED!!')
