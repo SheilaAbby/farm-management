@@ -129,7 +129,7 @@ def import_users():
     new_users_df = pd.DataFrame(new_users_data)
 
     # Write the DataFrame to a new Excel file
-    new_excel_file = 'windwood_farmer_data-new_users.xlsx'
+    new_excel_file = 'windwood_farmer_data-new_users-2.xlsx'
     new_users_df.to_excel(new_excel_file, index=False)
 
     print('OPERATION COMPLETED!!')
