@@ -129,28 +129,34 @@ WSGI_APPLICATION = 'farm_management_web.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 #  Postgres database connection
-DEVELOPMENT_MODE = os.getenv('DEVELOPMENT_MODE', 'False') == 'True'
+# DEVELOPMENT_MODE = os.getenv('DEVELOPMENT_MODE', 'False') == 'True'
 
-if DEVELOPMENT_MODE is True:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT'),
-            }
-            }
-elif len(sys.argv) > 1 and sys.argv[1] != 'collectstatic':
-    if os.getenv('DATABASE_URL', None) is None:
-        raise Exception('DATABASE_URL environment variable not defined!!!')
+# if DEVELOPMENT_MODE is True:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': os.getenv('DB_NAME'),
+#             'USER': os.getenv('DB_USER'),
+#             'PASSWORD': os.getenv('DB_PASSWORD'),
+#             'HOST': os.getenv('DB_HOST'),
+#             'PORT': os.getenv('DB_PORT'),
+#             }
+#             }
+# elif len(sys.argv) > 1 and sys.argv[1] != 'collectstatic':
+#     if os.getenv('DATABASE_URL', None) is None:
+#         raise Exception('DATABASE_URL environment variable not defined!!!')
     
-    db_config = dj_database_url.config(default=os.environ.get("DATABASE_URL"))
-    db_config['ENGINE'] = 'django.db.backends.postgresql'
-    DATABASES = {
-        'default': db_config,
-    }
+#     db_config = dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+#     db_config['ENGINE'] = 'django.db.backends.postgresql'
+#     DATABASES = {
+#         'default': db_config,
+#     }
+
+db_config = dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+db_config['ENGINE'] = 'django.db.backends.postgresql'
+DATABASES = {
+    'default': db_config,
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
