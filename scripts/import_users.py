@@ -48,7 +48,6 @@ def import_users():
         phone_number = row['phone_number']
         crops = row['crops']
         farmer_orgs = row['farmer_orgs']
-        # land_size = row['land_size']
         land_size = row.get('land_size', 0)  # Default to 0 if "land_size" is missing or null
 
           # Check if full_name is NaN
@@ -103,7 +102,7 @@ def import_users():
         user.birth_year = birth_year
         user.national_id = national_id
         user.district = district
-        # user.phone_number = formatted_phone_number
+        user.farmer_orgs = farmer_orgs
         
         # Save the User object
         user.save()
@@ -131,12 +130,8 @@ def import_users():
     # Convert the list of dictionaries to a DataFrame
     new_users_df = pd.DataFrame(new_users_data)
 
-    # # Write the DataFrame to a new Excel file
-    # new_excel_file = 'windwood_farmer_data-new_users.xlsx'
-    # new_users_df.to_excel(new_excel_file, index=False)
-
     # Get the path to the Downloads folder
-    downloads_folder = os.path.expanduser("~/Downloads")
+    downloads_folder = os.path.expanduser("~/home/Downloads")
 
     # Specify the full path to the new Excel file
     new_excel_file = os.path.join(downloads_folder, 'windwood_farmer_data-new_users.xlsx')
