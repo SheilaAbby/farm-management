@@ -54,7 +54,7 @@ DEBUG = False
 
 # DEBUG = True
 
-ALLOWED_HOSTS = ['157.245.103.7', 'windwoodfarmersnetwork.com', '127.0.0.1']
+ALLOWED_HOSTS = ['157.245.103.7', 'windwoodfarmersnetwork.com', '127.0.0.1', '015d-41-80-113-189.ngrok-free.app']
 
 print(f"__file__: {__file__}")
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -142,11 +142,14 @@ if DEVELOPMENT_MODE is True:
             'PORT': os.getenv('DB_PORT'),
             }
             }
-elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+elif len(sys.argv) > 1 and sys.argv[1] != 'collectstatic':
     if os.getenv('DATABASE_URL', None) is None:
         raise Exception('DATABASE_URL environment variable not defined!!!')
+    
+    db_config = dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+    db_config['ENGINE'] = 'django.db.backends.postgresql'
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get("DATABASE_URL")),
+        'default': db_config,
     }
 
 # Password validation
