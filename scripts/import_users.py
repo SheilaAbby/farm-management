@@ -16,7 +16,7 @@ from main.models import Farm
 # Read data from Excel file into a pandas DataFrame
 def import_users():
     current_directory = os.path.dirname(os.path.realpath(__file__))
-    excel_file = os.path.join(current_directory, 'windwood_farmer_data.xlsx')
+    excel_file = os.path.join(current_directory, 'windwood_farmer_data-2.xlsx')
     df = pd.read_excel(excel_file, engine='openpyxl')
 
     # Initialize a list to store the newly created user data
